@@ -27,6 +27,7 @@
             align-items: center;
             overflow-x: hidden;
             position: relative;
+            padding: 40px 0;
         }
 
         /* 50 Yıl Sonrası Siber Arka Plan Efekti */
@@ -54,7 +55,7 @@
             position: relative;
             z-index: 3;
             width: 90%;
-            max-width: 1100px;
+            max-width: 1200px;
             background: rgba(10, 15, 30, 0.7);
             border: 2px solid rgba(6, 182, 212, 0.3);
             backdrop-filter: blur(20px);
@@ -64,7 +65,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 30px;
+            gap: 35px;
         }
 
         /* Scanline Tarama Çizgisi Animasyonu */
@@ -77,7 +78,7 @@
             z-index: 10;
             background-size: 100% 4px, 6px 100%;
             pointer-events: none;
-            opacity: 0.4;
+            opacity: 0.3;
         }
 
         /* Logo Alanı */
@@ -87,14 +88,14 @@
         }
 
         .server-logo {
-            max-width: 260px;
+            max-width: 220px;
             filter: drop-shadow(0 0 25px rgba(6, 182, 212, 0.6));
             animation: float 4s ease-in-out infinite;
         }
 
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(1deg); }
+            50% { transform: translateY(-8px) rotate(0.5deg); }
         }
 
         .title-cyber {
@@ -113,21 +114,29 @@
             text-shadow: 0 0 20px rgba(6, 182, 212, 1);
         }
 
-        /* Grid Düzeni */
+        /* Üst Grid Düzeni (3 Kolonlu) */
         .content-grid {
             display: grid;
-            grid-template-columns: 1fr 1.5fr 1fr;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            gap: 25px;
+            width: 100%;
+        }
+
+        /* Alt Grid Düzeni (Yeni Eklenen Yerler İçin 2 Kolonlu) */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
             gap: 25px;
             width: 100%;
         }
 
         .panel {
-            background: rgba(6, 182, 212, 0.03);
+            background: rgba(6, 182, 212, 0.02);
             border: 1px solid rgba(6, 182, 212, 0.2);
             border-radius: 12px;
-            padding: 20px;
+            padding: 22px;
             position: relative;
-            box-shadow: inset 0 0 15px rgba(6, 182, 212, 0.05);
+            box-shadow: inset 0 0 15px rgba(6, 182, 212, 0.03);
         }
 
         /* Fütüristik Köşe Süsleri */
@@ -162,7 +171,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .counter-box {
@@ -171,7 +180,7 @@
 
         .counter-num {
             font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 700;
             color: #fff;
             text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
@@ -179,7 +188,7 @@
         }
 
         .counter-label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #9ca3af;
             letter-spacing: 3px;
             text-transform: uppercase;
@@ -190,7 +199,7 @@
             width: 100%;
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(6, 182, 212, 0.4);
-            padding: 14px;
+            padding: 12px;
             border-radius: 8px;
             display: flex;
             justify-content: space-between;
@@ -207,9 +216,8 @@
 
         .ip-code {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: #fff;
-            letter-spacing: 1px;
         }
 
         .copy-tag {
@@ -220,10 +228,9 @@
             font-size: 0.8rem;
             font-weight: 700;
             letter-spacing: 1px;
-            transition: all 0.2s;
         }
 
-        /* Listeler ve Sıralama */
+        /* Listeler */
         .feature-list {
             list-style: none;
         }
@@ -231,7 +238,7 @@
         .feature-list li {
             padding: 8px 0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: #d1d5db;
             display: flex;
             align-items: center;
@@ -243,51 +250,82 @@
             font-size: 0.9rem;
         }
 
-        .rank-item {
+        /* Formlar ve İnputlar (Ticket & Alım) */
+        .cyber-form {
             display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 1.1rem;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        .rank-name {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .cyber-input, .cyber-textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            padding: 10px 14px;
+            border-radius: 6px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.3s;
         }
 
-        .rank-num {
+        .cyber-input:focus, .cyber-textarea:focus {
+            border-color: #06b6d4;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+        }
+
+        .form-btn {
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid #06b6d4;
             color: #06b6d4;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
             font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: all 0.3s;
         }
 
-        .rank-score {
+        .form-btn:hover {
+            background: #06b6d4;
+            color: #000;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+        }
+
+        /* Biz Kimiz Metni */
+        .about-text {
             color: #9ca3af;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        .about-text strong {
+            color: #fff;
         }
 
-        /* Fütüristik Butonlar */
+        /* Aksiyon Butonları */
         .action-row {
             display: flex;
             gap: 20px;
             width: 100%;
             justify-content: center;
-            margin-top: 10px;
         }
 
         .cyber-btn {
             flex: 1;
             max-width: 250px;
             text-decoration: none;
-            padding: 15px 20px;
+            padding: 14px 20px;
             font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 2px;
             border-radius: 8px;
-            position: relative;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
@@ -299,43 +337,27 @@
             background: transparent;
             color: #5865F2;
             border: 2px solid #5865F2;
-            box-shadow: 0 0 15px rgba(88, 101, 242, 0.2);
+            box-shadow: 0 0 15px rgba(88, 101, 242, 0.1);
         }
 
         .btn-discord:hover {
             background: #5865F2;
             color: #fff;
-            box-shadow: 0 0 25px rgba(88, 101, 242, 0.6);
-            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(88, 101, 242, 0.5);
+            transform: translateY(-2px);
         }
 
-        .btn-store {
-            background: transparent;
-            color: #06b6d4;
-            border: 2px solid #06b6d4;
-            box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
-        }
-
-        .btn-store:hover {
-            background: #06b6d4;
-            color: #000;
-            box-shadow: 0 0 25px rgba(6, 182, 212, 0.6);
-            transform: translateY(-3px);
-        }
-
-        /* Mobil Cihazlar Ekran Uyumu */
-        @media (max-width: 900px) {
-            .content-grid {
+        /* Medya Etiketleri (Mobil Uyum) */
+        @media (max-width: 950px) {
+            .content-grid, .bottom-grid {
                 grid-template-columns: 1fr;
             }
             .main-container {
                 padding: 20px;
-                margin: 20px 0;
             }
             .action-row {
                 flex-direction: column;
                 align-items: center;
-                width: 100%;
             }
             .cyber-btn {
                 width: 100%;
@@ -369,12 +391,10 @@
 
             <div class="panel status-center">
                 <h2 class="panel-title"><i class="fa-solid fa-terminal"></i> SUNUCU DURUMU</h2>
-                
                 <div class="counter-box">
                     <div class="counter-num">1,200</div>
                     <div class="counter-label">Aktif Oyuncu</div>
                 </div>
-
                 <div class="cyber-ip-box" onclick="copyFuturisticIP()">
                     <div class="ip-code" id="cyber-ip">play.degisiksmp.com</div>
                     <div class="copy-tag" id="ip-btn">KOPYALA</div>
@@ -382,21 +402,32 @@
             </div>
 
             <div class="panel">
-                <h2 class="panel-title"><i class="fa-solid fa-trophy"></i> TOP OYUNCULAR</h2>
-                <div class="rank-list">
-                    <div class="rank-item">
-                        <div class="rank-name"><span class="rank-num">#1</span> GLUM</div>
-                        <div class="rank-score">12,500 XP</div>
-                    </div>
-                    <div class="rank-item">
-                        <div class="rank-name"><span class="rank-num">#2</span> SRARIANN</div>
-                        <div class="rank-score">11,200 XP</div>
-                    </div>
-                    <div class="rank-item">
-                        <div class="rank-name"><span class="rank-num">#3</span> GUR2IJK</div>
-                        <div class="rank-score">9,800 XP</div>
-                    </div>
+                <h2 class="panel-title"><i class="fa-solid fa-circle-info"></i> BİZ KİMİZ?</h2>
+                <p class="about-text">
+                    <strong>Değişik SMP</strong>, 2076 yılının teknolojisiyle harmanlanmış, alışılmışın dışında sistemlere sahip yeni nesil bir Minecraft topluluğudur. Sıradan hayatta kalma modlarından sıkılan siber gezginler için kurulmuştur.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="bottom-grid">
+            
+            <div class="panel">
+                <h2 class="panel-title"><i class="fa-solid fa-ticket"></i> SİBER DESTEK (TICKET)</h2>
+                <div class="cyber-form">
+                    <input type="text" id="ticket-title" class="cyber-input" placeholder="Destek Konusu (Örn: Ödeme, Hata Bildirimi)">
+                    <textarea id="ticket-msg" class="cyber-textarea" rows="3" placeholder="Yapay zeka asistanına iletilecek mesajınız..."></textarea>
+                    <button type="button" class="form-btn" onclick="triggerFakeTicket()">DESTEK TALEBİ AÇ</button>
                 </div>
+            </div>
+
+            <div class="panel">
+                <h2 class="panel-title"><i class="fa-solid fa-id-card"></i> YETKİLİ BAŞVURUSU</h2>
+                <form class="cyber-form" onsubmit="triggerApplication(event)">
+                    <input type="text" class="cyber-input" placeholder="Minecraft Kullanıcı Adınız" required>
+                    <input type="email" class="cyber-input" placeholder="İletişim Adresi (E-posta)" required>
+                    <button type="submit" class="form-btn">BAŞVURUYU SİSTEME GÖNDER</button>
+                </form>
             </div>
 
         </div>
@@ -405,28 +436,46 @@
             <a href="https://discord.gg/R89Hp5cn" target="_blank" class="cyber-btn btn-discord">
                 <i class="fa-brands fa-discord"></i> DISCORD'A KATIL
             </a>
-            <a href="#magaza" class="cyber-btn btn-store">
-                <i class="fa-solid fa-cart-shopping"></i> SİBER MARKET
-            </a>
         </div>
 
     </div>
 
     <script>
+        // IP Kopyalama Fonksiyonu
         function copyFuturisticIP() {
             const ipText = document.getElementById('cyber-ip').innerText;
             navigator.clipboard.writeText(ipText).then(() => {
                 const btn = document.getElementById('ip-btn');
                 btn.innerText = 'KLONLANDI!';
                 btn.style.background = '#00ffcc';
-                btn.style.color = '#000';
                 
                 setTimeout(() => {
                     btn.innerText = 'KOPYALA';
                     btn.style.background = '#06b6d4';
-                    btn.style.color = '#000';
                 }, 2000);
             });
+        }
+
+        // Sahte Ticket Açma Fonksiyonu
+        function triggerFakeTicket() {
+            const title = document.getElementById('ticket-title').value;
+            const msg = document.getElementById('ticket-msg').value;
+            
+            if(!title || !msg) {
+                alert("Sistem Hatası: Lütfen alanları boş bırakmayın.");
+                return;
+            }
+            
+            alert("Siber Ağ Bağlantısı Kuruluyor...\nTalep Başarıyla Açıldı! Yetkililerimiz Discord üzerinden sizinle iletişime geçecektir.");
+            document.getElementById('ticket-title').value = "";
+            document.getElementById('ticket-msg').value = "";
+        }
+
+        // Yetkili Başvuru Fonksiyonu
+        function triggerApplication(e) {
+            e.preventDefault();
+            alert("Başvurunuz Değişik SMP Veritabanına Kaydedildi!\nİnceleme süreci siber algoritmalar tarafından başlatılmıştır.");
+            e.target.reset();
         }
     </script>
 </body>
