@@ -3,74 +3,428 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Değişik SMP | Eğlencenin Yeni Adresi</title>
-    <!-- FontAwesome for Icons -->
+    <title>Değişik SMP | Geleceğin Sunucu Portalı</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #030712 url('https://images.alphacoders.com/134/1341076.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #f3f4f6;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 50 Yıl Sonrası Siber Arka Plan Efekti */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(3,7,18,0.85) 80%),
+                        linear-gradient(to bottom, rgba(6,182,212,0.05), rgba(0,0,0,0));
+            z-index: 1;
+        }
+
+        /* Matrix/Grid overlay */
+        .grid-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(18, 113, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(18, 113, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 3;
+            width: 90%;
+            max-width: 1100px;
+            background: rgba(10, 15, 30, 0.7);
+            border: 2px solid rgba(6, 182, 212, 0.3);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(6, 182, 212, 0.15), inset 0 0 20px rgba(6, 182, 212, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* Scanline Tarama Çizgisi Animasyonu */
+        .main-container::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 10;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        /* Logo Alanı */
+        .logo-wrap {
+            text-align: center;
+            position: relative;
+        }
+
+        .server-logo {
+            max-width: 260px;
+            filter: drop-shadow(0 0 25px rgba(6, 182, 212, 0.6));
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        .title-cyber {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(6, 182, 212, 0.7);
+            margin-top: 15px;
+            text-transform: uppercase;
+        }
+
+        .title-cyber span {
+            color: #06b6d4;
+            text-shadow: 0 0 20px rgba(6, 182, 212, 1);
+        }
+
+        /* Grid Düzeni */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            gap: 25px;
+            width: 100%;
+        }
+
+        .panel {
+            background: rgba(6, 182, 212, 0.03);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            box-shadow: inset 0 0 15px rgba(6, 182, 212, 0.05);
+        }
+
+        /* Fütüristik Köşe Süsleri */
+        .panel::before, .panel::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-color: #06b6d4;
+            border-style: solid;
+            pointer-events: none;
+        }
+        .panel::before { top: -2px; left: -2px; border-width: 2px 0 0 2px; }
+        .panel::after { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; }
+
+        .panel-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            color: #06b6d4;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Sunucu Durumu & IP Kopyalama */
+        .status-center {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .counter-box {
+            text-align: center;
+        }
+
+        .counter-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+            line-height: 1;
+        }
+
+        .counter-label {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .cyber-ip-box {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            padding: 14px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cyber-ip-box:hover {
+            background: rgba(6, 182, 212, 0.1);
+            border-color: #06b6d4;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+        }
+
+        .ip-code {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .copy-tag {
+            background: #06b6d4;
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        /* Listeler ve Sıralama */
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 1.1rem;
+            color: #d1d5db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-list li i {
+            color: #06b6d4;
+            font-size: 0.9rem;
+        }
+
+        .rank-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 1.1rem;
+        }
+
+        .rank-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rank-num {
+            color: #06b6d4;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .rank-score {
+            color: #9ca3af;
+        }
+
+        /* Fütüristik Butonlar */
+        .action-row {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .cyber-btn {
+            flex: 1;
+            max-width: 250px;
+            text-decoration: none;
+            padding: 15px 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 8px;
+            position: relative;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-discord {
+            background: transparent;
+            color: #5865F2;
+            border: 2px solid #5865F2;
+            box-shadow: 0 0 15px rgba(88, 101, 242, 0.2);
+        }
+
+        .btn-discord:hover {
+            background: #5865F2;
+            color: #fff;
+            box-shadow: 0 0 25px rgba(88, 101, 242, 0.6);
+            transform: translateY(-3px);
+        }
+
+        .btn-store {
+            background: transparent;
+            color: #06b6d4;
+            border: 2px solid #06b6d4;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+        }
+
+        .btn-store:hover {
+            background: #06b6d4;
+            color: #000;
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.6);
+            transform: translateY(-3px);
+        }
+
+        /* Mobil Cihazlar Ekran Uyumu */
+        @media (max-width: 900px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .main-container {
+                padding: 20px;
+                margin: 20px 0;
+            }
+            .action-row {
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+            }
+            .cyber-btn {
+                width: 100%;
+                max-width: none;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Arka Plan Karartma Katmanı -->
-    <div class="overlay"></div>
+    <div class="grid-overlay"></div>
 
-    <!-- Ana Konteyner -->
-    <div class="hero-container">
+    <div class="main-container">
         
-        <!-- Logo Bölümü -->
-        <div class="logo-area">
-            <!-- İstersen buraya bir logo görseli de koyabilirsin: <img src="logo.png" alt="Logo">-->
-            <h1>DEĞİŞİK <span class="highlight">SMP</span></h1>
-            <p>Sıradan sunuculardan sıkılmadın mı? Macera burada başlıyor!</p>
+        <div class="logo-wrap">
+            <img src="https://cdn.discordapp.com/attachments/1490033120962150552/1512087069894115358/image.png?ex=6a22d052&is=6a217ed2&hm=d2fcc6004c27ec1ee1545f5887d605e581c834e531f58c1b058e2716677a5ef9" alt="Değişik SMP Logo" class="server-logo">
+            <h1 class="title-cyber">Değişik <span>SMP</span></h1>
         </div>
 
-        <!-- IP Kopyalama Alanı -->
-        <div class="ip-box" onclick="copyIP()">
-            <div class="ip-text">
-                <i class="fa-solid fa-gamepad"></i>
-                <span id="server-ip">play.degisiksmp.com</span>
+        <div class="content-grid">
+            
+            <div class="panel">
+                <h2 class="panel-title"><i class="fa-solid fa-layer-group"></i> SUNUCU MODLARI</h2>
+                <ul class="feature-list">
+                    <li><i class="fa-solid fa-microchip"></i> Gelişmiş Ekonomi</li>
+                    <li><i class="fa-solid fa-user-gear"></i> Siberpunk Görevler</li>
+                    <li><i class="fa-solid fa-shield-halved"></i> Titreşimli Zırhlar</li>
+                    <li><i class="fa-solid fa-jet-fighter"></i> Özel Hologram Ticareti</li>
+                </ul>
             </div>
-            <div class="copy-btn">
-                <i class="fa-solid fa-copy"></i>
-                <span id="copy-tooltip">KOPYALA</span>
+
+            <div class="panel status-center">
+                <h2 class="panel-title"><i class="fa-solid fa-terminal"></i> SUNUCU DURUMU</h2>
+                
+                <div class="counter-box">
+                    <div class="counter-num">1,200</div>
+                    <div class="counter-label">Aktif Oyuncu</div>
+                </div>
+
+                <div class="cyber-ip-box" onclick="copyFuturisticIP()">
+                    <div class="ip-code" id="cyber-ip">play.degisiksmp.com</div>
+                    <div class="copy-tag" id="ip-btn">KOPYALA</div>
+                </div>
             </div>
+
+            <div class="panel">
+                <h2 class="panel-title"><i class="fa-solid fa-trophy"></i> TOP OYUNCULAR</h2>
+                <div class="rank-list">
+                    <div class="rank-item">
+                        <div class="rank-name"><span class="rank-num">#1</span> GLUM</div>
+                        <div class="rank-score">12,500 XP</div>
+                    </div>
+                    <div class="rank-item">
+                        <div class="rank-name"><span class="rank-num">#2</span> SRARIANN</div>
+                        <div class="rank-score">11,200 XP</div>
+                    </div>
+                    <div class="rank-item">
+                        <div class="rank-name"><span class="rank-num">#3</span> GUR2IJK</div>
+                        <div class="rank-score">9,800 XP</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- Canlı Oyuncu Sayısı (Statik, dilersen API bağlayabilirsin) -->
-        <div class="player-count">
-            <span class="online-dot"></span> <b id="online-players">42</b> Oyuncu Aktif!
-        </div>
-
-        <!-- Butonlar (ChickenNW Tarzı) -->
-        <div class="action-buttons">
-            <a href="https://discord.gg/davetlinkin" target="_blank" class="btn btn-discord">
-                <i class="fa-brands fa-discord"></i> Discord'a Katıl
+        <div class="action-row">
+            <a href="https://discord.gg/R89Hp5cn" target="_blank" class="cyber-btn btn-discord">
+                <i class="fa-brands fa-discord"></i> DISCORD'A KATIL
             </a>
-            <a href="/magaza" class="btn btn-store">
-                <i class="fa-solid fa-shopping-cart"></i> Mağaza / Market
-            </a>
-            <a href="/kayit" class="btn btn-web">
-                <i class="fa-solid fa-user-plus"></i> Kayıt Ol
+            <a href="#magaza" class="cyber-btn btn-store">
+                <i class="fa-solid fa-cart-shopping"></i> SİBER MARKET
             </a>
         </div>
 
     </div>
 
-    <!-- IP Kopyalama JavaScript Kodu -->
     <script>
-        function copyIP() {
-            const ipText = document.getElementById('server-ip').innerText;
+        function copyFuturisticIP() {
+            const ipText = document.getElementById('cyber-ip').innerText;
             navigator.clipboard.writeText(ipText).then(() => {
-                const tooltip = document.getElementById('copy-tooltip');
-                tooltip.innerText = 'KOPYALANDI!';
-                tooltip.style.background = '#2ecc71';
+                const btn = document.getElementById('ip-btn');
+                btn.innerText = 'KLONLANDI!';
+                btn.style.background = '#00ffcc';
+                btn.style.color = '#000';
                 
                 setTimeout(() => {
-                    tooltip.innerText = 'KOPYALA';
-                    tooltip.style.background = 'rgba(255, 255, 255, 0.1)';
+                    btn.innerText = 'KOPYALA';
+                    btn.style.background = '#06b6d4';
+                    btn.style.color = '#000';
                 }, 2000);
             });
         }
