@@ -3,228 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GHOSTCLIENT - Market & Yönetim</title>
+    <title>Değişik SMP | Eğlencenin Yeni Adresi</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: #0b0c10; color: #fff; padding-top: 100px; padding-bottom: 50px; }
-        
-        /* Üst Menü */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; position: fixed; top: 0; left: 0; width: 100%; background: #12131c; border-bottom: 1px solid #ff0055; z-index: 100; }
-        .logo { color: #ff0055; font-weight: 800; font-size: 24px; text-shadow: 0 0 10px rgba(255, 0, 85, 0.5); }
-        
-        /* Sol Menü Grubu */
-        .left-menu { display: flex; align-items: center; gap: 15px; }
-        
-        /* GİZLİ ADMİN BUTONU */
-        #adminButonu { display: none; background: #ff0055; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: 600; cursor: pointer; font-size: 13px; box-shadow: 0 0 10px rgba(255, 0, 85, 0.4); animation: pulse 2s infinite; }
-        #adminButonu:hover { background: #cc0044; }
-
-        .user-info { font-weight: 600; background: #1f2029; padding: 5px 15px; border-radius: 20px; border: 1px solid #333; }
-
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; text-align: center; }
-        h2 { margin-top: 40px; margin-bottom: 10px; font-weight: 800; letter-spacing: 1px; }
-        h2 span { color: #ff0055; text-shadow: 0 0 10px rgba(255, 0, 85, 0.3); }
-
-        /* Market Kartları */
-        .market-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
-        .item-card { background: #1f2029; border: 1px solid #2a2b36; padding: 25px; border-radius: 15px; transition: 0.3s; position: relative; overflow: hidden; }
-        .item-card:hover { border-color: #ff0055; transform: translateY(-5px); box-shadow: 0 5px 15px rgba(255, 0, 85, 0.2); }
-        .item-card h3 { margin-bottom: 10px; font-size: 20px; }
-        .price { color: #ff0055; font-weight: 800; font-size: 22px; margin-bottom: 15px; }
-        
-        .buy-btn { background: #ff0055; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; transition: 0.2s; }
-        .buy-btn:hover { background: #cc0044; }
-
-        /* GALERİ BÖLÜMÜ TASARIMI */
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
-        .gallery-card { background: #1f2029; border: 1px solid #2a2b36; border-radius: 15px; overflow: hidden; transition: 0.3s; }
-        .gallery-card:hover { border-color: #ff0055; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255, 0, 85, 0.2); }
-        
-        .img-container { width: 100%; height: 180px; background: #0b0c10; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .gallery-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s ease; }
-        .gallery-card:hover img { transform: scale(1.08); }
-        
-        .gallery-desc { padding: 15px; font-size: 14px; font-weight: 600; color: #c5a8b3; background: #12131c; text-align: left; border-top: 1px solid rgba(255, 0, 85, 0.1); }
-
-        /* AÇILIR ADMİN PANELİ (MODAL PENCERE) */
-        .admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
-        .admin-content { background: #12131c; border: 2px solid #ff0055; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px; box-shadow: 0 0 30px rgba(255, 0, 85, 0.3); position: relative; }
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #aaa; cursor: pointer; transition: 0.2s; }
-        .close-btn:hover { color: #ff0055; }
-        
-        .admin-title { color: #ff0055; font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
-        .admin-box { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-        .admin-box input { background: #0b0c10; border: 1px solid #333; padding: 12px; color: white; border-radius: 8px; width: 100%; font-size: 16px; }
-        .admin-box input:focus { border-color: #ff0055; outline: none; }
-        .admin-box button { background: #ff0055; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; }
-
-        .your-ip { font-size: 12px; color: #444; margin-top: 60px; text-align: center; }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 0, 85, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header>
-        <div class="left-menu">
-            <div class="logo">GHOSTCLIENT</div>
-            <!-- SOLDAKİ GİZLİ BUTON -->
-            <button id="adminButonu" onclick="paneliAc()">🛠️ Kurucu Paneli</button>
+    <!-- Arka Plan Karartma Katmanı -->
+    <div class="overlay"></div>
+
+    <!-- Ana Konteyner -->
+    <div class="hero-container">
+        
+        <!-- Logo Bölümü -->
+        <div class="logo-area">
+            <!-- İstersen buraya bir logo görseli de koyabilirsin: <img src="logo.png" alt="Logo">-->
+            <h1>DEĞİŞİK <span class="highlight">SMP</span></h1>
+            <p>Sıradan sunuculardan sıkılmadın mı? Macera burada başlıyor!</p>
         </div>
-        <div class="user-info" id="bakiyeGosterge">Bakiye: 100 GC</div>
-    </header>
 
-    <div class="container">
-        <h2>• <span>GHOST COIN MAĞAZASI</span> •</h2>
-        <p style="color: #888;">GhostClient ayrıcalıklarını hesabına tanımla.</p>
-
-        <!-- Market Ürünleri -->
-        <div class="market-grid">
-            <div class="item-card">
-                <h3>Vip Ghost Cape</h3>
-                <div class="price">50 GC</div>
-                <button class="buy-btn" onclick="satinal(50, 'Vip Ghost Cape')">Satın Al</button>
+        <!-- IP Kopyalama Alanı -->
+        <div class="ip-box" onclick="copyIP()">
+            <div class="ip-text">
+                <i class="fa-solid fa-gamepad"></i>
+                <span id="server-ip">play.degisiksmp.com</span>
             </div>
-            <div class="item-card">
-                <h3>Fly Hack (1 Günlük)</h3>
-                <div class="price">150 GC</div>
-                <button class="buy-btn" onclick="satinal(150, 'Fly Hack (1 Günlük)')">Satın Al</button>
-            </div>
-            <div class="item-card">
-                <h3>Premium Üyelik</h3>
-                <div class="price">500 GC</div>
-                <button class="buy-btn" onclick="satinal(500, 'Premium Üyelik')">Satın Al</button>
+            <div class="copy-btn">
+                <i class="fa-solid fa-copy"></i>
+                <span id="copy-tooltip">KOPYALA</span>
             </div>
         </div>
 
-        <hr style="border: 0; height: 1px; background: linear-gradient(to right, transparent, #ff0055, transparent); margin-top: 50px;">
-
-        <!-- MINECRAFT TEMALI GALERİ BÖLÜMÜ -->
-        <h2>• <span>MINECRAFT GÖRÜNTÜLERİ</span> •</h2>
-        <p style="color: #888;">GhostClient'ın Minecraft arenalarındaki kusursuz kozmetik gücü.</p>
-
-        <div class="gallery-grid">
-            <!-- 1. Galeri Kartı -->
-            <div class="gallery-card">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1605899435973-ca2d1a8861cf?q=80&w=500&auto=format&fit=crop" alt="Minecraft PVP">
-                </div>
-                <div class="gallery-desc">⚔️ Arena PvP Optimizasyonu — 250+ FPS</div>
-            </div>
-
-            <!-- 2. Galeri Kartı -->
-            <div class="gallery-card">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1627856013091-fed6e4e30025?q=80&w=500&auto=format&fit=crop" alt="Minecraft Nether">
-                </div>
-                <div class="gallery-desc">🔥 Nether Bölgesi Işıklandırma ve X-Ray Modu</div>
-            </div>
-
-            <!-- 3. Galeri Kartı -->
-            <div class="gallery-card">
-                <div class="img-container">
-                    <img src="https://images.unsplash.com/photo-1607988795691-3d0147b43231?q=80&w=500&auto=format&fit=crop" alt="Minecraft Cape">
-                </div>
-                <div class="gallery-desc">🧣 Özel Hayalet Pelerini — Lobi Tasarımı</div>
-            </div>
+        <!-- Canlı Oyuncu Sayısı (Statik, dilersen API bağlayabilirsin) -->
+        <div class="player-count">
+            <span class="online-dot"></span> <b id="online-players">42</b> Oyuncu Aktif!
         </div>
 
-        <!-- EKRANIN ORTASINDA AÇILACAK GİZLİ KURUCU PENCERESİ -->
-        <div id="adminModal" class="admin-modal">
-            <div class="admin-content">
-                <span class="close-btn" onclick="paneliKapat()">&times;</span>
-                <div class="admin-title">
-                    <h3>🛠️ KURUCU YÖNETİM PANELİ</h3>
-                    <span style="background: #ff0055; padding: 2px 8px; border-radius: 5px; font-size: 11px;">IP ONAYLANDI</span>
-                </div>
-                <p style="color: #aaa; font-size: 14px; text-align: left;">Sistem IP adresini başarıyla eşleştirdi. Kendine eklemek istediğin Ghost Coin miktarını yaz kral:</p>
-                
-                <div class="admin-box">
-                    <input type="number" id="paraMiktari" placeholder="Enjekte Edilecek GC (Örn: 5000)">
-                    <button onclick="adminParaEkle()">Bakiyeyi Güncelle</button>
-                </div>
-            </div>
+        <!-- Butonlar (ChickenNW Tarzı) -->
+        <div class="action-buttons">
+            <a href="https://discord.gg/davetlinkin" target="_blank" class="btn btn-discord">
+                <i class="fa-brands fa-discord"></i> Discord'a Katıl
+            </a>
+            <a href="/magaza" class="btn btn-store">
+                <i class="fa-solid fa-shopping-cart"></i> Mağaza / Market
+            </a>
+            <a href="/kayit" class="btn btn-web">
+                <i class="fa-solid fa-user-plus"></i> Kayıt Ol
+            </a>
         </div>
 
-        <div class="your-ip" id="ipGosterge">IP Adresiniz Kontrol Ediliyor...</div>
     </div>
 
+    <!-- IP Kopyalama JavaScript Kodu -->
     <script>
-        const ADMIN_IP = "188.3.187.179"; 
-        
-        let bakiye = parseInt(localStorage.getItem('ghost_balance')) || 100;
-        document.getElementById('bakiyeGosterge').innerText = `Bakiye: ${bakiye} GC`;
-
-        fetch('https://api.ipify.org?format=json')
-            .then(response => response.json())
-            .then(data => {
-                const userIP = data.ip;
-                document.getElementById('ipGosterge').innerText = `Mevcut IP: ${userIP}`;
+        function copyIP() {
+            const ipText = document.getElementById('server-ip').innerText;
+            navigator.clipboard.writeText(ipText).then(() => {
+                const tooltip = document.getElementById('copy-tooltip');
+                tooltip.innerText = 'KOPYALANDI!';
+                tooltip.style.background = '#2ecc71';
                 
-                if (userIP === ADMIN_IP) {
-                    document.getElementById('adminButonu').style.display = 'block';
-                }
-            })
-            .catch(error => {
-                console.error("IP Adresi doğrulanamadı:", error);
-                document.getElementById('ipGosterge').innerText = "IP servisine bağlanılamadı.";
+                setTimeout(() => {
+                    tooltip.innerText = 'KOPYALA';
+                    tooltip.style.background = 'rgba(255, 255, 255, 0.1)';
+                }, 2000);
             });
-
-        function paneliAc() {
-            document.getElementById('adminModal').style.display = 'flex';
-        }
-        function paneliKapat() {
-            document.getElementById('adminModal').style.display = 'none';
-        }
-
-        function satinal(fiyat, urunAdi) {
-            if (bakiye >= fiyat) {
-                bakiye -= fiyat;
-                localStorage.setItem('ghost_balance', bakiye);
-                document.getElementById('bakiyeGosterge').innerText = `Bakiye: ${bakiye} GC`;
-                alert(`🚀 ${urunAdi} başarıyla satın alındı! Güle güle kullan.`);
-            } else {
-                alert("❌ Yetersiz Ghost Coin! Sol üstteki kurucu panelini açıp kendine bakiye bas kral.");
-            }
-        }
-
-        function adminParaEkle() {
-            const miktarInput = document.getElementById('paraMiktari');
-            const miktar = parseInt(miktarInput.value);
-
-            if (!miktar || miktar <= 0) {
-                alert("Lütfen geçerli bir miktar gir!");
-                return;
-            }
-
-            bakiye += miktar;
-            localStorage.setItem('ghost_balance', bakiye);
-            document.getElementById('bakiyeGosterge').innerText = `Bakiye: ${bakiye} GC`;
-            miktarInput.value = ""; 
-            paneliKapat(); 
-            alert(`😎 Başarıyla hesabına ${miktar} GC enjekte edildi!`);
         }
     </script>
-
-    <!-- TAWK.TO CANLI DESTEK SİSTEMİ -->
-    <!--Start of Tawk.to Script-->
-    <script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/6a0f71202370201c349f2fa4/1jp653qfn';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-    })();
-    </script>
-    <!--End of Tawk.to Script-->
-
 </body>
 </html>
