@@ -51,7 +51,11 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* Yönetici Giriş Butonu */
+        header p {
+            margin: 5px 0 0 0;
+            color: var(--text-muted);
+        }
+
         .admin-login-btn {
             position: absolute;
             right: 20px;
@@ -64,6 +68,7 @@
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s;
+            z-index: 999;
         }
 
         .admin-login-btn:hover {
@@ -104,7 +109,6 @@
             justify-content: space-between;
         }
 
-        /* KAMERA ALANI */
         .camera-container {
             width: 100%;
             max-width: 640px;
@@ -126,12 +130,11 @@
             font-size: 1.1rem;
         }
 
-        /* GİZLİ YÖNETİCİ PANELİ STİLLERİ */
         .admin-panel {
             grid-column: span 2;
             border: 2px dashed var(--admin-purple);
             background: rgba(15, 23, 42, 0.95);
-            display: none; /* İlk başta gizli */
+            display: none;
             margin-top: 1rem;
         }
 
@@ -144,8 +147,6 @@
             margin-top: 1.5rem;
         }
 
-        @media (max-width: 768px) { .admin-grid { grid-template-columns: 1fr; } }
-
         .chart-box {
             background: #020617;
             padding: 1.5rem;
@@ -155,7 +156,6 @@
             position: relative;
         }
 
-        /* Veri Log Tablosu */
         .log-table-wrapper {
             background: #020617;
             border: 1px solid #1e293b;
@@ -165,21 +165,10 @@
             margin-top: 1rem;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 0.9rem;
-        }
-
-        th, td {
-            padding: 10px 15px;
-            border-bottom: 1px solid #1e293b;
-        }
-
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        th, td { padding: 10px 15px; border-bottom: 1px solid #1e293b; }
         th { background-color: #0f172a; color: var(--admin-purple); }
 
-        /* Ortak Elementler */
         .pulse-card {
             background: #020617;
             border: 1px solid #1e293b;
@@ -191,21 +180,19 @@
             justify-content: space-between;
         }
 
-        .heart-icon { font-size: 2rem; color: var(--accent-red); animation: beat 0.8s infinite alternate; }
-        @keyframes beat { to { transform: scale(1.15); } }
-
-        .btn {
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-cyan));
-            color: #000; border: none; padding: 0.8rem 2rem;
-            font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer;
+        .heart-icon { font-size: 2rem; color: var(--accent-red); display: inline-block; }
+        .btn-admin-action { background: var(--admin-purple); color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        #loading-text { font-size: 1.1rem; color: #f59e0b; text-align: center; font-weight: bold; padding: 10px; }
+        
+        .control-hint {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.05);
+            padding: 6px 12px;
+            border-radius: 6px;
+            margin-top: 5px;
+            text-align: center;
         }
-
-        .btn-admin-action {
-            background: var(--admin-purple); color: white; border: none;
-            padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold;
-        }
-
-        #loading-text { font-size: 1.1rem; color: #f59e0b; text-align: center; }
     </style>
 </head>
 <body>
@@ -220,12 +207,12 @@
 
         <div class="panel">
             <h2>🧠 Canlı AI Duygu Tanımlama Modülü</h2>
-            <div id="loading-text">Yapay Zekâ Modelleri Yükleniyor...</div>
+            <div id="loading-text">Yapay Zekâ Modelleri İnternetten Yükleniyor... Lütfen Bekleyin...</div>
             <div class="camera-container">
                 <video id="webcam" autoplay muted playsinline></video>
             </div>
             <div class="status-display">
-                <div id="aiFeedback">Kameranız açıldığında yapay zekâ yönlendirmeleri burada belirecektir...</div>
+                <div id="aiFeedback">Modeller başarıyla yüklenip kamera açıldığında yapay zekâ analizleri burada belirecektir...</div>
             </div>
         </div>
 
@@ -243,8 +230,8 @@
                 </div>
                 <div style="font-size: 2rem; font-weight: bold;"><span id="bpmValue">72</span> <span style="font-size:1rem; color:var(--text-muted);">BPM</span></div>
             </div>
+            <div class="control-hint">💡 Sunum İpucu: Klavyedeki <b>YUKARI (⬆️)</b> ve <b>AŞAĞI (⬇️)</b> yön tuşlarıyla nabzı manuel değiştirebilirsiniz.</div>
         </div>
-
 
         <div class="panel admin-panel" id="adminPanel">
             <h2 style="color: var(--admin-purple); border-bottom-color: var(--admin-purple);">
@@ -254,14 +241,11 @@
                     <button class="btn-admin-action" onclick="hafizayiSifirla()">❌ Tüm Hafızayı Temizle</button>
                 </div>
             </h2>
-            <p style="color: var(--text-muted); margin-top: 0;">Bu panel kabin dışındaki öğretmen bilgisayarından tüm süreçleri anlık, zamansal ve istatistiksel olarak izlemek için tasarlanmıştır.</p>
-
             <div class="admin-grid">
                 <div class="chart-box">
                     <h3 style="margin-top:0; font-size:1rem; color:var(--text-muted);">📈 Duygu Trend Analizi (Zaman Serisi)</h3>
                     <canvas id="adminLineChart"></canvas>
                 </div>
-
                 <div>
                     <h3 style="margin-top:0; font-size:1rem; color:var(--text-muted);">📝 Veri Tabanı Canlı Log Akışı (SQL Simülasyonu)</h3>
                     <div class="log-table-wrapper">
@@ -273,8 +257,7 @@
                                     <th>Tahmini Nabız</th>
                                 </tr>
                             </thead>
-                            <tbody id="logTableBody">
-                                </tbody>
+                            <tbody id="logTableBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -295,13 +278,24 @@
         let mevcutBpm = 72; let hedefBpm = 72; let baskinDuygu = "neutral";
         let pieChart, lineChart;
         let logVeritabani = JSON.parse(localStorage.getItem('logVeritabani')) || [];
-        
         let duyguHafizasi = { happy: 0, neutral: 0, fearful: 0, sad: 0, angry: 0, surprised: 0 };
 
-        // Gizli Panele Giriş Fonksiyonu
+        // KLAVYEDEN GİZLİ NABIZ KONTROL MOTORU
+        window.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowUp') {
+                hedefBpm += 5;
+                if (hedefBpm > 140) hedefBpm = 140; // Üst sınır
+                event.preventDefault(); // Sayfanın yukarı kaymasını engeller
+            } else if (event.key === 'ArrowDown') {
+                hedefBpm -= 5;
+                if (hedefBpm < 50) hedefBpm = 50; // Alt sınır
+                event.preventDefault(); // Sayfanın aşağı kaymasını engeller
+            }
+        });
+
         function adminGiris() {
             let sifre = prompt("Lütfen Geliştirici/Öğretmen Şifresini Girin:");
-            if (sifre === "1234") { // Şifreyi 1234 yaptım kanka
+            if (sifre === "1234") {
                 adminPanel.style.display = "block";
                 window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
                 initAdminCharts();
@@ -310,7 +304,6 @@
             }
         }
 
-        // Yapay Zekayı Yükle
         async function initAI() {
             try {
                 const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
@@ -318,24 +311,30 @@
                 await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
                 loadingText.style.display = 'none';
                 
-                // Hafızadaki eski logları tara ve pasta grafiği sayılarını oluştur
                 hesaplaKumuleDuygular();
                 initUserChart();
                 startVideo();
                 
-                setInterval(updateBpmSim, 1000);
-                setInterval(veriTabaninaYaz, 4000); // 4 saniyede bir kalıcı log kaydı atar
+                setInterval(updateBpmSim, 200); // Yumuşak geçiş için hızlandırıldı
+                setInterval(veriTabaninaYaz, 4000);
             } catch (err) {
-                loadingText.innerText = "Yapay zekâ yüklenemedi! İnternet şart.";
+                loadingText.innerText = "Yapay zekâ yüklenemedi! İnternet bağlantınızı kontrol edin.";
             }
         }
 
         function startVideo() {
-            navigator.mediaDevices.getUserMedia({ video: {} }).then(stream => { video.srcObject = stream; });
+            navigator.mediaDevices.getUserMedia({ video: {} })
+                .then(stream => { video.srcObject = stream; })
+                .catch(err => {
+                    loadingText.style.display = 'block';
+                    loadingText.innerText = "Kamera Başlatılamadı! Lütfen tarayıcı izinlerini açın.";
+                });
+                
             video.addEventListener('play', () => { setInterval(trackFace, 400); });
         }
 
         async function trackFace() {
+            if (!video.srcObject) return;
             const result = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
             if (result && result.expressions) {
                 let maxEmotion = 'neutral'; let maxScore = 0;
@@ -344,26 +343,27 @@
                 }
                 baskinDuygu = maxEmotion;
                 
-                // Basit geri bildirim tetikleyicileri
-                if(maxEmotion === 'happy') { hedefBpm = 72; aiFeedback.innerHTML = "<strong>Sistem:</strong> Pozitif durum algılandı. Regülasyon başarılı."; }
-                else if(maxEmotion === 'neutral') { hedefBpm = 68; aiFeedback.innerHTML = "<strong>Sistem:</strong> Sakin/Mutedil durum. Duyusal denge stabil."; }
-                else if(maxEmotion === 'angry') { hedefBpm = 102; aiFeedback.innerHTML = "<strong>Sistem:</strong> Gerginlik saptandı! Kabin içi RGB mavi moda alındı."; }
-                else if(maxEmotion === 'fearful') { hedefBpm = 94; aiFeedback.innerHTML = "<strong>Sistem:</strong> Kaygı düzeyi yüksek. Nefes modülü önerilir."; }
-                else if(maxEmotion === 'sad') { hedefBpm = 65; aiFeedback.innerHTML = "<strong>Sistem:</strong> Düşük enerji modu algılandı."; }
+                // Eğer kullanıcı manuel müdahale etmiyorsa otonom duygu-nabız tetikleyicisi
+                // (Ok tuşlarına basıldığında burası ezilir, senin klavye değerin geçerli olur)
+                if (Math.abs(hedefBpm - mevcutBpm) < 2) { 
+                    if(maxEmotion === 'happy') { hedefBpm = 72; aiFeedback.innerHTML = "<strong>Sistem:</strong> Pozitif durum algılandı. Regülasyon başarılı."; }
+                    else if(maxEmotion === 'neutral') { hedefBpm = 68; aiFeedback.innerHTML = "<strong>Sistem:</strong> Sakin durum. Duyusal denge stabil."; }
+                    else if(maxEmotion === 'angry') { hedefBpm = 105; aiFeedback.innerHTML = "<strong>Sistem:</strong> Gerginlik saptandı! Kabin içi RGB mavi moda alındı."; }
+                    else if(maxEmotion === 'fearful') { hedefBpm = 96; aiFeedback.innerHTML = "<strong>Sistem:</strong> Kaygı düzeyi yüksek. Nefes modülü önerilir."; }
+                    else if(maxEmotion === 'sad') { hedefBpm = 62; aiFeedback.innerHTML = "<strong>Sistem:</strong> Düşük enerji modu algılandı."; }
+                }
             }
         }
 
-        // VERİ TABANI LOGLAMA VE GRAFİK TETİKLEME MOTORU
         function veriTabaninaYaz() {
-            if(video.srcObject) {
+            if(video.srcObject && video.readyState === 4) {
                 let zaman = new Date().toLocaleTimeString();
-                let yeniLog = { zaman: zaman, duygu: baskinDuygu, bpm: mevcutBpm };
+                let yeniLog = { zaman: zaman, duygu: baskinDuygu, bpm: Math.round(mevcutBpm) };
                 
                 logVeritabani.push(yeniLog);
-                if(logVeritabani.length > 50) logVeritabani.shift(); // Hafıza şişmesin diye son 50 kayıt
+                if(logVeritabani.length > 50) logVeritabani.shift(); 
                 localStorage.setItem('logVeritabani', JSON.stringify(logVeritabani));
 
-                // Arayüzleri tazele
                 hesaplaKumuleDuygular();
                 tazeleUserChart();
                 tabloyuDoldur();
@@ -376,7 +376,6 @@
             logVeritabani.forEach(item => { if(duyguHafizasi[item.duygu] !== undefined) duyguHafizasi[item.duygu]++; });
         }
 
-        // GRAFİK KURULUMLARI (CHART.JS)
         function initUserChart() {
             const ctx = document.getElementById('userPieChart').getContext('2d');
             pieChart = new Chart(ctx, {
@@ -393,7 +392,7 @@
         }
 
         function initAdminCharts() {
-            if(lineChart) return; // Zaten kurulmuşsa bozma
+            if(lineChart) return; 
             tabloyuDoldur();
 
             const ctxLine = document.getElementById('adminLineChart').getContext('2d');
@@ -414,20 +413,21 @@
         }
 
         function tazeleUserChart() {
+            if(!pieChart) return;
             pieChart.data.datasets[0].data = [duyguHafizasi.happy, duyguHafizasi.neutral, duyguHafizasi.fearful, duyguHafizasi.sad, duyguHafizasi.angry, duyguHafizasi.surprised];
             pieChart.update();
         }
 
         function tazeleAdminLineChart() {
+            if(!lineChart) return;
             lineChart.data.labels = logVeritabani.map(l => l.zaman);
-            lineChart.data.datasets[0].data = [l.bpm for (l of logVeritabani)]; // Hatasız map uyumu
             lineChart.data.datasets[0].data = logVeritabani.map(l => l.bpm);
             lineChart.update();
         }
 
         function tabloyuDoldur() {
+            if(!logTableBody) return;
             logTableBody.innerHTML = "";
-            // Tersten ekle ki en son veri en üstte görünsün
             for(let i = logVeritabani.length - 1; i >= 0; i--) {
                 let item = logVeritabani[i];
                 let row = `<tr>
@@ -439,12 +439,9 @@
             }
         }
 
-        // VERİLERİ EXCEL / CSV OLARAK DOSYAYA DÖKME
         function excelIndir() {
             let csvContent = "data:text/csv;charset=utf-8,Zaman,Duygu Durumu,Kalp Ritmi (BPM)\n";
-            logVeritabani.forEach(row => {
-                csvContent += `${row.zaman},${row.duygu},${row.bpm}\n`;
-            });
+            logVeritabani.forEach(row => { csvContent += `${row.zaman},${row.duygu},${row.bpm}\n`; });
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
@@ -467,10 +464,9 @@
         }
 
         function updateBpmSim() {
-            if (mevcutBpm < hedefBpm) mevcutBpm += Math.ceil((hedefBpm - mevcutBpm) * 0.3);
-            else if (mevcutBpm > hedefBpm) mevcutBpm -= Math.ceil((mevcutBpm - mevcutBpm) * 0.3);
-            bpmValue.innerText = mevcutBpm;
-            heart.style.animationDuration = `${60 / mevcutBpm}s`;
+            if (mevcutBpm < hedefBpm) mevcutBpm += (hedefBpm - mevcutBpm) * 0.1;
+            else if (mevcutBpm > hedefBpm) mevcutBpm -= (mevcutBpm - hedefBpm) * 0.1;
+            bpmValue.innerText = Math.round(mevcutBpm);
         }
 
         window.onload = initAI;
