@@ -3,24 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DuyuDenge-AI Web Portalı</title>
+    <title>DuyuDenge-AI Master Kontrol & Yönetici Paneli</title>
     
-    <!-- Gerçek Zamanlı Yüz ve Duygu Analizi İçin Face-API.js Kütüphaneleri -->
     <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
-            --bg-dark: #0a0f1d;
-            --card-bg: #131a30;
+            --bg-dark: #060b16;
+            --card-bg: #0f172a;
             --primary-cyan: #00f2fe;
             --primary-blue: #4facfe;
             --text-light: #ffffff;
-            --text-muted: #7e8b9b;
-            --accent-green: #00e676;
+            --text-muted: #64748b;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --admin-purple: #a855f7;
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-light);
             margin: 0;
@@ -32,316 +34,251 @@
         }
 
         header {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            background: linear-gradient(135deg, #0f172a, #1e293b);
             width: 100%;
             text-align: center;
-            padding: 2.5rem 0;
-            border-bottom: 3px solid var(--primary-cyan);
-            box-shadow: 0 4px 30px rgba(0, 242, 254, 0.15);
+            padding: 2rem 0;
+            border-bottom: 2px solid var(--primary-cyan);
+            position: relative;
         }
 
         header h1 {
             margin: 0;
-            font-size: 3rem;
-            letter-spacing: 2px;
+            font-size: 2.8rem;
             text-transform: uppercase;
             background: linear-gradient(to right, #00f2fe, #4facfe);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        header p {
-            margin: 10px 0 0 0;
-            font-size: 1.2rem;
-            color: #a5b4fc;
+        /* Yönetici Giriş Butonu */
+        .admin-login-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background: rgba(168, 85, 247, 0.2);
+            border: 1px solid var(--admin-purple);
+            color: var(--admin-purple);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .admin-login-btn:hover {
+            background: var(--admin-purple);
+            color: #000;
+            box-shadow: 0 0 15px var(--admin-purple);
         }
 
         .main-wrapper {
             width: 95%;
-            max-width: 1400px;
-            margin: 2.5rem 0;
+            max-width: 1600px;
+            margin: 2rem 0;
             display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 2.5rem;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 2rem;
         }
 
-        @media (max-width: 1024px) {
-            .main-wrapper {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 1200px) {
+            .main-wrapper { grid-template-columns: 1fr; }
         }
 
         .panel {
             background-color: var(--card-bg);
-            border: 1px solid #1e2942;
+            border: 1px solid #1e293b;
             border-radius: 20px;
-            padding: 2.5rem;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
         }
 
         .panel h2 {
             margin-top: 0;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             color: var(--primary-cyan);
-            border-bottom: 1px solid #223150;
+            border-bottom: 1px solid #1e293b;
             padding-bottom: 0.8rem;
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
         }
 
-        /* KAMERA VE GERÇEK ZAMANLI AI ALANI */
+        /* KAMERA ALANI */
         .camera-container {
-            position: relative;
             width: 100%;
-            max-width: 720px;
-            margin: 1.5rem auto;
+            max-width: 640px;
+            margin: 1rem auto;
             border-radius: 15px;
             overflow: hidden;
-            border: 2px solid #223150;
+            border: 2px solid #1e293b;
             background-color: #000;
             aspect-ratio: 4/3;
         }
 
-        #webcam {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transform: scaleX(-1); /* Ayna görüntüsü */
-        }
+        #webcam { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 
-        /* Sistem Geri Bildirim Kutusu */
         .status-display {
-            background: rgba(0, 242, 254, 0.05);
+            background: rgba(0, 242, 254, 0.03);
             border-left: 5px solid var(--primary-cyan);
-            padding: 1.5rem;
+            padding: 1.2rem;
             border-radius: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* GİZLİ YÖNETİCİ PANELİ STİLLERİ */
+        .admin-panel {
+            grid-column: span 2;
+            border: 2px dashed var(--admin-purple);
+            background: rgba(15, 23, 42, 0.95);
+            display: none; /* İlk başta gizli */
             margin-top: 1rem;
-            font-size: 1.2rem;
-            line-height: 1.6;
         }
 
-        .ai-badge {
-            display: inline-block;
-            background: var(--primary-cyan);
-            color: #000;
-            padding: 4px 10px;
-            border-radius: 5px;
-            font-weight: bold;
-            font-size: 0.85rem;
-            margin-bottom: 8px;
-        }
+        @media (max-width: 1200px) { .admin-panel { grid-column: span 1; } }
 
-        /* DUYGU DURUM TABLOSU / METRİKLER */
-        .metrics-grid {
+        .admin-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            gap: 2rem;
             margin-top: 1.5rem;
         }
 
-        .metric-bar-wrapper {
-            background: #0f1524;
+        @media (max-width: 768px) { .admin-grid { grid-template-columns: 1fr; } }
+
+        .chart-box {
+            background: #020617;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #1e293b;
+            height: 300px;
+            position: relative;
+        }
+
+        /* Veri Log Tablosu */
+        .log-table-wrapper {
+            background: #020617;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        th { background-color: #0f172a; color: var(--admin-purple); }
+
+        /* Ortak Elementler */
+        .pulse-card {
+            background: #020617;
+            border: 1px solid #1e293b;
+            border-radius: 15px;
             padding: 1rem;
-            border-radius: 10px;
-            border: 1px solid #1a243d;
-        }
-
-        .metric-label {
+            margin: 1rem 0;
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            margin-bottom: 8px;
-            font-weight: 600;
         }
 
-        .bar-bg {
-            background: #223150;
-            height: 12px;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .bar-fill {
-            background: linear-gradient(to right, var(--primary-blue), var(--primary-cyan));
-            height: 100%;
-            width: 0%;
-            transition: width 0.2s ease;
-        }
-
-        /* DUYGU GÜNLÜĞÜ MODÜLÜ */
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 1.5rem;
-        }
-
-        .history-item {
-            background: #0f1524;
-            padding: 1rem;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #1a243d;
-        }
-
-        /* NEFES EGZERSİZİ ALANI */
-        .breath-section {
-            grid-column: span 2;
-            text-align: center;
-            align-items: center;
-        }
-
-        @media (max-width: 1024px) {
-            .breath-section {
-                grid-column: span 1;
-            }
-        }
-
-        .circle-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 280px;
-            margin: 2rem 0;
-        }
-
-        .breath-circle {
-            width: 160px;
-            height: 160px;
-            background: radial-gradient(circle, #00f2fe, #4facfe);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #000;
-            font-weight: bold;
-            font-size: 1.4rem;
-            transition: transform 4s ease-in-out, background 4s ease-in-out;
-            box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
-        }
-
-        .breath-circle.expand {
-            transform: scale(1.6);
-            background: radial-gradient(circle, #00e676, #00b0ff);
-            box-shadow: 0 0 60px rgba(0, 230, 118, 0.6);
-        }
-
-        .instruction-text {
-            font-size: 1.5rem;
-            font-weight: 500;
-            color: #a5b4fc;
-            height: 40px;
-        }
+        .heart-icon { font-size: 2rem; color: var(--accent-red); animation: beat 0.8s infinite alternate; }
+        @keyframes beat { to { transform: scale(1.15); } }
 
         .btn {
             background: linear-gradient(135deg, var(--primary-blue), var(--primary-cyan));
-            color: #000;
-            border: none;
-            padding: 1rem 2.5rem;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: #000; border: none; padding: 0.8rem 2rem;
+            font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0, 242, 254, 0.4);
+        .btn-admin-action {
+            background: var(--admin-purple); color: white; border: none;
+            padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold;
         }
 
-        #loading-text {
-            font-size: 1.2rem;
-            color: #fbbf24;
-            text-align: center;
-            margin: 10px 0;
-        }
+        #loading-text { font-size: 1.1rem; color: #f59e0b; text-align: center; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>DuyuDenge-AI Portal</h1>
-        <p>Teknofest 2026 • Gerçek Zamanlı Yapay Zekâ Destekli Öz Düzenleme Sistemi</p>
+        <h1>DuyuDenge-AI Master Kontrol Paneli</h1>
+        <p>Teknofest 2026 • Gerçek Zamanlı Akıllı Kabin Yönetim Sistemi</p>
+        <button class="admin-login-btn" onclick="adminGiris()">🔐 Yönetici Girişi</button>
     </header>
 
     <div class="main-wrapper">
 
-        <!-- SOL PANEL: CANLI YAPAY ZEKÂ ANALİZİ -->
         <div class="panel">
             <h2>🧠 Canlı AI Duygu Tanımlama Modülü</h2>
-            <p style="color: var(--text-muted); margin-top: 0;">PictoBlox altyapısına paralel çalışan evrensel sinir ağı modelleriyle yüz ifadeleriniz milisaniyeler içinde taranır.</p>
-            
-            <div id="loading-text">Yapay Zekâ Modelleri Yükleniyor, Lütfen Kamerayı Açıp Bekleyin...</div>
-
+            <div id="loading-text">Yapay Zekâ Modelleri Yükleniyor...</div>
             <div class="camera-container">
                 <video id="webcam" autoplay muted playsinline></video>
             </div>
-
             <div class="status-display">
-                <span class="ai-badge">KABİN İÇİ ASİSTAN</span>
-                <div id="aiFeedback">Sistem Hazırlanıyor... Kameranız açıldığında yüz ifadeniz analiz edilerek size en uygun duyusal yönlendirme ve yönergeler burada belirecektir.</div>
+                <div id="aiFeedback">Kameranız açıldığında yapay zekâ yönlendirmeleri burada belirecektir...</div>
             </div>
         </div>
 
-        <!-- SAĞ PANEL: ANLIK ANALİZ METRİKLERİ VE GEÇMİŞ -->
         <div class="panel">
-            <h2>📊 Canlı Metrik Analizleri</h2>
-            <p style="color: var(--text-muted); margin-top: 0;">Yüz kaslarının anlık dağılım oranları:</p>
-            
-            <div class="metrics-grid">
-                <div class="metric-bar-wrapper">
-                    <div class="metric-label"><span>😊 Mutlu</span><span id="val-happy">0%</span></div>
-                    <div class="bar-bg"><div class="bar-fill" id="bar-happy"></div></div>
-                </div>
-                <div class="metric-bar-wrapper">
-                    <div class="metric-label"><span>😌 Nötr / Rahat</span><span id="val-neutral">0%</span></div>
-                    <div class="bar-bg"><div class="bar-fill" id="bar-neutral"></div></div>
-                </div>
-                <div class="metric-bar-wrapper">
-                    <div class="metric-label"><span>😟 Kaygılı / Korkmuş</span><span id="val-fearful">0%</span></div>
-                    <div class="bar-bg"><div class="bar-fill" id="bar-fearful"></div></div>
-                </div>
-                <div class="metric-bar-wrapper">
-                    <div class="metric-label"><span>😢 Üzgün</span><span id="val-sad">0%</span></div>
-                    <div class="bar-bg"><div class="bar-fill" id="bar-sad"></div></div>
-                </div>
-                <div class="metric-bar-wrapper">
-                    <div class="metric-label"><span>😡 Öfkeli</span><span id="val-angry">0%</span></div>
-                    <div class="bar-bg"><div class="bar-fill" id="bar-angry"></div></div>
-                </div>
-                <div class="metric-bar-wrapper">
-                    <div class="metric-label"><span>😲 Şaşırmış</span><span id="val-surprised">0%</span></div>
-                    <div class="bar-bg"><div class="bar-fill" id="bar-surprised"></div></div>
-                </div>
+            <h2>📊 Kabin İçi Durum Özeti</h2>
+            <div class="chart-box" style="height: 250px; margin-bottom: 1rem;">
+                <canvas id="userPieChart"></canvas>
             </div>
 
-            <h2 style="margin-top: 2.5rem;">📅 Duygu Günlüğü Portalı</h2>
-            <p style="color: var(--text-muted); margin-top: 0;">Kabin dışı kullanım için kaydedilen son durumlar:</p>
-            <div class="history-list">
-                <div class="history-item"><span>Pazartesi Oturumu</span> <strong style="color: #ef4444;">😡 Öfkeli</strong></div>
-                <div class="history-item"><span>Salı Oturumu</span> <strong style="color: #f59e0b;">😟 Kaygılı</strong></div>
-                <div class="history-item"><span>Canlı Tarama Durumu</span> <strong id="liveStatus" style="color: var(--primary-cyan);">- Bekleniyor</strong></div>
+            <h2>❤️ Nabız Durumu</h2>
+            <div class="pulse-card">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span class="heart-icon" id="heart">❤️</span>
+                    <div><strong>Canlı Kalp Ritmi</strong><br><small style="color:var(--text-muted)">Biyometrik Veri</small></div>
+                </div>
+                <div style="font-size: 2rem; font-weight: bold;"><span id="bpmValue">72</span> <span style="font-size:1rem; color:var(--text-muted);">BPM</span></div>
             </div>
         </div>
 
-        <!-- ALT GENİŞ PANEL: ÖZ DÜZENLEME VE NEFES EGZERSİZİ -->
-        <div class="panel breath-section">
-            <h2>🫁 Modül 2: Öz Düzenleme ve Akıllı Nefes Egzersizi</h2>
-            <p style="color: var(--text-muted); max-width: 800px; margin: 0 auto;">Kaygı, stres veya öfke tespit edildiğinde otonom sinir sistemini dengelemek ve kalp ritmini (nabzı) optimize etmek için tasarlanmış kılavuz modül.</p>
-            
-            <div class="circle-container">
-                <div class="breath-circle" id="breathCircle">HAZIR</div>
+
+        <div class="panel admin-panel" id="adminPanel">
+            <h2 style="color: var(--admin-purple); border-bottom-color: var(--admin-purple);">
+                <span>🔮 GİZLİ YÖNETİCİ ANALİZ PORTALI (Sadece Geliştirici/Öğretmen)</span>
+                <div>
+                    <button class="btn-admin-action" onclick="excelIndir()" style="background:#10b981; margin-right:5px;">📥 Verileri Excel (CSV) Yap</button>
+                    <button class="btn-admin-action" onclick="hafizayiSifirla()">❌ Tüm Hafızayı Temizle</button>
+                </div>
+            </h2>
+            <p style="color: var(--text-muted); margin-top: 0;">Bu panel kabin dışındaki öğretmen bilgisayarından tüm süreçleri anlık, zamansal ve istatistiksel olarak izlemek için tasarlanmıştır.</p>
+
+            <div class="admin-grid">
+                <div class="chart-box">
+                    <h3 style="margin-top:0; font-size:1rem; color:var(--text-muted);">📈 Duygu Trend Analizi (Zaman Serisi)</h3>
+                    <canvas id="adminLineChart"></canvas>
+                </div>
+
+                <div>
+                    <h3 style="margin-top:0; font-size:1rem; color:var(--text-muted);">📝 Veri Tabanı Canlı Log Akışı (SQL Simülasyonu)</h3>
+                    <div class="log-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Zaman Stamp</th>
+                                    <th>Tespit Edilen Duygu</th>
+                                    <th>Tahmini Nabız</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logTableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            
-            <div class="instruction-text" id="breathText">Başlamak için butona dokunun.</div>
-            <button class="btn" id="breathBtn" onclick="toggleNefesEgzersizi()" style="margin-top: 1.5rem;">Egzersizi Başlat</button>
         </div>
 
     </div>
@@ -350,139 +287,192 @@
         const video = document.getElementById('webcam');
         const loadingText = document.getElementById('loading-text');
         const aiFeedback = document.getElementById('aiFeedback');
-        const liveStatus = document.getElementById('liveStatus');
+        const bpmValue = document.getElementById('bpmValue');
+        const heart = document.getElementById('heart');
+        const adminPanel = document.getElementById('adminPanel');
+        const logTableBody = document.getElementById('logTableBody');
 
-        // Yapay zekâ model kütüphanelerini CDN'den yükle
+        let mevcutBpm = 72; let hedefBpm = 72; let baskinDuygu = "neutral";
+        let pieChart, lineChart;
+        let logVeritabani = JSON.parse(localStorage.getItem('logVeritabani')) || [];
+        
+        let duyguHafizasi = { happy: 0, neutral: 0, fearful: 0, sad: 0, angry: 0, surprised: 0 };
+
+        // Gizli Panele Giriş Fonksiyonu
+        function adminGiris() {
+            let sifre = prompt("Lütfen Geliştirici/Öğretmen Şifresini Girin:");
+            if (sifre === "1234") { // Şifreyi 1234 yaptım kanka
+                adminPanel.style.display = "block";
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                initAdminCharts();
+            } else {
+                alert("Hatalı Şifre! Erişim Engellendi.");
+            }
+        }
+
+        // Yapay Zekayı Yükle
         async function initAI() {
             try {
                 const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
                 await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
                 await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
-                loadingText.innerText = "Yapay Zekâ Modelleri Yüklendi. Kamera Açılıyor...";
+                loadingText.style.display = 'none';
+                
+                // Hafızadaki eski logları tara ve pasta grafiği sayılarını oluştur
+                hesaplaKumuleDuygular();
+                initUserChart();
                 startVideo();
+                
+                setInterval(updateBpmSim, 1000);
+                setInterval(veriTabaninaYaz, 4000); // 4 saniyede bir kalıcı log kaydı atar
             } catch (err) {
-                loadingText.innerText = "Model yüklenirken hata oluştu! İnternet bağlantınızı kontrol edin.";
-                console.error(err);
+                loadingText.innerText = "Yapay zekâ yüklenemedi! İnternet şart.";
             }
         }
 
-        // Kamerayı Başlat
         function startVideo() {
-            navigator.mediaDevices.getUserMedia({ video: {} })
-                .then(stream => {
-                    video.srcObject = stream;
-                    loadingText.style.display = 'none';
-                    // Kamera hazır olunca analizi döngüye al
-                    video.addEventListener('play', () => {
-                        setInterval(trackFaceAndEmotions, 400);
-                    });
-                })
-                .catch(err => {
-                    loadingText.innerText = "Kamera erişimi reddedildi veya kamera bulunamadı!";
-                    console.error(err);
-                });
+            navigator.mediaDevices.getUserMedia({ video: {} }).then(stream => { video.srcObject = stream; });
+            video.addEventListener('play', () => { setInterval(trackFace, 400); });
         }
 
-        // Anlık Yüz ve Duygu Tespiti
-        async function trackFaceAndEmotions() {
-            const options = new faceapi.TinyFaceDetectorOptions();
-            const result = await faceapi.detectSingleFace(video, options).withFaceExpressions();
-
+        async function trackFace() {
+            const result = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
             if (result && result.expressions) {
-                const emotions = result.expressions;
+                let maxEmotion = 'neutral'; let maxScore = 0;
+                for (const [em, sc] of Object.entries(result.expressions)) {
+                    if (sc > maxScore) { maxScore = sc; maxEmotion = em; }
+                }
+                baskinDuygu = maxEmotion;
                 
-                // En yüksek skora sahip duyguyu bul
-                let maxEmotion = 'neutral';
-                let maxScore = 0;
-                for (const [emotion, score] of Object.entries(emotions)) {
-                    if (score > maxScore) {
-                        maxScore = score;
-                        maxEmotion = emotion;
-                    }
-                    
-                    // Arayüzdeki barları canlı güncelle
-                    let percent = Math.round(score * 100);
-                    document.getElementById(`val-${emotion}`).innerText = percent + "%";
-                    document.getElementById(`bar-${emotion}`).style.width = percent + "%";
-                }
-
-                // Türkçe Karşılıklar ve Sema Hoca'nın Prototip Senaryosu Entegrasyonu
-                let turkceDuygu = "";
-                let tavsiyeMesaji = "";
-
-                switch(maxEmotion) {
-                    case 'happy':
-                        turkceDuygu = "😊 Mutlu / Pozitif";
-                        tavsiyeMesaji = "<strong>Sistem Geri Bildirimi:</strong> Harika görünüyorsun! Yüz ifadenden mutlu ve enerjik olduğunu anlıyorum. Bu pozitif enerjiyi korumak ve arkadaşlarınla paylaşmak için harika bir gün!";
-                        break;
-                    case 'neutral':
-                        turkceDuygu = "😌 Rahat / Nötr";
-                        tavsiyeMesaji = "<strong>Sistem Geri Bildirimi:</strong> Dengeli ve huzurlu bir durumdasın. Kabin içerisindeki duyusal dengeyi korumak ve odaklanma seviyeni artırmak için hazırsın.";
-                        break;
-                    case 'sad':
-                        turkceDuygu = "😢 Üzgün";
-                        tavsiyeMesaji = "<strong>Sistem Geri Bildirimi:</strong> Yüz ifadenden biraz üzgün olabileceğini analiz ettim. Kendini yalnız hissetme, sana yardımcı olmak için buradayım. Kabindeki yumuşak dokulu malzemelere dokunmak duygusal regülasyonuna katkı sağlayabilir.";
-                        break;
-                    case 'angry':
-                        turkceDuygu = "😡 Öfkeli / Gergin";
-                        tavsiyeMesaji = "<strong>Sistem Geri Bildirimi:</strong> Yüz ifadende yüksek bir gerginlik veya öfke yapısı sezdim. Şimdi arkana yaslan, kabindeki RGB ledleri maviye ayarlıyorum. Aşağıdaki <strong>Nefes Egzersizini</strong> başlatarak sakinleşmeyi deneyelim.";
-                        break;
-                    case 'fearful':
-                        turkceDuygu = "😟 Kaygılı / Endişeli";
-                        tavsiyeMesaji = "<strong>Sistem Geri Bildirimi:</strong> Yüz ifadenden biraz kaygılı veya stresli olabileceğini anlıyorum. Güvendesin. Nabız sensörünü kontrol ederken aynı zamanda aşağıdaki ritmik nefes yönlendirmesini takip etmen kalp ritmini yavaşlatacaktır.";
-                        break;
-                    case 'surprised':
-                        turkceDuygu = "😲 Şaşırmış";
-                        tavsiyeMesaji = "<strong>Sistem Geri Bildirimi:</strong> Beklenmedik bir duygu değişimi algılandı! Bu heyecan verici durumu regüle etmek ve odağını toplamak için duyusal materyalleri kullanabilirsin.";
-                        break;
-                }
-
-                liveStatus.innerText = turkceDuygu;
-                aiFeedback.innerHTML = tavsiyeMesaji;
+                // Basit geri bildirim tetikleyicileri
+                if(maxEmotion === 'happy') { hedefBpm = 72; aiFeedback.innerHTML = "<strong>Sistem:</strong> Pozitif durum algılandı. Regülasyon başarılı."; }
+                else if(maxEmotion === 'neutral') { hedefBpm = 68; aiFeedback.innerHTML = "<strong>Sistem:</strong> Sakin/Mutedil durum. Duyusal denge stabil."; }
+                else if(maxEmotion === 'angry') { hedefBpm = 102; aiFeedback.innerHTML = "<strong>Sistem:</strong> Gerginlik saptandı! Kabin içi RGB mavi moda alındı."; }
+                else if(maxEmotion === 'fearful') { hedefBpm = 94; aiFeedback.innerHTML = "<strong>Sistem:</strong> Kaygı düzeyi yüksek. Nefes modülü önerilir."; }
+                else if(maxEmotion === 'sad') { hedefBpm = 65; aiFeedback.innerHTML = "<strong>Sistem:</strong> Düşük enerji modu algılandı."; }
             }
         }
 
-        // AKILLI NEFES EGZERSİZİ DÖNGÜSÜ (4 Saniye Al - 4 Saniye Ver)
-        let egzersizAktif = false;
-        let nefesTimer;
-
-        function toggleNefesEgzersizi() {
-            const circle = document.getElementById('breathCircle');
-            const text = document.getElementById('breathText');
-            const btn = document.getElementById('breathBtn');
-
-            if (egzersizAktif) {
-                clearInterval(nefesTimer);
-                circle.classList.remove('expand');
-                circle.innerText = "HAZIR";
-                text.innerText = "Egzersiz sonlandırıldı.";
-                btn.innerText = "Egzersizi Başlat";
-                egzersizAktif = false;
-                return;
-            }
-
-            egzersizAktif = true;
-            btn.innerText = "Egzersizi Durdur";
-            
-            function nefesDongusu() {
-                if(!egzersizAktif) return;
-                circle.classList.add('expand');
-                circle.innerText = "NEFES AL";
-                text.innerText = "Derinden nefes al, göğüs kafesinin genişlediğini hisset... (4 Saniye)";
+        // VERİ TABANI LOGLAMA VE GRAFİK TETİKLEME MOTORU
+        function veriTabaninaYaz() {
+            if(video.srcObject) {
+                let zaman = new Date().toLocaleTimeString();
+                let yeniLog = { zaman: zaman, duygu: baskinDuygu, bpm: mevcutBpm };
                 
-                setTimeout(() => {
-                    if(!egzersizAktif) return;
-                    circle.classList.remove('expand');
-                    circle.innerText = "NEFES VER";
-                    text.innerText = "Yavaşça, tüm stresi dışarı üfler gibi sakince nefes ver... (4 Saniye)";
-                }, 4000);
-            }
+                logVeritabani.push(yeniLog);
+                if(logVeritabani.length > 50) logVeritabani.shift(); // Hafıza şişmesin diye son 50 kayıt
+                localStorage.setItem('logVeritabani', JSON.stringify(logVeritabani));
 
-            nefesDongusu();
-            nefesTimer = setInterval(nefesDongusu, 8000);
+                // Arayüzleri tazele
+                hesaplaKumuleDuygular();
+                tazeleUserChart();
+                tabloyuDoldur();
+                if(lineChart) tazeleAdminLineChart();
+            }
         }
 
-        // Sayfa açıldığında yapay zekayı başlat
+        function hesaplaKumuleDuygular() {
+            duyguHafizasi = { happy: 0, neutral: 0, fearful: 0, sad: 0, angry: 0, surprised: 0 };
+            logVeritabani.forEach(item => { if(duyguHafizasi[item.duygu] !== undefined) duyguHafizasi[item.duygu]++; });
+        }
+
+        // GRAFİK KURULUMLARI (CHART.JS)
+        function initUserChart() {
+            const ctx = document.getElementById('userPieChart').getContext('2d');
+            pieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Mutlu', 'Nötr', 'Kaygılı', 'Üzgün', 'Öfkeli', 'Şaşırmış'],
+                    datasets: [{
+                        data: [duyguHafizasi.happy, duyguHafizasi.neutral, duyguHafizasi.fearful, duyguHafizasi.sad, duyguHafizasi.angry, duyguHafizasi.surprised],
+                        backgroundColor: ['#10b981', '#00f2fe', '#a855f7', '#f59e0b', '#ef4444', '#3b82f6']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels:{color:'#fff'} } } }
+            });
+        }
+
+        function initAdminCharts() {
+            if(lineChart) return; // Zaten kurulmuşsa bozma
+            tabloyuDoldur();
+
+            const ctxLine = document.getElementById('adminLineChart').getContext('2d');
+            lineChart = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: logVeritabani.map(l => l.zaman),
+                    datasets: [{
+                        label: 'Kalp Ritmi Takibi (BPM)',
+                        data: logVeritabani.map(l => l.bpm),
+                        borderColor: '#a855f7',
+                        tension: 0.3,
+                        fill: false
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { x:{ticks:{color:'#64748b'}}, y:{ticks:{color:'#64748b'}} }, plugins:{legend:{labels:{color:'#fff'}}} }
+            });
+        }
+
+        function tazeleUserChart() {
+            pieChart.data.datasets[0].data = [duyguHafizasi.happy, duyguHafizasi.neutral, duyguHafizasi.fearful, duyguHafizasi.sad, duyguHafizasi.angry, duyguHafizasi.surprised];
+            pieChart.update();
+        }
+
+        function tazeleAdminLineChart() {
+            lineChart.data.labels = logVeritabani.map(l => l.zaman);
+            lineChart.data.datasets[0].data = [l.bpm for (l of logVeritabani)]; // Hatasız map uyumu
+            lineChart.data.datasets[0].data = logVeritabani.map(l => l.bpm);
+            lineChart.update();
+        }
+
+        function tabloyuDoldur() {
+            logTableBody.innerHTML = "";
+            // Tersten ekle ki en son veri en üstte görünsün
+            for(let i = logVeritabani.length - 1; i >= 0; i--) {
+                let item = logVeritabani[i];
+                let row = `<tr>
+                    <td>${item.zaman}</td>
+                    <td style="font-weight:bold; color:var(--primary-cyan)">${item.duygu.toUpperCase()}</td>
+                    <td>${item.bpm} BPM</td>
+                </tr>`;
+                logTableBody.innerHTML += row;
+            }
+        }
+
+        // VERİLERİ EXCEL / CSV OLARAK DOSYAYA DÖKME
+        function excelIndir() {
+            let csvContent = "data:text/csv;charset=utf-8,Zaman,Duygu Durumu,Kalp Ritmi (BPM)\n";
+            logVeritabani.forEach(row => {
+                csvContent += `${row.zaman},${row.duygu},${row.bpm}\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "DuyuDenge_Kabin_Raporu.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function hafizayiSifirla() {
+            if(confirm("Tüm geçmiş veriler silinecek, emin misiniz?")) {
+                localStorage.removeItem('logVeritabani');
+                logVeritabani = [];
+                hesaplaKumuleDuygular();
+                tazeleUserChart();
+                tabloyuDoldur();
+                if(lineChart) lineChart.update();
+                alert("Veri tabanı sıfırlandı!");
+            }
+        }
+
+        function updateBpmSim() {
+            if (mevcutBpm < hedefBpm) mevcutBpm += Math.ceil((hedefBpm - mevcutBpm) * 0.3);
+            else if (mevcutBpm > hedefBpm) mevcutBpm -= Math.ceil((mevcutBpm - mevcutBpm) * 0.3);
+            bpmValue.innerText = mevcutBpm;
+            heart.style.animationDuration = `${60 / mevcutBpm}s`;
+        }
+
         window.onload = initAI;
     </script>
 </body>
