@@ -4,355 +4,486 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DuyuDenge-AI Web Portalı</title>
+    
+    <!-- Gerçek Zamanlı Yüz ve Duygu Analizi İçin Face-API.js Kütüphaneleri -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+
     <style>
-        /* Genel Tasarım ve Renk Paleti (Sakinleştirici Modern Temalar) */
         :root {
-            --bg-color: #f0f4f8;
-            --card-bg: #ffffff;
-            --text-color: #2c3e50;
-            --primary-color: #4a90e2;
-            --accent-color: #2ecc71;
-            --shadow: 0 8px 30px rgba(0,0,0,0.08);
+            --bg-dark: #0a0f1d;
+            --card-bg: #131a30;
+            --primary-cyan: #00f2fe;
+            --primary-blue: #4facfe;
+            --text-light: #ffffff;
+            --text-muted: #7e8b9b;
+            --accent-green: #00e676;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
         header {
-            background: linear-gradient(135deg, #4a90e2, #63b3ed);
-            color: white;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             width: 100%;
             text-align: center;
-            padding: 2rem 0;
-            box-shadow: var(--shadow);
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
+            padding: 2.5rem 0;
+            border-bottom: 3px solid var(--primary-cyan);
+            box-shadow: 0 4px 30px rgba(0, 242, 254, 0.15);
         }
 
         header h1 {
             margin: 0;
-            font-size: 2.5rem;
-            letter-spacing: 1px;
+            font-size: 3rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #00f2fe, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         header p {
-            margin: 5px 0 0 0;
-            opacity: 0.9;
+            margin: 10px 0 0 0;
+            font-size: 1.2rem;
+            color: #a5b4fc;
         }
 
-        .container {
-            max-width: 1000px;
-            width: 90%;
-            margin: 2rem 0;
+        .main-wrapper {
+            width: 95%;
+            max-width: 1400px;
+            margin: 2.5rem 0;
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 2.5rem;
         }
 
-        @media (max-width: 768px) {
-            .container {
+        @media (max-width: 1024px) {
+            .main-wrapper {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Kart Yapısı */
-        .card {
+        .panel {
             background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card h2 {
-            margin-top: 0;
-            color: var(--primary-color);
-            border-bottom: 2px solid #edf2f7;
-            padding-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Modül 1: AI Simülasyon Alanı */
-        .ai-box {
-            background-color: #f7fafc;
-            border-left: 4px solid var(--primary-color);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            min-height: 80px;
-        }
-
-        .camera-placeholder {
-            width: 100%;
-            height: 180px;
-            background-color: #2d3748;
-            color: #a0aec0;
+            border: 1px solid #1e2942;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
-            justify-content: center;
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            font-size: 1.8rem;
+            color: var(--primary-cyan);
+            border-bottom: 1px solid #223150;
+            padding-bottom: 0.8rem;
+            display: flex;
             align-items: center;
-            border-radius: 12px;
-            margin-top: 1rem;
+            gap: 12px;
+        }
+
+        /* KAMERA VE GERÇEK ZAMANLI AI ALANI */
+        .camera-container {
             position: relative;
+            width: 100%;
+            max-width: 720px;
+            margin: 1.5rem auto;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid #223150;
+            background-color: #000;
+            aspect-ratio: 4/3;
+        }
+
+        #webcam {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* Ayna görüntüsü */
+        }
+
+        /* Sistem Geri Bildirim Kutusu */
+        .status-display {
+            background: rgba(0, 242, 254, 0.05);
+            border-left: 5px solid var(--primary-cyan);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .ai-badge {
+            display: inline-block;
+            background: var(--primary-cyan);
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        /* DUYGU DURUM TABLOSU / METRİKLER */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .metric-bar-wrapper {
+            background: #0f1524;
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid #1a243d;
+        }
+
+        .metric-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .bar-bg {
+            background: #223150;
+            height: 12px;
+            border-radius: 6px;
             overflow: hidden;
         }
 
-        .camera-placeholder::before {
-            content: '';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 12px;
-            height: 12px;
-            background-color: #e53e3e;
-            border-radius: 50%;
-            animation: blink 1.5s infinite;
+        .bar-fill {
+            background: linear-gradient(to right, var(--primary-blue), var(--primary-cyan));
+            height: 100%;
+            width: 0%;
+            transition: width 0.2s ease;
         }
 
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        /* Modül 2: Duygu Günlüğü */
-        .emoji-group {
+        /* DUYGU GÜNLÜĞÜ MODÜLÜ */
+        .history-list {
             display: flex;
-            justify-content: space-around;
-            margin: 1.5rem 0;
-        }
-
-        .emoji-btn {
-            font-size: 2rem;
-            background: none;
-            border: 2px solid transparent;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
-            padding: 5px;
-        }
-
-        .emoji-btn:hover {
-            transform: scale(1.2);
-            background-color: #edf2f7;
-        }
-
-        .emoji-btn.selected {
-            border-color: var(--primary-color);
-            background-color: #ebf8ff;
-        }
-
-        /* Grafik Alanı */
-        .log-chart {
+            flex-direction: column;
+            gap: 12px;
             margin-top: 1.5rem;
-            background-color: #f7fafc;
-            padding: 1rem;
-            border-radius: 8px;
         }
 
-        .chart-row {
+        .history-item {
+            background: #0f1524;
+            padding: 1rem;
+            border-radius: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 8px 0;
-            padding-bottom: 5px;
-            border-bottom: 1px dashed #e2e8f0;
+            border: 1px solid #1a243d;
         }
 
-        /* Modül 3: Nefes Egzersizi */
-        .breath-container {
-            display: flex;
-            flex-direction: column;
+        /* NEFES EGZERSİZİ ALANI */
+        .breath-section {
+            grid-column: span 2;
+            text-align: center;
             align-items: center;
+        }
+
+        @media (max-width: 1024px) {
+            .breath-section {
+                grid-column: span 1;
+            }
+        }
+
+        .circle-container {
+            display: flex;
             justify-content: center;
-            margin-top: 2rem;
+            align-items: center;
+            height: 280px;
+            margin: 2rem 0;
         }
 
         .breath-circle {
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle, #63b3ed, #4a90e2);
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, #00f2fe, #4facfe);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
+            color: #000;
             font-weight: bold;
-            transition: transform 4s ease-in-out;
-            box-shadow: 0 0 20px rgba(74, 144, 226, 0.5);
+            font-size: 1.4rem;
+            transition: transform 4s ease-in-out, background 4s ease-in-out;
+            box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
         }
 
         .breath-circle.expand {
             transform: scale(1.6);
-            background: radial-gradient(circle, #68d391, #38a169);
-            box-shadow: 0 0 30px rgba(56, 161, 105, 0.6);
+            background: radial-gradient(circle, #00e676, #00b0ff);
+            box-shadow: 0 0 60px rgba(0, 230, 118, 0.6);
         }
 
-        .breath-text {
-            margin-top: 1.5rem;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--text-color);
-            height: 25px;
+        .instruction-text {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #a5b4fc;
+            height: 40px;
         }
 
-        button.action-btn {
-            background-color: var(--primary-color);
-            color: white;
+        .btn {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-cyan));
+            color: #000;
             border: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            border-radius: 8px;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background-color 0.2s;
-            margin-top: 1rem;
-            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        button.action-btn:hover {
-            background-color: #3182ce;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 242, 254, 0.4);
+        }
+
+        #loading-text {
+            font-size: 1.2rem;
+            color: #fbbf24;
+            text-align: center;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>DuyuDenge-AI</h1>
-        <p>Teknofest 2026 • Destekleyici Web Portalı</p>
+        <h1>DuyuDenge-AI Portal</h1>
+        <p>Teknofest 2026 • Gerçek Zamanlı Yapay Zekâ Destekli Öz Düzenleme Sistemi</p>
     </header>
 
-    <div class="container">
+    <div class="main-wrapper">
 
-        <!-- KART 1: AI DUYGU FARK ETME ALANI -->
-        <div class="card">
-            <h2>🧠 AI Duygu Analiz Simülasyonu</h2>
-            <p>Kabine girdiğinizde PictoBlox destekli kamera sistemi yüz ifadenizi analiz eder.</p>
+        <!-- SOL PANEL: CANLI YAPAY ZEKÂ ANALİZİ -->
+        <div class="panel">
+            <h2>🧠 Canlı AI Duygu Tanımlama Modülü</h2>
+            <p style="color: var(--text-muted); margin-top: 0;">PictoBlox altyapısına paralel çalışan evrensel sinir ağı modelleriyle yüz ifadeleriniz milisaniyeler içinde taranır.</p>
             
-            <div class="ai-box" id="aiResponse">
-                <strong>Sistem:</strong> Merhaba. Kendini daha iyi hissetmene yardımcı olmak için buradayım. Şu an nasıl hissettiğini birlikte anlamaya çalışalım.
+            <div id="loading-text">Yapay Zekâ Modelleri Yükleniyor, Lütfen Kamerayı Açıp Bekleyin...</div>
+
+            <div class="camera-container">
+                <video id="webcam" autoplay muted playsinline></video>
             </div>
 
-            <div class="camera-placeholder">
-                <span style="font-size: 2.5rem; margin-bottom: 5px;">📷</span>
-                <span>PictoBlox Kamera Aktif</span>
-                <span style="font-size: 0.8rem; color: #718096; margin-top: 5px;">Yüz İfadesi Analiz Ediliyor...</span>
-            </div>
-            
-            <button class="action-btn" onclick="simüleEtAI()">Kamera Analizini Simüle Et</button>
-        </div>
-
-        <!-- KART 2: DUYGU GÜNLÜĞÜ -->
-        <div class="card">
-            <h2>😊 Duygu Günlüğü</h2>
-            <p>Bugün kendini nasıl hissediyorsun? Seçimini yap ve haftalık grafiğini takip et.</p>
-            
-            <div class="emoji-group">
-                <button class="emoji-btn" onclick="duyguSec('Mutlu', '😊')">😊</button>
-                <button class="emoji-btn" onclick="duyguSec('Rahat', '😌')">😌</button>
-                <button class="emoji-btn" onclick="duyguSec('Kaygılı', '😟')">😟</button>
-                <button class="emoji-btn" onclick="duyguSec('Üzgün', '😢')">😢</button>
-                <button class="emoji-btn" onclick="duyguSec('Öfkeli', '😡')">😡</button>
-            </div>
-
-            <div class="log-chart">
-                <h4 style="margin: 0 0 10px 0; color: #4a5568;">Haftalık Durum Grafiği</h4>
-                <div class="chart-row"><span>Pazartesi</span> <span>😡 Öfkeli</span></div>
-                <div class="chart-row"><span>Salı</span> <span>😟 Kaygılı</span></div>
-                <div class="chart-row"><span>Çarşamba (Bugün)</span> <span id="bugunDuygu">- Seçilmedi</span></div>
+            <div class="status-display">
+                <span class="ai-badge">KABİN İÇİ ASİSTAN</span>
+                <div id="aiFeedback">Sistem Hazırlanıyor... Kameranız açıldığında yüz ifadeniz analiz edilerek size en uygun duyusal yönlendirme ve yönergeler burada belirecektir.</div>
             </div>
         </div>
 
-        <!-- KART 3: NEFES EGZERSİZİ MODÜLÜ -->
-        <div class="card" style="grid-column: span 2; max-width: 1000px; margin: 0 auto; width: 100%;">
-            <h2>🫁 Öz Düzenleme: Nefes Egzersizi</h2>
-            <p>Kaygılı veya öfkeli hissettiğinde sakinleşmek için daireyi takip ederek derin nefes al.</p>
+        <!-- SAĞ PANEL: ANLIK ANALİZ METRİKLERİ VE GEÇMİŞ -->
+        <div class="panel">
+            <h2>📊 Canlı Metrik Analizleri</h2>
+            <p style="color: var(--text-muted); margin-top: 0;">Yüz kaslarının anlık dağılım oranları:</p>
             
-            <div class="breath-container">
-                <div class="breath-circle" id="breathCircle">Nefes Al</div>
-                <div class="breath-text" id="breathText">Başlamak için butona bas.</div>
-                <button class="action-btn" id="breathBtn" onclick="nefesEgzersiziBaslat()" style="max-width: 250px;">Egzersizi Başlat</button>
+            <div class="metrics-grid">
+                <div class="metric-bar-wrapper">
+                    <div class="metric-label"><span>😊 Mutlu</span><span id="val-happy">0%</span></div>
+                    <div class="bar-bg"><div class="bar-fill" id="bar-happy"></div></div>
+                </div>
+                <div class="metric-bar-wrapper">
+                    <div class="metric-label"><span>😌 Nötr / Rahat</span><span id="val-neutral">0%</span></div>
+                    <div class="bar-bg"><div class="bar-fill" id="bar-neutral"></div></div>
+                </div>
+                <div class="metric-bar-wrapper">
+                    <div class="metric-label"><span>😟 Kaygılı / Korkmuş</span><span id="val-fearful">0%</span></div>
+                    <div class="bar-bg"><div class="bar-fill" id="bar-fearful"></div></div>
+                </div>
+                <div class="metric-bar-wrapper">
+                    <div class="metric-label"><span>😢 Üzgün</span><span id="val-sad">0%</span></div>
+                    <div class="bar-bg"><div class="bar-fill" id="bar-sad"></div></div>
+                </div>
+                <div class="metric-bar-wrapper">
+                    <div class="metric-label"><span>😡 Öfkeli</span><span id="val-angry">0%</span></div>
+                    <div class="bar-bg"><div class="bar-fill" id="bar-angry"></div></div>
+                </div>
+                <div class="metric-bar-wrapper">
+                    <div class="metric-label"><span>😲 Şaşırmış</span><span id="val-surprised">0%</span></div>
+                    <div class="bar-bg"><div class="bar-fill" id="bar-surprised"></div></div>
+                </div>
             </div>
+
+            <h2 style="margin-top: 2.5rem;">📅 Duygu Günlüğü Portalı</h2>
+            <p style="color: var(--text-muted); margin-top: 0;">Kabin dışı kullanım için kaydedilen son durumlar:</p>
+            <div class="history-list">
+                <div class="history-item"><span>Pazartesi Oturumu</span> <strong style="color: #ef4444;">😡 Öfkeli</strong></div>
+                <div class="history-item"><span>Salı Oturumu</span> <strong style="color: #f59e0b;">😟 Kaygılı</strong></div>
+                <div class="history-item"><span>Canlı Tarama Durumu</span> <strong id="liveStatus" style="color: var(--primary-cyan);">- Bekleniyor</strong></div>
+            </div>
+        </div>
+
+        <!-- ALT GENİŞ PANEL: ÖZ DÜZENLEME VE NEFES EGZERSİZİ -->
+        <div class="panel breath-section">
+            <h2>🫁 Modül 2: Öz Düzenleme ve Akıllı Nefes Egzersizi</h2>
+            <p style="color: var(--text-muted); max-width: 800px; margin: 0 auto;">Kaygı, stres veya öfke tespit edildiğinde otonom sinir sistemini dengelemek ve kalp ritmini (nabzı) optimize etmek için tasarlanmış kılavuz modül.</p>
+            
+            <div class="circle-container">
+                <div class="breath-circle" id="breathCircle">HAZIR</div>
+            </div>
+            
+            <div class="instruction-text" id="breathText">Başlamak için butona dokunun.</div>
+            <button class="btn" id="breathBtn" onclick="toggleNefesEgzersizi()" style="margin-top: 1.5rem;">Egzersizi Başlat</button>
         </div>
 
     </div>
 
     <script>
-        // AI Analiz Simülasyonu Fonksiyonu
-        function simüleEtAI() {
-            const mesajlar = [
-                "<strong>Sistem:</strong> Yüz ifadenden biraz <strong>kaygılı</strong> veya üzgün olabileceğini düşünüyorum. Yanındaki duyusal materyallere dokunmayı denemek ister misin?",
-                "<strong>Sistem:</strong> Harika görüyorsun! Yüz ifadenden <strong>mutlu</strong> ve enerjik olduğunu anlıyorum. Bu enerjiyi koruyalım!",
-                "<strong>Sistem:</strong> Biraz <strong>yorgun</strong> veya bitkin bir ifaden var. Kabindeki nefes egzersizi modülünü denemek sana çok iyi gelecektir."
-            ];
-            const rastgeleMesaj = mesajlar[Math.floor(Math.random() * mesajlar.length)];
-            document.getElementById('aiResponse').innerHTML = rastgeleMesaj;
+        const video = document.getElementById('webcam');
+        const loadingText = document.getElementById('loading-text');
+        const aiFeedback = document.getElementById('aiFeedback');
+        const liveStatus = document.getElementById('liveStatus');
+
+        // Yapay zekâ model kütüphanelerini CDN'den yükle
+        async function initAI() {
+            try {
+                const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+                await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+                await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+                loadingText.innerText = "Yapay Zekâ Modelleri Yüklendi. Kamera Açılıyor...";
+                startVideo();
+            } catch (err) {
+                loadingText.innerText = "Model yüklenirken hata oluştu! İnternet bağlantınızı kontrol edin.";
+                console.error(err);
+            }
         }
 
-        // Duygu Günlüğü Seçim Fonksiyonu
-        function duyguSec(duyguAd, emoji) {
-            // Aktif butonu işaretle
-            const buttons = document.querySelectorAll('.emoji-btn');
-            buttons.forEach(btn => btn.classList.remove('selected'));
-            event.target.classList.add('selected');
-
-            // Grafikte güncelle
-            document.getElementById('bugunDuygu').innerHTML = `${emoji} ${duyguAd}`;
+        // Kamerayı Başlat
+        function startVideo() {
+            navigator.mediaDevices.getUserMedia({ video: {} })
+                .then(stream => {
+                    video.srcObject = stream;
+                    loadingText.style.display = 'none';
+                    // Kamera hazır olunca analizi döngüye al
+                    video.addEventListener('play', () => {
+                        setInterval(trackFaceAndEmotions, 400);
+                    });
+                })
+                .catch(err => {
+                    loadingText.innerText = "Kamera erişimi reddedildi veya kamera bulunamadı!";
+                    console.error(err);
+                });
         }
 
-        // Nefes Egzersizi Döngüsü
-        let egzersizCalisiyor = false;
-        let nefesInterval;
+        // Anlık Yüz ve Duygu Tespiti
+        async function trackFaceAndEmotions() {
+            const options = new faceapi.TinyFaceDetectorOptions();
+            const result = await faceapi.detectSingleFace(video, options).withFaceExpressions();
 
-        function nefesEgzersiziBaslat() {
+            if (result && result.expressions) {
+                const emotions = result.expressions;
+                
+                // En yüksek skora sahip duyguyu bul
+                let maxEmotion = 'neutral';
+                let maxScore = 0;
+                for (const [emotion, score] of Object.entries(emotions)) {
+                    if (score > maxScore) {
+                        maxScore = score;
+                        maxEmotion = emotion;
+                    }
+                    
+                    // Arayüzdeki barları canlı güncelle
+                    let percent = Math.round(score * 100);
+                    document.getElementById(`val-${emotion}`).innerText = percent + "%";
+                    document.getElementById(`bar-${emotion}`).style.width = percent + "%";
+                }
+
+                // Türkçe Karşılıklar ve Sema Hoca'nın Prototip Senaryosu Entegrasyonu
+                let turkceDuygu = "";
+                let tavsiyeMesaji = "";
+
+                switch(maxEmotion) {
+                    case 'happy':
+                        turkceDuygu = "😊 Mutlu / Pozitif";
+                        tavsiyeMesaji = "<strong>Sistem Geri Bildirimi:</strong> Harika görünüyorsun! Yüz ifadenden mutlu ve enerjik olduğunu anlıyorum. Bu pozitif enerjiyi korumak ve arkadaşlarınla paylaşmak için harika bir gün!";
+                        break;
+                    case 'neutral':
+                        turkceDuygu = "😌 Rahat / Nötr";
+                        tavsiyeMesaji = "<strong>Sistem Geri Bildirimi:</strong> Dengeli ve huzurlu bir durumdasın. Kabin içerisindeki duyusal dengeyi korumak ve odaklanma seviyeni artırmak için hazırsın.";
+                        break;
+                    case 'sad':
+                        turkceDuygu = "😢 Üzgün";
+                        tavsiyeMesaji = "<strong>Sistem Geri Bildirimi:</strong> Yüz ifadenden biraz üzgün olabileceğini analiz ettim. Kendini yalnız hissetme, sana yardımcı olmak için buradayım. Kabindeki yumuşak dokulu malzemelere dokunmak duygusal regülasyonuna katkı sağlayabilir.";
+                        break;
+                    case 'angry':
+                        turkceDuygu = "😡 Öfkeli / Gergin";
+                        tavsiyeMesaji = "<strong>Sistem Geri Bildirimi:</strong> Yüz ifadende yüksek bir gerginlik veya öfke yapısı sezdim. Şimdi arkana yaslan, kabindeki RGB ledleri maviye ayarlıyorum. Aşağıdaki <strong>Nefes Egzersizini</strong> başlatarak sakinleşmeyi deneyelim.";
+                        break;
+                    case 'fearful':
+                        turkceDuygu = "😟 Kaygılı / Endişeli";
+                        tavsiyeMesaji = "<strong>Sistem Geri Bildirimi:</strong> Yüz ifadenden biraz kaygılı veya stresli olabileceğini anlıyorum. Güvendesin. Nabız sensörünü kontrol ederken aynı zamanda aşağıdaki ritmik nefes yönlendirmesini takip etmen kalp ritmini yavaşlatacaktır.";
+                        break;
+                    case 'surprised':
+                        turkceDuygu = "😲 Şaşırmış";
+                        tavsiyeMesaji = "<strong>Sistem Geri Bildirimi:</strong> Beklenmedik bir duygu değişimi algılandı! Bu heyecan verici durumu regüle etmek ve odağını toplamak için duyusal materyalleri kullanabilirsin.";
+                        break;
+                }
+
+                liveStatus.innerText = turkceDuygu;
+                aiFeedback.innerHTML = tavsiyeMesaji;
+            }
+        }
+
+        // AKILLI NEFES EGZERSİZİ DÖNGÜSÜ (4 Saniye Al - 4 Saniye Ver)
+        let egzersizAktif = false;
+        let nefesTimer;
+
+        function toggleNefesEgzersizi() {
             const circle = document.getElementById('breathCircle');
             const text = document.getElementById('breathText');
             const btn = document.getElementById('breathBtn');
 
-            if (egzersizCalisiyor) {
-                // Durdurma mantığı
-                clearInterval(nefesInterval);
+            if (egzersizAktif) {
+                clearInterval(nefesTimer);
                 circle.classList.remove('expand');
-                circle.innerText = "Nefes Al";
-                text.innerText = "Egzersiz durduruldu.";
+                circle.innerText = "HAZIR";
+                text.innerText = "Egzersiz sonlandırıldı.";
                 btn.innerText = "Egzersizi Başlat";
-                egzersizCalisiyor = false;
+                egzersizAktif = false;
                 return;
             }
 
-            egzersizCalisiyor = true;
+            egzersizAktif = true;
             btn.innerText = "Egzersizi Durdur";
             
-            function döngü() {
-                // Nefes Al (4 Saniye)
+            function nefesDongusu() {
+                if(!egzersizAktif) return;
                 circle.classList.add('expand');
-                circle.innerText = "Nefes Al";
-                text.innerText = "Derinden nefes al ve ciğerlerini doldur...";
+                circle.innerText = "NEFES AL";
+                text.innerText = "Derinden nefes al, göğüs kafesinin genişlediğini hisset... (4 Saniye)";
                 
                 setTimeout(() => {
-                    if(!egzersizCalisiyor) return;
-                    // Nefes Ver (4 Saniye)
+                    if(!egzersizAktif) return;
                     circle.classList.remove('expand');
-                    circle.innerText = "Nefes Ver";
-                    text.innerText = "Yavaşça ve sakince nefesini dışarı üfle...";
+                    circle.innerText = "NEFES VER";
+                    text.innerText = "Yavaşça, tüm stresi dışarı üfler gibi sakince nefes ver... (4 Saniye)";
                 }, 4000);
             }
 
-            döngü();
-            nefesInterval = setInterval(döngü, 8000);
+            nefesDongusu();
+            nefesTimer = setInterval(nefesDongusu, 8000);
         }
+
+        // Sayfa açıldığında yapay zekayı başlat
+        window.onload = initAI;
     </script>
 </body>
 </html>
