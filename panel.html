@@ -18,12 +18,14 @@
 </head>
 <body>
 
+    <!-- SOL TARAF: KULLANICI LİSTESİ -->
     <div class="sidebar">
         <h3 style="color: #a855f7; margin-top:0;">👥 Kabini Kullanan Kişiler</h3>
-        <p style="font-size: 0.85rem; color:#64748b; margin-bottom: 20px;">Google veya Okul No ile giriş yapan tüm aktif kullanıcı havuzu:</p>
+        <p style="font-size: 0.85rem; color:#64748b; margin-bottom: 20px;">Okul No veya Google ile giriş yapan tüm aktif kullanıcı havuzu:</p>
         <div id="userList" style="flex: 1; overflow-y: auto;">Kullanıcı verileri senkronize ediliyor...</div>
     </div>
 
+    <!-- SAĞ TARAF: DETAYLAR -->
     <div class="main-content">
         <h2 style="margin-top: 0;">🔮 Öğretmen / Jüri Uzaktan İzleme Portalı</h2>
         <h3 id="seciliKisiBaslik" style="color: #00f2fe;">⚠️ Lütfen soldaki listeden analizini incelemek istediğiniz kişiyi seçin.</h3>
@@ -42,18 +44,20 @@
         </table>
     </div>
 
+    <!-- FIREBASE MODÜLER SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
+        // Kanka panel için aldığın yepyeni config burası!
         const firebaseConfig = {
             apiKey: "AIzaSyB-sjEa93bNOoplmYYpqF1cfTqvb0mm7Dk",
             authDomain: "duyu-kabini.firebaseapp.com",
             projectId: "duyu-kabini",
             storageBucket: "duyu-kabini.firebasestorage.app",
             messagingSenderId: "411207534602",
-            appId: "1:411207534602:web:838c1a373019e951b5b7f3",
-            measurementId: "G-GXHJHBN35V"
+            appId: "1:411207534602:web:8405cfa828601f35b5b7f3",
+            measurementId: "G-MKXW2H15MD"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -62,6 +66,7 @@
         let tumLoglar = [];
         let seciliUid = null;
 
+        // Aynı veri tabanındaki "kabin_loglari" koleksiyonunu dinliyoruz
         const q = query(collection(db, "kabin_loglari"), orderBy("zaman", "desc"));
         
         onSnapshot(q, (snapshot) => {
