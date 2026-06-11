@@ -46,7 +46,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-        // Senin deponun anahtarları tam entegre edildi kanka
         const firebaseConfig = {
             apiKey: "AIzaSyB-sjEa93bNOoplmYYpqF1cfTqvb0mm7Dk",
             authDomain: "duyu-kabini.firebaseapp.com",
@@ -63,7 +62,6 @@
         let tumLoglar = [];
         let seciliUid = null;
 
-        // Buluttaki verileri zamana göre otonom olarak dinle
         const q = query(collection(db, "kabin_loglari"), orderBy("zaman", "desc"));
         
         onSnapshot(q, (snapshot) => {
