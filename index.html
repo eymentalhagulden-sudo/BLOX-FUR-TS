@@ -79,7 +79,8 @@
 
         async function initAI() {
             try {
-                const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+                // 404 VERMEYECEK EN GARANTİ MODEL LİNKİNE ÇEVRİLDİ kanka:
+                const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
                 await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
                 await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
                 aiDurum.innerText = "Modeller yüklendi. Kamera açılıyor...";
@@ -87,14 +88,18 @@
                 startVideo();
                 setInterval(bulutaVeriGonder, 4000);
             } catch (err) {
-                aiDurum.innerText = "AI yükleme hatası! İnterneti kontrol edin.";
+                console.error(err);
+                aiDurum.innerText = "AI yükleme hatası! İnterneti veya modelleri kontrol edin.";
             }
         }
 
         function startVideo() {
             navigator.mediaDevices.getUserMedia({ video: {} }).then(stream => { 
                 video.srcObject = stream; 
+            }).catch(err => {
+                aiDurum.innerText = "Kamera açılamadı! İzin verdiğinizden emin olun.";
             });
+
             video.addEventListener('play', () => { 
                 setInterval(trackFace, 400); 
             });
