@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DuyuDenge-AI Kabin Giriş & Analiz</title>
     
+    <!-- Yapay Zeka Yüz Tanıma Kütüphanesi -->
     <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
 
     <style>
@@ -30,6 +31,7 @@
 </head>
 <body>
 
+    <!-- GİRİŞ PORTALI -->
     <div id="loginKutusu" class="box">
         <h2>🧠 DuyuDenge-AI Akıllı Kabin</h2>
         <p style="color: #64748b; font-size:0.9rem;">Analizin başlaması için aşağıdaki yöntemlerden biriyle oturum açın.</p>
@@ -53,6 +55,7 @@
         <button id="manuelGirisBtn" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: white; margin-top: 10px;">🔐 Bilgilerle Kabine Giriş Yap</button>
     </div>
 
+    <!-- KABIN AKTIF EKRANI -->
     <div id="kabinAlani">
         <div class="box" style="max-width: 640px;">
             <h3>Hoş geldin, <span id="kullaniciAdi" style="color:#00f2fe">...</span></h3>
@@ -66,11 +69,13 @@
         </div>
     </div>
 
+    <!-- FIREBASE MODÜLER SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
+        // Kabin uygulamasının kendi config bilgileri kanka
         const firebaseConfig = {
             apiKey: "AIzaSyB-sjEa93bNOoplmYYpqF1cfTqvb0mm7Dk",
             authDomain: "duyu-kabini.firebaseapp.com",
@@ -85,17 +90,14 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Sisteme kaydedilecek ortak kullanıcı kimlik yapısı
         let cihazUser = { uid: null, displayName: null };
         let baskinDuygu = "neutral";
         const video = document.getElementById('webcam');
         const aiDurum = document.getElementById('aiDurum');
 
-        // Dinleyicileri Bağla
         document.getElementById('loginBtn').addEventListener('click', googleIleGiris);
         document.getElementById('manuelGirisBtn').addEventListener('click', manuelGirisYap);
 
-        // 1. YÖNTEM: Google Giriş (Edge engellemezse çalışır)
         function googleIleGiris() {
             const provider = new GoogleAuthProvider();
             signInWithPopup(auth, provider).then(result => {
@@ -103,25 +105,22 @@
                 cihazUser.displayName = result.user.displayName;
                 sistemiGoster(cihazUser.displayName);
             }).catch(err => {
-                alert("Edge veya tarayıcı kısıtlaması nedeniyle Google girişi engellendi! Lütfen aşağıdaki okul formuyla giriş yapın. Hata: " + err.message);
+                alert("Edge kısıtlaması nedeniyle Google girişi atlandı! Lütfen okul formuyla giriş yapın.");
             });
         }
 
-        // 2. YÖNTEM: Okul No / Sınıf Form Girişi (%100 Garanti)
         function manuelGirisYap() {
             const no = document.getElementById('okulNo').value.trim();
             const ad = document.getElementById('adSoyad').value.trim();
             const sınıf = document.getElementById('sinif').value.trim();
 
             if(!no || !ad || !sınıf) {
-                alert("Lütfen tüm okul alanlarını doldurun!");
+                alert("Lütfen tüm alanları doldurun!");
                 return;
             }
 
-            // Benzersiz bir ID simüle et ve ismi jüriye uygun formatla
             cihazUser.uid = "okul_" + no + "_" + Date.now();
             cihazUser.displayName = no + " - " + ad + " (" + sınıf + ")";
-
             sistemiGoster(cihazUser.displayName);
         }
 
@@ -142,18 +141,14 @@
                 startVideo();
                 setInterval(bulutaVeriGonder, 4000);
             } catch (err) {
-                console.error(err);
-                aiDurum.innerText = "AI yükleme hatası! İnterneti kontrol edin.";
+                aiDurum.innerText = "AI yükleme hatası!";
             }
         }
 
         function startVideo() {
             navigator.mediaDevices.getUserMedia({ video: {} }).then(stream => { 
                 video.srcObject = stream; 
-            }).catch(err => {
-                aiDurum.innerText = "Kamera açılamadı! Lütfen izin verin.";
             });
-
             video.addEventListener('play', () => { 
                 setInterval(trackFace, 400); 
             });
@@ -182,7 +177,7 @@
                     bpm: Math.floor(Math.random() * (92 - 66 + 1)) + 66,
                     zaman: serverTimestamp()
                 });
-                console.log("Buluta gönderildi: ", cihazUser.displayName);
+                console.log("Buluta veri uçtu!");
             } catch (err) {
                 console.error("Bulut hatası: ", err);
             }
