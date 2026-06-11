@@ -6,9 +6,9 @@
     <title>DuyuDenge-AI Bulut Yönetim Paneli</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #020617; color: white; display: flex; padding: 20px; gap: 20px; margin:0; height: 100vh; box-sizing: border-box; }
-        .sidebar { width: 320px; background: #0f172a; padding: 20px; border-radius: 15px; border: 1px solid #a855f7; display: flex; flex-direction: column; }
+        .sidebar { width: 340px; background: #0f172a; padding: 20px; border-radius: 15px; border: 1px solid #a855f7; display: flex; flex-direction: column; }
         .main-content { flex: 1; background: #0f172a; padding: 25px; border-radius: 15px; border: 1px solid #1e293b; overflow-y: auto; }
-        .user-item { padding: 12px; background: #1e293b; margin-bottom: 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: bold; border-left: 4px solid transparent; }
+        .user-item { padding: 12px; background: #1e293b; margin-bottom: 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: bold; border-left: 4px solid transparent; font-size: 0.95rem; }
         .user-item:hover { background: rgba(168, 85, 247, 0.2); border-left-color: #a855f7; }
         .active-user-item { background: #a855f7 !important; color: black !important; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #020617; border-radius: 10px; overflow: hidden; }
@@ -20,7 +20,7 @@
 
     <div class="sidebar">
         <h3 style="color: #a855f7; margin-top:0;">👥 Kabini Kullanan Kişiler</h3>
-        <p style="font-size: 0.85rem; color:#64748b; margin-bottom: 20px;">Firebase bulut veri tabanından anlık çekilen aktif kullanıcı listesi:</p>
+        <p style="font-size: 0.85rem; color:#64748b; margin-bottom: 20px;">Google veya Okul No ile giriş yapan tüm aktif kullanıcı havuzu:</p>
         <div id="userList" style="flex: 1; overflow-y: auto;">Kullanıcı verileri senkronize ediliyor...</div>
     </div>
 
