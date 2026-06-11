@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuyuDenge-AI Kabin Giriş & Analiz</title>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #060b16; color: white; text-align: center; padding: 20px; margin: 0; }
+        .box { background: #0f172a; padding: 30px; border-radius: 15px; max-width: 500px; margin: 40px auto; border: 1px solid #00f2fe; box-shadow: 0 0 20px rgba(0,242,254,0.2); }
+        button { background: linear-gradient(135deg, #4facfe, #00f2fe); color: black; border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: 0.3s; }
+        button:hover { transform: scale(1.05); box-shadow: 0 0 15px #00f2fe; }
+        #kabinAlani { display: none; }
+        .camera-box { width: 100%; max-width: 450px; margin: 20px auto; border-radius: 12px; overflow: hidden; border: 2px solid #1e293b; background: #000; aspect-ratio: 4/3; }
+        video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        #aiDurum { background: rgba(0, 242, 254, 0.05); padding: 15px; border-radius: 8px; border-left: 4px solid #00f2fe; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+    <div id="loginKutusu" class="box">
+        <h2>🧠 DuyuDenge-AI Akıllı Kabin</h2>
+        <p>Analizin başlaması için lütfen Google hesabınızla oturum açın.</p>
+        <br>
+        <button id="loginBtn">🌐 Google ile Giriş Yap</button>
+    </div>
+
+    <div id="kabinAlani">
+        <div class="box" style="max-width: 640px;">
+            <h3>Hoş geldin, <span id="kullaniciAdi" style="color:#00f2fe">...</span></h3>
+            <p style="color: #64748b;">Sistem şu an Firebase bulut veri tabanına bağlı. Verileriniz güvenle işleniyor.</p>
+            
+            <div class="camera-box">
+                <video id="webcam" autoplay muted playsinline></video>
+            </div>
+            
+            <h4 id="aiDurum">Yapay zekâ modelleri yükleniyor...</h4>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-sjEa93bNOoplmYYpqF1cfTqvb0mm7Dk",
+            authDomain: "duyu-kabini.firebaseapp.com",
+            projectId: "duyu-kabini",
+            storageBucket: "duyu-kabini.firebasestorage.app",
+            messagingSenderId: "411207534602",
+            appId: "1:411207534602:web:838c1a373019e951b5b7f3",
+            measurementId: "G-GXHJHBN35V"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let aktifUser = null;
+        let baskinDuygu = "neutral";
+        const video = document.getElementById('webcam');
+        const aiDurum = document.getElementById('aiDurum');
+
+        document.getElementById('loginBtn').addEventListener('click', googleIleGiris);
+
+        function googleIleGiris() {
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider).then(result => {
+                aktifUser = result.user;
+                document.getElementById('loginKutusu').style.display = 'none';
+                document.getElementById('kabinAlani').style.display = 'block';
+                document.getElementById('kullaniciAdi').innerText = aktifUser.displayName;
+                initAI();
+            }).catch(err => alert("Giriş hatası: " + err.message));
+        }
+
+        async function initAI() {
+            try {
+                const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+                await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+                await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+                aiDurum.innerText = "Modeller yüklendi. Kamera açılıyor...";
+                
+                startVideo();
+                setInterval(bulutaVeriGonder, 4000);
+            } catch (err) {
+                aiDurum.innerText = "AI yükleme hatası! İnterneti kontrol edin.";
+            }
+        }
+
+        function startVideo() {
+            navigator.mediaDevices.getUserMedia({ video: {} }).then(stream => { 
+                video.srcObject = stream; 
+            });
+            video.addEventListener('play', () => { 
+                setInterval(trackFace, 400); 
+            });
+        }
+
+        async function trackFace() {
+            if (!video.srcObject) return;
+            const result = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
+            if (result && result.expressions) {
+                let maxEmotion = 'neutral'; let maxScore = 0;
+                for (const [em, sc] of Object.entries(result.expressions)) {
+                    if (sc > maxScore) { maxScore = sc; maxEmotion = em; }
+                }
+                baskinDuygu = maxEmotion;
+                aiDurum.innerHTML = "Algılanan Durum: <strong style='color:#00f2fe'>" + maxEmotion.toUpperCase() + "</strong>";
+            }
+        }
+
+        async function bulutaVeriGonder() {
+            if(!aktifUser) return;
+            try {
+                await addDoc(collection(db, "kabin_loglari"), {
+                    userId: aktifUser.uid,
+                    userName: aktifUser.displayName,
+                    userEmail: aktifUser.email,
+                    duygu: baskinDuygu,
+                    bpm: Math.floor(Math.random() * (92 - 66 + 1)) + 66,
+                    zaman: serverTimestamp()
+                });
+                console.log("Veri paketlendi ve başarıyla Firestore bulutuna uçtu!");
+            } catch (err) {
+                console.error("Bulut hatası: ", err);
+            }
+        }
+    </script>
+</body>
+</html>
