@@ -33,6 +33,42 @@
             --button-text: white;
         }
 
+        /* YENİ: Siber Orman Teması (Yeşil / Doğa) */
+        [data-theme="orman"] {
+            --bg-color: #0b140f;
+            --box-bg: #112216;
+            --primary-color: #10b981;
+            --gradient-start: #059669;
+            --gradient-end: #10b981;
+            --text-color: #ecfdf5;
+            --border-color: #065f46;
+            --button-text: white;
+        }
+
+        /* YENİ: Gece Yarısı Teması (Asil & Derin Siyah) */
+        [data-theme="gece"] {
+            --bg-color: #020617;
+            --box-bg: #090d16;
+            --primary-color: #a855f7;
+            --gradient-start: #7c3aed;
+            --gradient-end: #a855f7;
+            --text-color: #f8fafc;
+            --border-color: #1e1b4b;
+            --button-text: white;
+        }
+
+        /* YENİ: Siberpunk Teması (Neon Enerji) */
+        [data-theme="cyberpunk"] {
+            --bg-color: #12011b;
+            --box-bg: #210230;
+            --primary-color: #facc15;
+            --gradient-start: #db2777;
+            --gradient-end: #facc15;
+            --text-color: #fae8ff;
+            --border-color: #4d076b;
+            --button-text: black;
+        }
+
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-color); text-align: center; padding: 20px; margin: 0; transition: all 0.5s ease; }
         .box { background: var(--box-bg); padding: 30px; border-radius: 15px; max-width: 600px; margin: 20px auto; border: 1px solid var(--primary-color); box-shadow: 0 0 20px rgba(0,242,254,0.1); transition: all 0.5s ease; }
         
@@ -72,10 +108,8 @@
         .progress-bar-container { width: 100%; background: #1e293b; height: 8px; border-radius: 4px; margin-top: 10px; display: none; overflow: hidden; }
         .progress-bar { width: 0%; height: 100%; background: var(--primary-color); transition: width 0.1s linear; }
 
-        /* KÜÇÜLTÜLMÜŞ NEFES DAİRESİ kanka */
+        /* Küçültülmüş Nefes Dairesi */
         .nefes-daresi { width: 80px; height: 80px; background: radial-gradient(circle, var(--primary-color) 0%, var(--gradient-start) 100%); border-radius: 50%; margin: 20px auto; transition: transform 4s ease-in-out; box-shadow: 0 0 25px var(--primary-color); }
-        .nefes-al = { transform: scale(1.4); }
-        .nefes-ver = { transform: scale(0.85); }
 
         .sensor-data { font-size: 1.5rem; font-weight: bold; color: #ef4444; margin: 15px 0; }
         .info-msg { color: #94a3b8; font-style: italic; margin-bottom: 20px; font-size: 0.95rem; }
@@ -100,6 +134,9 @@
             <select id="temaSecimi">
                 <option value="mavi">💙 Mavi Akım (Teknolojik & Siber)</option>
                 <option value="sakura">🌸 Sakura (Yumuşak & Rahatlatıcı Pembe)</option>
+                <option value="orman">🌲 Siber Orman (Doğa & Dengeli Yeşil)</option>
+                <option value="gece">🌌 Gece Yarısı (Asil & Derin Siyah)</option>
+                <option value="cyberpunk">🔥 Siberpunk (Neon Enerji & Fütüristik)</option>
             </select>
         </div>
 
@@ -199,7 +236,7 @@
             </div>
         </div>
 
-        <!-- MODÜL 4: SES VE İŞİTSEL DÜZENLEME (GERÇEK SESLİ) -->
+        <!-- MODÜL 4: SES VE İŞİTSEL DÜZENLEME -->
         <div id="modul4" class="box modul-ekrani">
             <h3>🎵 Modül 4: Ses ve İşitsel Düzenleme Alanı</h3>
             <p class="info-msg">"Hangi sesi dinlemek istersin? Seçtiğinde arka planda gerçek ses oynatılacaktır."</p>
@@ -288,7 +325,7 @@
                 <button class="option-btn" onclick="secimYap(this, 'anket', 'Koku ve Tat Köşesi')">○ Koku ve Tat Köşesi</button>
             </div>
 
-            <!-- OKUL YETKİLİLERİ PAYLAŞIM İZNİ (Rehberlik Soru Alanı) -->
+            <!-- OKUL YETKİLİLERİ PAYLAŞIM İZNİ -->
             <div id="izinOnayKutusuAlani" style="display:none; margin-top:20px;">
                 <div class="izin-alani">
                     <input type="checkbox" id="okulIzniCheckbox" checked>
@@ -339,31 +376,26 @@
         let sonBpm = 0;
 
         let aiInterval;
-        let aktifSes = null; // Çalan sesi tutacak değişken kanka
+        let aktifSes = null; 
         const video = document.getElementById('webcam');
         const aiDurum = document.getElementById('aiDurum');
 
-        // GERÇEK SES DOSYALARI HARİTASI
         const sesDosyalari = {
-            'Yağmur': 'https://assets.mixkit.co/active_storage/sfx/2449/2449-84.wav',
-            'Deniz': 'https://assets.mixkit.co/active_storage/sfx/1193/1193-84.wav',
-            'Orman': 'https://assets.mixkit.co/active_storage/sfx/1187/1187-84.wav',
-            'Frekans': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' // Örnek soft meditasyon sesi
+            'Yağmur': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+            'Deniz': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+            'Orman': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
+            'Frekans': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
         };
 
-        // KÜFÜR VE RASTGELE YAZI FİLTRESİ MOTORU
         const argoKelimeler = ["küfür1", "argo2", "aptal", "salak", "mal", "gerizekali", "asdasd", "qweqwe", "123123", "siktir", "orospu", "piç"];
         
         function girdiValidasyonuYap(ad, no, sinif) {
             const birlesikMetin = (ad + " " + sinif + " " + no).toLowerCase();
-            
-            // Küfür / Argo kontrolü
             for (let kelime of argoKelimeler) {
                 if (birlesikMetin.includes(kelime)) {
                     return "⚠️ Lütfen topluluk kurallarına uygun, temiz kelimeler kullanın.";
                 }
             }
-            // Anlamsız uzunluk kontrolü veya rastgele harfler
             if (ad.length < 3 || /([a-z0-9])\1{4,}/.test(birlesikMetin)) {
                 return "⚠️ Girdiğiniz bilgiler pek gerçekçi durmuyor kanka, lütfen doğru bilgiler yaz.";
             }
@@ -396,7 +428,6 @@
                 return;
             }
 
-            // Güvenlik ve Argo Filtresi Çalışıyor
             const hataVarMi = girdiValidasyonuYap(ad, no, sınıf);
             if(hataVarMi) {
                 hataKutusu.innerText = hataVarMi;
@@ -411,9 +442,10 @@
         }
 
         function sistemiGoster() {
+            // GENİŞLETİLMİŞ TEMA SEÇİM ALGORİTMASI kanka
             const secilenTema = document.getElementById('temaSecimi').value;
-            if(secilenTema === "sakura") {
-                document.documentElement.setAttribute('data-theme', 'sakura');
+            if(secilenTema !== "mavi") {
+                document.documentElement.setAttribute('data-theme', secilenTema);
             } else {
                 document.documentElement.removeAttribute('data-theme');
             }
@@ -424,7 +456,6 @@
         }
 
         window.modulGoster = function(modulId) {
-            // Başka modüle geçerken çalan ses varsa durdur kanka
             if (modulId !== 4 && aktifSes) {
                 aktifSes.pause();
             }
@@ -436,17 +467,15 @@
             else if(modulId === 2) { nefesEgzersiziBaslat(); }
         }
 
-        // AKILLI SEÇİM VE ETKİLEŞİM MOTORU (İşaretleme Sorununu Çözen Kısım)
         window.secimYap = function(butonNesnesi, kategori, deger) {
             const ebeveynGrid = butonNesnesi.parentElement;
             ebeveynGrid.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
             
-            // Butonu seçili kilitle! kanka
             butonNesnesi.classList.add('selected');
 
             if(kategori === 'duygu') {
                 secilenDuygu = deger;
-                document.getElementById('feedbackTxt1').innerText = `💬 Demek kendini "${deger}" hissediyorsun. Paylaştığın için teşekkürler, şimdi harika hissedeceksin!`;
+                document.getElementById('feedbackTxt1').innerText = `💬 Demek kendini "${deger}" hissediyorsun. Paylaştığın için teşekkürler, şimdi harika hissedeceksiniz!`;
                 document.getElementById('feedbackModul1').style.display = 'block';
             }
             
@@ -461,13 +490,15 @@
                 document.getElementById('feedbackTxt4').innerText = `🎵 Harika! ${deger} sesi senin için oynatılıyor. Gözlerini kapat ve akışa bırak...`;
                 document.getElementById('feedbackModul4').style.display = 'block';
 
-                // GERÇEK SES OYNATMA TEKNOLOJİSİ
-                if(aktifSes) { aktifSes.pause(); }
+                if(aktifSes) { 
+                    aktifSes.pause(); 
+                    aktifSes = null;
+                }
                 if(sesDosyalari[deger]) {
                     aktifSes = new Audio(sesDosyalari[deger]);
                     aktifSes.loop = true;
-                    aktifSes.volume = 0.5;
-                    aktifSes.play().catch(e => console.log("Ses oynatma engellendi, kullanıcı etkileşimi gerekiyor."));
+                    aktifSes.volume = 0.4;
+                    aktifSes.play().catch(e => console.log("Ses engellendi: ", e));
                 }
             }
 
@@ -485,7 +516,6 @@
 
             if(kategori === 'anket') {
                 enYararliEtkinlik = deger;
-                // REHBERLİK PANELİNİ AÇIYORUZ
                 document.getElementById('izinOnayKutusuAlani').style.display = 'block';
             }
         }
@@ -495,7 +525,7 @@
             document.getElementById('kokuSorusu').style.display = 'block';
         }
 
-        // Modül 0 Düzenekleri
+        // Modül 0
         document.getElementById('hijyenOnayBtn').addEventListener('click', () => {
             document.getElementById('nabizAlani0').style.display = 'block';
             baslangicBpm = Math.floor(Math.random() * (105 - 90 + 1)) + 90;
@@ -561,7 +591,7 @@
             }
         }
 
-        // Modül 2: Yeni Küçültülmüş Nefes Döngüsü kanka
+        // Modül 2
         function nefesEgzersiziBaslat() {
             const daire = document.getElementById('nefesDaire');
             const komut = document.getElementById('nefesKomut');
@@ -593,7 +623,7 @@
             modulGoster(3);
         });
 
-        // Modül 7 Son Ölçüm
+        // Modül 7
         document.getElementById('sonNabizOlculmeBtn').addEventListener('click', () => {
             let dusus = Math.floor(Math.random() * (15 - 8 + 1)) + 8;
             sonBpm = baslangicBpm - dusus;
@@ -603,7 +633,7 @@
             document.getElementById('sonNabizSonucAlani').style.display = 'block';
         });
 
-        // Verileri Buluta Gönderme ve Kayıt
+        // Kayıt
         document.getElementById('finalGonderBtn').addEventListener('click', async () => {
             const okulIzinDurumu = document.getElementById('okulIzniCheckbox').checked;
             document.getElementById('izinOnayKutusuAlani').style.display = 'none';
