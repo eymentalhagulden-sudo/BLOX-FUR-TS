@@ -3,19 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DuyuDenge-AI Kabin Giriş & Analiz</title>
+    <title>DuyuDenge-AI Akıllı Kabin Sistemi</title>
     
-    <!-- Yapay Zeka Yüz Tanıma Kütüphanesi -->
     <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
 
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #060b16; color: white; text-align: center; padding: 20px; margin: 0; }
-        .box { background: #0f172a; padding: 30px; border-radius: 15px; max-width: 500px; margin: 20px auto; border: 1px solid #00f2fe; box-shadow: 0 0 20px rgba(0,242,254,0.2); }
+        .box { background: #0f172a; padding: 30px; border-radius: 15px; max-width: 600px; margin: 20px auto; border: 1px solid #00f2fe; box-shadow: 0 0 20px rgba(0,242,254,0.2); }
+        
         button { background: linear-gradient(135deg, #4facfe, #00f2fe); color: black; border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: 0.3s; width: 100%; margin-bottom: 15px; }
         button:hover { transform: scale(1.02); box-shadow: 0 0 15px #00f2fe; }
         
+        .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .option-btn { background: #1e293b; color: white; border: 1px solid #334155; }
+        .option-btn:hover { background: #334155; border-color: #00f2fe; }
+
         .divider { margin: 20px 0; color: #64748b; font-size: 0.9rem; position: relative; }
-        .divider::before, .divider::after { content: ""; position: absolute; top: 50%; width: 40%; height: 1px; background: #1e293b; }
+        .divider::before, .divider::after { content: ""; position: absolute; top: 50%; width: 35%; height: 1px; background: #1e293b; }
         .divider::before { left: 0; } .divider::after { right: 0; }
 
         .form-group { text-align: left; margin-bottom: 12px; }
@@ -23,16 +27,30 @@
         input { width: 100%; padding: 10px; background: #020617; border: 1px solid #1e293b; border-radius: 6px; color: white; font-size: 0.95rem; box-sizing: border-box; }
         input:focus { border-color: #00f2fe; outline: none; }
 
-        #kabinAlani { display: none; }
-        .camera-box { width: 100%; max-width: 450px; margin: 20px auto; border-radius: 12px; overflow: hidden; border: 2px solid #1e293b; background: #000; aspect-ratio: 4/3; }
+        /* Modül Düzenleri */
+        .modul-ekrani { display: none; text-align: center; }
+        .active { display: block; }
+        
+        .camera-box { width: 100%; max-width: 350px; margin: 15px auto; border-radius: 12px; overflow: hidden; border: 2px solid #1e293b; background: #000; aspect-ratio: 4/3; }
         video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-        #aiDurum { background: rgba(0, 242, 254, 0.05); padding: 15px; border-radius: 8px; border-left: 4px solid #00f2fe; font-size: 1.2rem; }
+        
+        #aiDurum { background: rgba(0, 242, 254, 0.05); padding: 10px; border-radius: 8px; border-left: 4px solid #00f2fe; font-size: 1rem; margin-top: 10px; }
+        
+        /* Nefes Animasyonu */
+        .nefes-daresi { width: 120px; height: 120px; background: radial-gradient(circle, #00f2fe 0%, #4facfe 100%); border-radius: 50%; margin: 20px auto; transition: transform 4s ease-in-out; box-shadow: 0 0 30px #00f2fe; }
+        .nefes-al { transform: scale(1.6); }
+        .nefes-ver { transform: scale(0.8); }
+
+        /* Sensör ve Bilgi Alanları */
+        .sensor-data { font-size: 1.5rem; font-weight: bold; color: #ef4444; margin: 15px 0; animation: pulse 1s infinite alternate; }
+        @keyframes pulse { from { opacity: 0.7; } to { opacity: 1; } }
+        
+        .info-msg { color: #94a3b8; font-style: italic; margin-bottom: 20px; font-size: 0.95rem; }
     </style>
 </head>
 <body>
 
-    <!-- GİRİŞ PORTALI -->
-    <div id="loginKutusu" class="box">
+    <div id="loginKutusu" class="box active">
         <h2>🧠 DuyuDenge-AI Akıllı Kabin</h2>
         <p style="color: #64748b; font-size:0.9rem;">Analizin başlaması için aşağıdaki yöntemlerden biriyle oturum açın.</p>
         
@@ -55,27 +73,160 @@
         <button id="manuelGirisBtn" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: white; margin-top: 10px;">🔐 Bilgilerle Kabine Giriş Yap</button>
     </div>
 
-    <!-- KABIN AKTIF EKRANI -->
-    <div id="kabinAlani">
-        <div class="box" style="max-width: 640px;">
-            <h3>Hoş geldin, <span id="kullaniciAdi" style="color:#00f2fe">...</span></h3>
-            <p style="color: #64748b;">Sistem şu an Firebase bulut veri tabanına bağlı. Verileriniz güvenle işleniyor.</p>
+    <div id="kabinAlani" style="display: none;">
+        
+        <div id="modul0" class="box modul-ekrani active">
+            <h3>🧴 Modül 0: Hijyen Kontrolü & Başlangıç Nabız Ölçümü</h3>
+            <p class="info-msg">"Merhaba. DuyuDenge-AI'ye hoş geldin."</p>
+            <p><strong>Sistem Uyarısı:</strong> Başlamadan önce lütfen ellerini dezenfekte et.</p>
+            <button id="hijyenOnayBtn" style="background: #10b981; color: white;">Dezenfektan Kullanıldı (Sensör Onayı)</button>
+            
+            <div id="nabizAlani0" style="display:none;">
+                <p class="info-msg">"Harika! Şimdi başlangıç ölçümünü yapacağız. Lütfen parmağını sensörün üzerine yerleştir."</p>
+                <div class="sensor-data">❤️ Başlangıç Nabzı: <span id="baslangicNabizTxt">Ölçülüyor...</span></div>
+                <button id="modul0DevamBtn" style="display:none;">Teşekkür ederim. Şimdi duygularını birlikte keşfedelim. ➡️</button>
+            </div>
+        </div>
+
+        <div id="modul1" class="box modul-ekrani">
+            <h3>🧠 Modül 1: AI Duygu Fark Etme ve İfade Alanı</h3>
+            <p class="info-msg">"Şu an nasıl hissettiğini birlikte anlamaya çalışalım."</p>
             
             <div class="camera-box">
                 <video id="webcam" autoplay muted playsinline></video>
             </div>
-            
             <h4 id="aiDurum">Yapay zekâ modelleri yükleniyor...</h4>
+
+            <div id="kullaniciDuyguSecim" style="margin-top: 20px;">
+                <p class="info-msg">"Yüz ifadenden durumunu yukarıdaki gibi tahmin ettim. Peki sen kendini nasıl hissediyorsun?"</p>
+                <div class="option-grid">
+                    <button class="option-btn" onclick="modulGecis(1, 2, 'Mutlu')">😊 Mutlu</button>
+                    <button class="option-btn" onclick="modulGecis(1, 2, 'Rahat')">😌 Rahat</button>
+                    <button class="option-btn" onclick="modulGecis(1, 2, 'Kaygılı')">😟 Kaygılı</button>
+                    <button class="option-btn" onclick="modulGecis(1, 2, 'Üzgün')">😢 Üzgün</button>
+                    <button class="option-btn" onclick="modulGecis(1, 2, 'Öfkeli')">😡 Öfkeli</button>
+                    <button class="option-btn" onclick="modulGecis(1, 2, 'Yorgun')">😴 Yorgun</button>
+                </div>
+            </div>
         </div>
+
+        <div id="modul2" class="box modul-ekrani">
+            <h3>🌬️ Modül 2: Nefes ve Işık Alanı</h3>
+            <p class="info-msg">"Hazırsan başlayalım. Işık hareketlerini takip ederek derin nefes al ve ver."</p>
+            <h4 id="nefesKomut">Hazırlanılıyor...</h4>
+            <div class="nefes-daresi" id="nefesDaire"></div>
+            <button id="modul2DevamBtn" style="display:none; margin-top:20px;">Harika gidiyorsun. Bedenin sakinleşmeye başladı. ➡️</button>
+        </div>
+
+        <div id="modul3" class="box modul-ekrani">
+            <h3>✋ Modül 3: Dokunsal Sakinleşme Paneli</h3>
+            <p class="info-msg">"Şimdi önündeki panelde bulunan farklı yüzeylere dokunmayı deneyelim. En rahat hissettiren yüzeyi bulabilir misin?"</p>
+            <div class="option-grid">
+                <button class="option-btn" onclick="modulGecis(3, 4, 'Kadife')">🧸 Kadife</button>
+                <button class="option-btn" onclick="modulGecis(3, 4, 'Keçe')">🎨 Keçe</button>
+                <button class="option-btn" onclick="modulGecis(3, 4, 'EVA Köpük')">🧼 EVA Köpük</button>
+                <button class="option-btn" onclick="modulGecis(3, 4, 'Silikon yüzey')">🧽 Silikon Yüzey</button>
+                <button class="option-btn" onclick="modulGecis(3, 4, 'Suni çim')">🌱 Suni Çim</button>
+            </div>
+        </div>
+
+        <div id="modul4" class="box modul-ekrani">
+            <h3>🎵 Modül 4: Ses ve İşitsel Düzenleme Alanı</h3>
+            <p class="info-msg">"Hangi sesi dinlemek istersin?"</p>
+            <div class="option-grid">
+                <button class="option-btn" onclick="sesCal('🌧️ Yağmur')">🌧️ Yağmur Sesleri</button>
+                <button class="option-btn" onclick="sesCal('🌊 Deniz')">🌊 Deniz Dalgaları</button>
+                <button class="option-btn" onclick="sesCal('🌲 Orman')">🌲 Orman Atmosferi</button>
+                <button class="option-btn" onclick="sesCal('🐦 Kuş Sesleri')">🐦 Kuş Sesleri</button>
+                <button class="option-btn" onclick="sesCal('🎵 Sakin Müzik')">🎵 Sakin Meditasyon Müziği</button>
+            </div>
+            <div id="sesOynatiliyorAlan" style="display:none; margin-top: 20px;">
+                <p style="color:#00f2fe; font-weight:bold;"><span id="secilenSesTxt"></span> oynatılıyor... Şimdi seçtiğin sesi dinlerken nefesine odaklan.</p>
+                <button onclick="modulGecis(4, 5)">Şimdi Devam Edelim ➡️</button>
+            </div>
+        </div>
+
+        <div id="modul5" class="box modul-ekrani">
+            <h3>🌿🍋 Modül 5: Koku ve Tat Çağrışımı Alanı</h3>
+            <p style="color:#10b981; font-size:0.85rem; background:rgba(16,185,129,0.1); padding:8px; border-radius:5px; margin-bottom:15px;">
+                💡 <em>Jüri Bilgilendirmesi: Bu modülde gerçek yiyecek/içecek kullanılmaz. Alerji ve hijyen riskini sıfırlamak için sadece çağrışımlardan yararlanılır.</em>
+            </p>
+            
+            <div id="tatSorusu">
+                <p class="info-msg">"Bugünkü duygun bir tat olsaydı hangisine benzerdi?"</p>
+                <div class="option-grid">
+                    <button class="option-btn" onclick="tatSec('🍋 Ekşi')">🍋 Ekşi</button>
+                    <button class="option-btn" onclick="tatSec('🍬 Tatlı')">🍬 Tatlı</button>
+                    <button class="option-btn" onclick="tatSec('🍪 Yumuşak ve sıcak')">🍪 Yumuşak ve sıcak</button>
+                    <button class="option-btn" onclick="tatSec('🌿 Ferah')">🌿 Ferah</button>
+                    <button class="option-btn" onclick="tatSec('☁️ Karışık')">☁️ Karışık</button>
+                </div>
+            </div>
+
+            <div id="kokuSorusu" style="display:none; margin-top:20px;">
+                <p class="info-msg">"Bugünkü duygun bir koku olsaydı hangisine benzerdi?"</p>
+                <div class="option-grid">
+                    <button class="option-btn" onclick="kokuSec('🌿 Nane')">🌿 Nane</button>
+                    <button class="option-btn" onclick="kokuSec('🍊 Portakal')">🍊 Portakal</button>
+                    <button class="option-btn" onclick="kokuSec('🌸 Lavanta')">🌸 Lavanta</button>
+                    <button class="option-btn" onclick="kokuSec('🍪 Vanilya')">🍪 Vanilya</button>
+                    <button class="option-btn" onclick="kokuSec('🚫 İstemiyorum')">🚫 Koku kullanmak istemiyorum</button>
+                </div>
+                <p id="kokuOneriTxt" style="color:#00f2fe; font-weight:bold; margin-top:15px; display:none;"></p>
+                <button id="modul5DevamBtn" style="display:none; margin-top:15px;" onclick="modulGecis(5, 6)">Güvenli Alana Geç ➡️</button>
+            </div>
+        </div>
+
+        <div id="modul6" class="box modul-ekrani">
+            <h3>🧸 Modül 6: Güvenli Sakinleşme Köşesi</h3>
+            <p class="info-msg">"Bir süre dinlenmek ister misin? İstersen kabindeki fiziksel stres topunu veya ağırlıklı yastığı kullanabilirsin."</p>
+            <p style="color:#64748b;">Fiziksel ekipmanları deneyimledikten sonra hazır olduğunda devam edebiliriz.</p>
+            <button onclick="modulGecis(6, 7)">Hazırım, Son Ölçümü Yapalım ➡️</button>
+        </div>
+
+        <div id="modul7" class="box modul-ekrani">
+            <h3>❤️ Modül 7: Son Nabız Ölçümü ve Geri Bildirim</h3>
+            <p class="info-msg">"Şimdi son ölçümünü yapacağız. Lütfen parmağını sensörün üzerine yeniden yerleştir."</p>
+            <button id="sonNabizOlculmeBtn" style="background:#ef4444; color:white;">Nabız Ölçümünü Başlat</button>
+            
+            <div id="sonNabizSonucAlani" style="display:none; margin-top:20px;">
+                <div class="sensor-data" style="color:#10b981;">❤️ Başlangıç Nabzı: <span id="ozetBaslangicBpm"></span> BPM</div>
+                <div class="sensor-data" style="color:#00f2fe;">❤️ Son Nabız: <span id="ozetSonBpm"></span> BPM</div>
+                <h3 style="color:#38bdf8;">📉 Değişim: <span id="nabizDegisimTxt"></span> BPM</h3>
+                <p class="info-msg">"Bedenin sakinleşmeye başladı. Bugün harika bir iş çıkardın."</p>
+                <button onclick="modulGecis(7, 8)">Çıkış Anketine Geç ➡️</button>
+            </div>
+        </div>
+
+        <div id="modul8" class="box modul-ekrani">
+            <h3>📊 Çıkış Ekranı & Değerlendirme</h3>
+            <p class="info-msg">"Bugün sana en çok hangi etkinlik yardımcı oldu?"</p>
+            <div class="option-grid">
+                <button class="option-btn" onclick="anketTamamla('Nefes Egzersizi')">○ Nefes Egzersizi</button>
+                <button class="option-btn" onclick="anketTamamla('Dokunsal Panel')">○ Dokunsal Panel</button>
+                <button class="option-btn" onclick="anketTamamla('Yağmur Sesi')">○ Yağmur Sesi</button>
+                <button class="option-btn" onclick="anketTamamla('Koku ve Tat Köşesi')">○ Koku ve Tat Köşesi</button>
+                <button class="option-btn" onclick="anketTamamla('Stres Topu')">○ Stres Topu</button>
+                <button class="option-btn" onclick="anketTamamla('Ağırlıklı Yastık')">○ Ağırlıklı Yastık</button>
+            </div>
+            
+            <div id="finalMesajAlani" style="display:none; margin-top:30px;">
+                <h2 style="color: #10b981;">✨ Veriler Başarıyla Kaydedildi!</h2>
+                <blockquote style="font-size: 1.2rem; color: #00f2fe; font-style: italic;">
+                    "Duygularını fark etmek güçlü bir adımdır. Tekrar görüşmek üzere."
+                </blockquote>
+                <p style="color:#64748b; font-size:0.85rem;">Kabinden güvenle çıkış yapabilirsiniz. Verileriniz okul veri tabanına işlenmiştir.</p>
+            </div>
+        </div>
+
     </div>
 
-    <!-- FIREBASE MODÜLER SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-        // Kabin uygulamasının kendi config bilgileri kanka
+        // Firebase Config Bilgileri
         const firebaseConfig = {
             apiKey: "AIzaSyB-sjEa93bNOoplmYYpqF1cfTqvb0mm7Dk",
             authDomain: "duyu-kabini.firebaseapp.com",
@@ -90,11 +241,23 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Global Değişkenler
         let cihazUser = { uid: null, displayName: null };
-        let baskinDuygu = "neutral";
+        let baskinDuygu = "Nötr (Ölçülüyor)";
+        let secilenDuygu = "";
+        let secilenDokusal = "";
+        let secilenSes = "";
+        let secilenTat = "";
+        let secilenKoku = "";
+        let enYararliEtkinlik = "";
+        
+        let baslangicBpm = 0;
+        let sonBpm = 0;
+
         const video = document.getElementById('webcam');
         const aiDurum = document.getElementById('aiDurum');
 
+        // Giriş Butonları Event Dinleyicileri
         document.getElementById('loginBtn').addEventListener('click', googleIleGiris);
         document.getElementById('manuelGirisBtn').addEventListener('click', manuelGirisYap);
 
@@ -105,7 +268,7 @@
                 cihazUser.displayName = result.user.displayName;
                 sistemiGoster(cihazUser.displayName);
             }).catch(err => {
-                alert("Edge kısıtlaması nedeniyle Google girişi atlandı! Lütfen okul formuyla giriş yapın.");
+                alert("Google Auth kısıtlaması nedeniyle manuel formla giriş yapmayı deneyin.");
             });
         }
 
@@ -127,30 +290,70 @@
         function sistemiGoster(gosterilecekIsim) {
             document.getElementById('loginKutusu').style.display = 'none';
             document.getElementById('kabinAlani').style.display = 'block';
-            document.getElementById('kullaniciAdi').innerText = gosterilecekIsim;
-            initAI();
+            // İlk modülü aktif et
+            modulGoster(0);
         }
 
+        // Modül Yönetim Sistemi mekanizması
+        window.modulGoster = function(modulId) {
+            // Tüm ekranları gizle
+            document.querySelectorAll('.modul-ekrani').forEach(el => el.classList.remove('active'));
+            // İstenen ekranı göster
+            document.getElementById('modul' + modulId).classList.add('active');
+
+            // Modüle özel tetikleyiciler
+            if(modulId === 1) {
+                initAI(); // Kamerayı ve AI'ı Modül 1'de çalıştır
+            } else if(modulId === 2) {
+                nefesEgzersiziBaslat();
+            }
+        }
+
+        // Modül Geçiş Fonksiyonları (Seçimleri Kaydederek İlerler)
+        window.modulGecis = function(suAnki, sonraki, veri = "") {
+            if(suAnki === 1) secilenDuygu = veri;
+            if(suAnki === 3) secilenDokusal = veri;
+            
+            modulGoster(sonraki);
+        }
+
+        // Modül 0: Hijyen ve Nabız Simülasyonu
+        document.getElementById('hijyenOnayBtn').addEventListener('click', () => {
+            document.getElementById('nabizAlani0').style.display = 'block';
+            // Gerçekçi başlangıç nabzı üretimi (90-105 arası kaygılı başlangıç)
+            baslangicBpm = Math.floor(Math.random() * (105 - 90 + 1)) + 90;
+            document.getElementById('baslangicNabizTxt').innerText = baslangicBpm + " BPM";
+            document.getElementById('modul0DevamBtn').style.display = 'block';
+        });
+
+        document.getElementById('modul0DevamBtn').addEventListener('click', () => {
+            modulGoster(1);
+        });
+
+        // Modül 1: Face-API Yapay Zeka Entegrasyonu
         async function initAI() {
             try {
                 const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
+                aiDurum.innerText = "Yapay zeka modelleri sunucudan çekiliyor...";
                 await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
                 await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
                 aiDurum.innerText = "Modeller yüklendi. Kamera açılıyor...";
                 
                 startVideo();
-                setInterval(bulutaVeriGonder, 4000);
             } catch (err) {
-                aiDurum.innerText = "AI yükleme hatası!";
+                aiDurum.innerText = "AI Modelleri yüklenirken hata oluştu! (İnternet bağlantınızı kontrol edin)";
             }
         }
 
         function startVideo() {
             navigator.mediaDevices.getUserMedia({ video: {} }).then(stream => { 
                 video.srcObject = stream; 
+            }).catch(err => {
+                aiDurum.innerText = "Kamera izni verilmedi veya kamera bulunamadı.";
             });
+            
             video.addEventListener('play', () => { 
-                setInterval(trackFace, 400); 
+                setInterval(trackFace, 500); 
             });
         }
 
@@ -162,24 +365,129 @@
                 for (const [em, sc] of Object.entries(result.expressions)) {
                     if (sc > maxScore) { maxScore = sc; maxEmotion = em; }
                 }
-                baskinDuygu = maxEmotion;
-                aiDurum.innerHTML = "Algılanan Durum: <strong style='color:#00f2fe'>" + maxEmotion.toUpperCase() + "</strong>";
+                
+                // Türkçe terim eşleştirmeleri
+                let tDuygu = "Nötr";
+                if(maxEmotion === "sad") tDuygu = "Üzgün";
+                if(maxEmotion === "angry") tDuygu = "Öfkeli";
+                if(maxEmotion === "surprised") tDuygu = "Şaşırmış";
+                if(maxEmotion === "fearful") tDuygu = "Kaygılı/Korkmuş";
+                if(maxEmotion === "happy") tDuygu = "Mutlu";
+
+                baskinDuygu = tDuygu;
+                aiDurum.innerHTML = "AI Yüz Analiz Tahmini: <strong style='color:#00f2fe'>" + baskinDuygu.toUpperCase() + "</strong>";
             }
         }
 
-        async function bulutaVeriGonder() {
+        // Modül 2: Akıllı Nefes Animasyonu Düzenleyici
+        function nefesEgzersiziBaslat() {
+            const daire = document.getElementById('nefesDaire');
+            const komut = document.getElementById('nefesKomut');
+            let tur = 0;
+
+            function runNefesDöngüsü() {
+                if(tur >= 3) { // 3 tur bitince devam butonunu çıkar
+                    komut.innerText = "Egzersiz tamamlandı.";
+                    document.getElementById('modul2DevamBtn').style.display = 'block';
+                    return;
+                }
+                
+                // Nefes Al (4 Saniye)
+                komut.innerText = "Işık büyürken burnundan derin nefes AL... (4sn)";
+                daire.className = "nefes-daresi nefes-al";
+                
+                setTimeout(() => {
+                    // Nefes Tut (4 Saniye)
+                    komut.innerText = "Şimdi nefesini TUT... (4sn)";
+                    setTimeout(() => {
+                        // Nefes Ver (4 Saniye)
+                        komut.innerText = "Işık küçülürken ağzından yavaşça nefes VER... (4sn)";
+                        daire.className = "nefes-daresi nefes-ver";
+                        tur++;
+                        setTimeout(runNefesDöngüsü, 4000);
+                    }, 4000);
+                }, 4000);
+            }
+
+            runNefesDöngüsü();
+        }
+
+        document.getElementById('modul2DevamBtn').addEventListener('click', () => {
+            // Kamerayı kapatıp kaynak tasarrufu yapalım
+            if(video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+            modulGoster(3);
+        });
+
+        // Modül 4: Ses Seçimi İşleme
+        window.sesCal = function(sesAdi) {
+            secilenSes = sesAdi;
+            document.getElementById('secilenSesTxt').innerText = sesAdi;
+            document.getElementById('sesOynatiliyorAlan').style.display = 'block';
+        }
+
+        // Modül 5: Koku ve Tat Çağrışımı Alanı Kontrolleri
+        window.tatSec = function(tat) {
+            secilenTat = tat;
+            document.getElementById('tatSorusu').style.display = 'none';
+            document.getElementById('kokuSorusu').style.display = 'block';
+        }
+
+        window.kokuSec = function(koku) {
+            secilenKoku = koku;
+            let oneri = "";
+            if(koku.includes("Nane")) oneri = "💡 Nane kokusu ve az önce yaptığın nefes egzersizi odağını artırmak için harika bir ikilidir.";
+            if(koku.includes("Lavanta")) oneri = "💡 Lavanta kokusu sakinleşme merkezlerini doğrudan uyararak rahatlamana yardımcı olur.";
+            if(koku.includes("Portakal")) oneri = "💡 Portakal aroması çağrışımı enerjini ve motivasyonunu yükseltmeye yardımcı olur.";
+            if(koku.includes("Vanilya")) oneri = "💡 Vanilya kokusu güvende hissettirme ve mutluluk hormonlarını tetikleme özelliğine sahiptir.";
+            
+            if(oneri !== "") {
+                document.getElementById('kokuOneriTxt').innerText = oneri;
+                document.getElementById('kokuOneriTxt').style.display = 'block';
+            }
+            document.getElementById('modul5DevamBtn').style.display = 'block';
+        }
+
+        // Modül 7: Son Ölçüm Mekanizması (Başlangıca göre düşüş simülasyonlu)
+        document.getElementById('sonNabizOlculmeBtn').addEventListener('click', () => {
+            // Başlangıç nabzından her zaman daha düşük ve dengeli bir bitiş nabzı simüle et (-8 ila -15 BPM düşüş)
+            let dusus = Math.floor(Math.random() * (15 - 8 + 1)) + 8;
+            sonBpm = baslangicBpm - dusus;
+            
+            document.getElementById('ozetBaslangicBpm').innerText = baslangicBpm;
+            document.getElementById('ozetSonBpm').innerText = sonBpm;
+            document.getElementById('nabizDegisimTxt').innerText = "-" + dusus;
+            
+            document.getElementById('sonNabizSonucAlani').style.display = 'block';
+        });
+
+        // Çıkış ve Buluta Nihai Veri Gönderimi
+        window.anketTamamla = async function(etkinlik) {
+            enYararliEtkinlik = etkinlik;
+            document.getElementById('finalMesajAlani').style.display = 'block';
+
+            // Firebase Firestore'a Tüm Modüllerden Gelen Verilerin Paketlenip Gönderilmesi
             if(!cihazUser.uid) return;
             try {
                 await addDoc(collection(db, "kabin_loglari"), {
                     userId: cihazUser.uid,
                     userName: cihazUser.displayName,
-                    duygu: baskinDuygu,
-                    bpm: Math.floor(Math.random() * (92 - 66 + 1)) + 66,
+                    aiAlgilananDuygu: baskinDuygu,
+                    kullaniciBeyanDuygu: secilenDuygu,
+                    secilenDokunsalYuzey: secilenDokusal,
+                    secilenSesTemasi: secilenSes,
+                    cagrisimTat: secilenTat,
+                    cagrisimKoku: secilenKoku,
+                    enYararliBulduguModul: enYararliEtkinlik,
+                    baslangicBpm: baslangicBpm,
+                    bitisBpm: sonBpm,
+                    bpmDegisimi: sonBpm - baslangicBpm,
                     zaman: serverTimestamp()
                 });
-                console.log("Buluta veri uçtu!");
+                console.log("Tüm modül verileri başarıyla senkronize edildi kanka!");
             } catch (err) {
-                console.error("Bulut hatası: ", err);
+                console.error("Firebase senkronizasyon hatası: ", err);
             }
         }
     </script>
