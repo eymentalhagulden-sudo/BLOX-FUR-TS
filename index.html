@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DuyuKabini-AI Akıllı Kabin Sistemi</title>
     
-
     <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
 
     <style>
@@ -122,7 +121,6 @@
 </head>
 <body>
 
-    <!-- ================= GİRİŞ PORTALI ================= -->
     <div id="loginKutusu" class="box active">
         <h2>🧠 DuyuKabini-AI Akıllı Kabin</h2>
         <p style="color: #64748b; font-size:0.9rem;">Analizin başlaması için giriş yapın ve kabin temanızı seçin.</p>
@@ -158,10 +156,8 @@
         <button id="manuelGirisBtn" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: white; margin-top: 10px;">🔐 Bilgilerle Kabine Giriş Yap</button>
     </div>
 
-    <!-- ================= ANA KABİN ALANI ================= -->
     <div id="kabinAlani" style="display: none;">
         
-        <!-- MODÜL 0: HİJYEN VE BAŞLANGIÇ NABZI -->
         <div id="modul0" class="box modul-ekrani active">
             <h3>🧴 Modül 0: Hijyen Kontrolü & Başlangıç Nabız Ölçümü</h3>
             <p class="info-msg">"Merhaba. DuyuDenge-AI'ye hoş geldin. Bugün duygularını birlikte keşfedeceğiz."</p>
@@ -175,7 +171,6 @@
             </div>
         </div>
 
-        <!-- MODÜL 1: AI DUYGU FARK ETME -->
         <div id="modul1" class="box modul-ekrani">
             <h3>🧠 Modül 1: AI Duygu Fark Etme ve İfade Alanı</h3>
             <p class="info-msg" id="modul1GirisMetni">"Kameraya birkaç saniye bakabilir misin?"</p>
@@ -207,7 +202,6 @@
             </div>
         </div>
 
-        <!-- MODÜL 2: NEFES VE IŞIK -->
         <div id="modul2" class="box modul-ekrani">
             <h3>🌬️ Modül 2: Nefes ve Işık Alanı</h3>
             <p class="info-msg">"Önce nefesimizi düzenlemeyi deneyelim. Hazırsan başlayabiliriz."</p>
@@ -216,7 +210,6 @@
             <button id="modul2DevamBtn" style="display:none; margin-top:20px;">Harika gidiyorsun. Bedenin biraz daha sakinleşiyor olabilir. ➡️</button>
         </div>
 
-        <!-- MODÜL 3: DOKUNSAL SAKİNLEŞME -->
         <div id="modul3" class="box modul-ekrani">
             <h3>✋ Modül 3: Dokunsal Sakinleşme Paneli</h3>
             <p class="info-msg">"Şimdi farklı yüzeyleri keşfedelim. Dokunurken nefesine odaklanmayı unutma."</p>
@@ -234,7 +227,6 @@
             </div>
         </div>
 
-        <!-- MODÜL 4: SES VE İŞİTSEL DÜZENLEME -->
         <div id="modul4" class="box modul-ekrani">
             <h3>🎵 Modül 4: Ses ve İşitsel Düzenleme Alanı</h3>
             <p class="info-msg">"Şimdi seni rahatlatabilecek bir ses seçebilirsin."</p>
@@ -252,32 +244,33 @@
             </div>
         </div>
 
-        <!-- MODÜL 5: KOKU VE TAT ÇAĞRIŞIMI -->
         <div id="modul5" class="box modul-ekrani">
             <h3>🌿🍋 Modül 5: Koku ve Tat Çağrışımı Alanı</h3>
-            <p class="info-msg">"Duygular bazen tatlar ve kokularla da ilişkilendirilebilir."</p>
+            <p class="info-msg">"Duygular bazen tatlar ve kokularla da ilişkilendirilebilir. Duygusal farkındalığımızı artırmak için bu çağrışımlardan yararlanabiliriz."</p>
             
             <div id="tatSorusu">
-                <p class="info-msg">"Bugünkü duygun bir tat olsaydı hangisine benzerdi?"</p>
+                <p class="info-msg" style="color: var(--primary-color); font-weight: bold;">"Bugünkü duygun bir tat olsaydı hangisine benzerdi? Seçeneklerin altındaki anlamları birlikte düşünelim."</p>
                 <div class="option-grid" id="tatGrid">
-                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Ekşi')">🍋 Ekşi</button>
-                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Tatlı')">🍬 Tatlı</button>
-                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Ferah')">🌿 Ferah</button>
-                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Sıcak ve Yumuşak')">🍪 Sıcak ve Yumuşak</button>
-                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Karışık')">☁️ Karışık</button>
+                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Ekşi')">🍋 Ekşi (Yoğun & Keskin)</button>
+                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Tatlı')">🍬 Tatlı (Hafif & Dingin)</button>
+                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Ferah')">🌿 Ferah (Açık & Rahat)</button>
+                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Sıcak ve Yumuşak')">🍪 Sıcak ve Yumuşak (Güvenli & Sakin)</button>
+                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Acı')">🌶️ Acı (Yorucu & Baskın)</button>
+                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Karışık')">☁️ Karışık / Belirsiz</button>
                 </div>
                 
                 <div class="ai-feedback-box" id="feedbackTat" style="margin-top: 15px;">
-                    <p id="feedbackTatTxt" style="color:var(--primary-color); font-weight:bold;"></p>
-                    <button onclick="tatAşamasınıKapat()">Koku Çağrışımına Geç</button>
+                    <p id="feedbackTatTxt" style="color:var(--primary-color); font-weight:bold; line-height: 1.5;"></p>
+                    <button onclick="tatAşamasınıKapat()" style="background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); margin-top: 10px;">Anlamı Keşfettim, Koku Çağrışımına Geç ➡️</button>
                 </div>
             </div>
 
             <div id="kokuSorusu" style="display:none; margin-top:20px;">
                 <p class="info-msg">"Bugünkü duygun bir koku olsaydı hangisine benzerdi?"</p>
                 <div class="option-grid" id="kokuGrid">
-                    <button class="option-btn" onclick="secimYap(this, 'koku', 'Nane')">🌿 Nane</button>
-                    <button class="option-btn" onclick="secimYap(this, 'koku', 'Portakal')">🍊 Portakal</button>
+                    <button class="option-btn" onclick="secimYap(this, 'koku', 'Nane')">🌿 Nane (Zihinsel Canlanma)</button>
+                    <button class="option-btn" onclick="secimYap(this, 'koku', 'Portakal')">🍊 Portakal (Enerji & Motif)</button>
+                    <button class="option-btn" onclick="secimYap(this, 'koku', 'Lavanta')">🪻 Lavanta (Gevşeme & Huzur)</button>
                 </div>
                 
                 <div class="ai-feedback-box" id="feedbackKoku">
@@ -287,7 +280,6 @@
             </div>
         </div>
 
-        <!-- MODÜL 6: GÜVENLİ SAKİNLEŞME KÖŞESİ -->
         <div id="modul6" class="box modul-ekrani">
             <h3>🧸 Modül 6: Güvenli Sakinleşme Köşesi</h3>
             <p class="info-msg">"Bir süre dinlenmek ister misin? İstersen kabindeki fiziksel stres topunu veya ağırlıklı yastığı kullanabilirsin."</p>
@@ -295,7 +287,6 @@
             <button onclick="modulGoster(7)">Hazırım, Son Analizleri Yapalım ➡️</button>
         </div>
 
-        <!-- MODÜL 7: SON NABIZ VE AI KONTROLÜ -->
         <div id="modul7" class="box modul-ekrani">
             <h3>❤️ Modül 7: Son Durum Analizi ve Geri Bildirim</h3>
             <p class="info-msg">"Bedenindeki değişimi birlikte gözlemleyelim. Lütfen parmağını sensörün üzerine yeniden yerleştir."</p>
@@ -321,7 +312,6 @@
             </div>
         </div>
 
-        <!-- REHBERLİK SORUSU VE RAPORLAMA ALANI -->
         <div id="modul8" class="box modul-ekrani">
             <h3>📊 Çıkış Ekranı & Değerlendirme</h3>
             <p class="info-msg">"Sesler bazen zihnimizi dinlendirmeye yardımcı olabilir. Bugün sana en çok hangi etkinlik yardımcı oldu?"</p>
@@ -332,7 +322,6 @@
                 <button class="option-btn" onclick="secimYap(this, 'anket', 'Koku ve Tat Köşesi')">○ Koku ve Tat Köşesi</button>
             </div>
 
-            <!-- OKUL YETKİLİLERİ PAYLAŞIM İZNİ -->
             <div id="izinOnayKutusuAlani" style="display:none; margin-top:20px;">
                 <div class="izin-alani">
                     <input type="checkbox" id="okulIzniCheckbox" checked>
@@ -352,7 +341,6 @@
 
     </div>
 
-    <!-- FIREBASE MODÜLER SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
@@ -524,11 +512,19 @@
             if(kategori === 'tat') {
                 secilenTat = deger;
                 let tatMetni = "";
-                if(deger === 'Ekşi') tatMetni = "Bazı güçlü duygular ekşi tatları çağrıştırabilir.";
-                if(deger === 'Tatlı') tatMetni = "Tatlı tatlar bazen huzur ve mutluluğu hatırlatabilir.";
-                if(deger === 'Ferah') tatMetni = "Ferah tatlar rahatlama hissi oluşturabilir.";
-                if(deger === 'Sıcak ve Yumuşak') tatMetni = "Bu seçim güven ve rahatlık hissini çağrıştırabilir.";
-                if(deger === 'Karışık') tatMetni = "Bazen duygularımızı tek bir kelimeyle anlatmak zor olabilir.";
+                if(deger === 'Ekşi') {
+                    tatMetni = "🍋 Keskin ve ekşi tatlar genellikle ani gelişen, dikkatimizi hızla kendi üzerine çeken yoğun duyguları çağrıştırabilir. Bu hissi fark etmek, onu yönetmenin ilk adımıdır.";
+                } else if(deger === 'Tatlı') {
+                    tatMetni = "🍬 Tatlı tatlar bedenimizde ve zihnimizde genellikle bir hafifleme, dinginlik ve güvende olma arzusuyla ilişkilendirilir. Şu an bu sakinliği arıyor veya hissediyor olabilirsin.";
+                } else if(deger === 'Ferah') {
+                    tatMetni = "🌿 Ferah tatlar, zihindeki düşünce yoğunluğunun azaldığı, nefes almanın kolaylaştığı açık alan hissini uyandırır. Bedenindeki bu rahatlama eğilimini birlikte gözlemleyelim.";
+                } else if(deger === 'Sıcak ve Yumuşak') {
+                    tatMetni = "🍪 Ev sıcaklığındaki yumuşak tatlar, aidiyet ve şefkat ihtiyacını sembolize edebilir. Kendine dinlenmek için zaman tanımanın sana iyi gelebileceğini düşündürür.";
+                } else if(deger === 'Acı') {
+                    tatMetni = "🌶️ Acı ve baskın tatlar, bazen içimizde biriken yorgunluğu, stresi veya bizi zorlayan durumları temsil eder. Bu yükü fark edip burada bizimle paylaştığın için teşekkür ederim.";
+                } else if(deger === 'Karışık') {
+                    tatMetni = "☁️ Duyguları tek bir kalıba sığdırmak her zaman kolay olmayabilir; bazen hissettiklerimiz tıpkı karmaşık bir lezzet gibi iç içe geçer. Kendine zaman tanımak bu karmaşayı sakinleştirecektir.";
+                }
                 
                 document.getElementById('feedbackTatTxt').innerText = tatMetni;
                 document.getElementById('feedbackTat').style.display = 'block';
@@ -537,8 +533,13 @@
             if(kategori === 'koku') {
                 secilenKoku = deger;
                 let kokuMetni = "";
-                if(deger === 'Nane') kokuMetni = "Nane birçok kişide ferahlık hissi uyandırabilir.";
-                if(deger === 'Portakal') kokuMetni = "Portakal kokusu enerjini tazelemeye ve duyularını canlandırmaya yardımcı olabilir.";
+                if(deger === 'Nane') {
+                    kokuMetni = "🌿 Nane kokusu zihni berraklaştırmaya ve dikkatimizi dağıtan düşünceleri bulunduğumuz ana toplamaya yardımcı olabilir.";
+                } else if(deger === 'Portakal') {
+                    kokuMetni = "🍊 Portakal kokusu, doğası gereği enerjiyi tazelemeyi ve içsel motivasyonu nazikçe desteklemeyi çağrıştırır.";
+                } else if(deger === 'Lavanta') {
+                    kokuMetni = "🪻 Lavanta kokusunun sakinleştirici ve kasları gevşetici etkisi, bedenimizin dinlenme moduna geçmesine katkı sağlayabilir.";
+                }
 
                 document.getElementById('feedbackKokuTxt').innerText = kokuMetni;
                 document.getElementById('feedbackKoku').style.display = 'block';
@@ -555,7 +556,7 @@
             document.getElementById('kokuSorusu').style.display = 'block';
         }
 
-        // Modül 0
+        // Modül 0 Tetikleyicileri
         document.getElementById('hijyenOnayBtn').addEventListener('click', () => {
             document.getElementById('nabizAlani0').style.display = 'block';
             baslangicBpm = Math.floor(Math.random() * (105 - 90 + 1)) + 90;
@@ -616,7 +617,7 @@
                 if(maxEmotion === "sad") tDuygu = "Üzgün";
                 if(maxEmotion === "angry") tDuygu = "Öfkeli";
                 if(maxEmotion === "happy") tDuygu = "Mutlu";
-                if(maxEmotion === "neutral") tDuygu = "Kaygılı"; // Rehberlik akışı gereği nötr/stres durumu kaygılı eğilimli alınabilir.
+                if(maxEmotion === "neutral") tDuygu = "Kaygılı"; 
                 baskinDuygu = tDuygu;
             }
         }
@@ -639,7 +640,7 @@
                 setTimeout(() => {
                     nefesKomut.innerText = "Nefesini kısa bir süre tut.";
                     setTimeout(() => {
-                        nefesKomut.innerText = "Şnow yavaşça nefes ver. Nefesine odaklan, acele etmene gerek yok.";
+                        nefesKomut.innerText = "Şimdi yavaşça nefes ver. Nefesine odaklan, acele etmene gerek yok.";
                         nefesDaire.style.transform = "scale(1.0)";
                         setTimeout(() => {
                             tur++;
@@ -662,7 +663,6 @@
             document.getElementById('sonKameraKutusu').style.display = 'block';
             document.getElementById('aiSonDurum').style.display = 'block';
 
-            // Kamera akışını ikinci video elementine de yönlendir
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
                 videoSon.srcObject = stream;
@@ -672,7 +672,6 @@
                 sonBpm = baslangicBpm - (Math.floor(Math.random() * (12 - 5 + 1)) + 5);
                 const degisim = sonBpm - baslangicBpm;
                 
-                // Başlangıçta kaygılı/üzgün tahmin edilen kullanıcının son durumu "Rahat/Mutlu" eğilimine geçer
                 sonBaskinDuygu = "Rahatlamış / Dengeli";
 
                 document.getElementById('ozetBaslangicBpm').innerText = baslangicBpm;
@@ -693,7 +692,7 @@
             }, 4000);
         });
 
-        // Veri Kaydetme
+        // Veri Kaydetme (Firestore)
         document.getElementById('finalGonderBtn').addEventListener('click', async () => {
             const buton = document.getElementById('finalGonderBtn');
             const okulIzni = document.getElementById('okulIzniCheckbox').checked;
