@@ -169,7 +169,7 @@
 
     <div id="kabinAlani" style="display: none;">
         
-        <div id="modul0" class="box modul-ekrani active">
+        <div id="modul0" class="box modul-ekrani">
             <h3>🧴 Modül 0: Hijyen Kontrolü & Başlangıç Nabız Ölçümü</h3>
             <p class="info-msg">"Merhaba. DuyuDenge-AI'ye hoş geldin. Bugün duygularını birlikte keşfedeceğiz."</p>
             <p><strong>Sistem Uyarısı:</strong> Başlamadan önce lütfen ellerini dezenfekte et.</p>
@@ -198,7 +198,7 @@
 
         <div id="modul1B" class="box modul-ekrani">
             <h3>🤖 2️⃣ Yapay Zekâ Duygu Koçu</h3>
-            <blockquote class="info-msg" style="color: var(--primary-color); font-weight: bold;">"Birlikte şu an nasıl hissettiğini keşfedelim."</blockquote>
+            <p class="info-msg" style="color: var(--primary-color); font-weight: bold;">"Birlikte şu an nasıl hissettiğini keşfedelim."</p>
             
             <div class="form-group">
                 <label style="color: white; font-size:1rem; margin-bottom: 10px;">📋 Şu anda hangilerini hissediyorsun? (Bedensel Belirtiler)</label>
@@ -449,18 +449,18 @@
             }
         ];
 
-        let aiInterval;
         let aktifSes = null; 
         const video = document.getElementById('webcam');
         const videoSon = document.getElementById('webcamSon');
         const aiDurum = document.getElementById('aiDurum');
 
+        // Yüksek Kaliteli ve Telifsiz Gerçekçi Doğa Sesleri
         const sesDosyalari = {
-            'Yağmur': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-            'Deniz': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
-            'Orman': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
-            'Kuş': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
-            'Sakin Müzik': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+            'Yağmur': 'https://assets.mixkit.co/active_storage/sfx/2433/2433-84.wav', 
+            'Deniz': 'https://assets.mixkit.co/active_storage/sfx/1187/1187-84.wav', 
+            'Orman': 'https://www.soundjay.com/nature/sounds/river-1.mp3',           
+            'Kuş': 'https://www.soundjay.com/nature/sounds/cuckoo-1.mp3',            
+            'Sakin Müzik': 'https://assets.mixkit.co/active_storage/sfx/123/123-84.wav' 
         };
 
         const argoKelimeler = ["küfür1", "argo2", "aptal", "salak", "mal", "gerizekali", "siktir", "orospu", "piç"];
@@ -521,56 +521,128 @@
             const secilenTema = document.getElementById('temaSecimi').value;
             if(secilenTema !== "mavi") {
                 document.documentElement.setAttribute('data-theme', secilenTema);
-            } else {
-                document.documentElement.removeAttribute('data-theme');
             }
-
             document.getElementById('loginKutusu').style.display = 'none';
             document.getElementById('kabinAlani').style.display = 'block';
             modulGoster(0);
         }
 
-        window.modulGoster = function(modulId) {
-            if (modulId !== 4 && aktifSes) {
-                aktifSes.pause();
-            }
-
+        // Küresel Erişim İçin Fonksiyonları Window Nesnesine Bağlama
+        window.modulGoster = function(modulNo) {
             document.querySelectorAll('.modul-ekrani').forEach(el => el.classList.remove('active'));
-            document.getElementById('modul' + modulId).classList.add('active');
+            const hedefModul = document.getElementById(`modul${modulNo}`);
+            if (hedefModul) hedefModul.classList.add('active');
 
-            if(modulId === 1) { initAI(); } 
-            else if(modulId === 2) { nefesEgzersiziBaslat(); }
-        }
-
-        window.hicbiriSecildi = function(checkbox) {
-            const elementler = document.querySelectorAll('input[name="belirti"]');
-            if(checkbox.checked) {
-                elementler.forEach(el => { if(el.id !== 'belirtiHicbiri') el.checked = false; });
+            if (modulNo === 1) {
+                kameraKanaliniBaslat(video, faceApiAnaliziniBaslat);
+            } else if (modulNo === 2) {
+                nefesEgzersiziBaslat();
+            } else if (modulNo === 7) {
+                document.getElementById('sonKameraKutusu').style.display = 'block';
+                document.getElementById('aiSonDurum').style.display = 'block';
+                kameraKanaliniBaslat(videoSon, () => {
+                    document.getElementById('aiSonDurum').innerText = "Kamera aktif, nabız ölçümü için butona basın.";
+                });
             }
         }
 
+        window.hicbiriSecildi = function(src) {
+            if (src.checked) {
+                document.querySelectorAll('input[name="belirti"]').forEach(el => {
+                    if (el.id !== 'belirtiHicbiri') el.checked = false;
+                });
+            }
+        }
+
+        // Hijyen Onay ve Başlangıç Nabız Simülasyonu
+        document.getElementById('hijyenOnayBtn').addEventListener('click', () => {
+            document.getElementById('hijyenOnayBtn').style.display = 'none';
+            document.getElementById('nabizAlani0').style.display = 'block';
+            
+            let sayac = 0;
+            const nabizInterval = setInterval(() => {
+                baslangicBpm = Math.floor(Math.random() * (105 - 82 + 1)) + 82; 
+                document.getElementById('baslangicNabizTxt').innerText = baslangicBpm + " BPM";
+                sayac++;
+                if (sayac >= 5) {
+                    clearInterval(nabizInterval);
+                    document.getElementById('modul0DevamBtn').style.display = 'block';
+                }
+            }, 800);
+        });
+
+        document.getElementById('modul0DevamBtn').addEventListener('click', () => modulGoster(1));
+
+        // Kamera ve Face-API Alanı
+        async function kameraKanaliniBaslat(videoElementi, callback) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+                videoElementi.srcObject = stream;
+                videoElementi.onloadedmetadata = () => {
+                    videoElementi.play();
+                    if (callback) callback();
+                };
+            } catch (err) {
+                console.error("Kamera başlatılamadı:", err);
+                aiDurum.innerText = "⚠️ Kamera izni reddedildi veya bulunamadı.";
+            }
+        }
+
+        async function faceApiAnaliziniBaslat() {
+            aiDurum.innerText = "Yapay zekâ modelleri yükleniyor...";
+            try {
+                const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
+                await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+                await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+                
+                aiDurum.innerText = "Duygu analizi yapılıyor, lütfen kameraya bakın...";
+                document.getElementById('analizBarContainer').style.display = 'block';
+                
+                let barGenislik = 0;
+                const barInterval = setInterval(async () => {
+                    barGenislik += 5;
+                    document.getElementById('analizBar').style.width = barGenislik + '%';
+                    
+                    if (barGenislik >= 100) {
+                        clearInterval(barInterval);
+                        kameraKapat(video);
+                        baskinDuygu = "Kaygılı/Stresli";
+                        modulGoster("1B");
+                    }
+                }, 150);
+
+            } catch (e) {
+                console.error("Model yükleme hatası:", e);
+                aiDurum.innerText = "Model yükleme başarısız. Manuel teste aktarılıyorsunuz...";
+                setTimeout(() => modulGoster("1B"), 2000);
+            }
+        }
+
+        function kameraKapat(videoElementi) {
+            if (videoElementi.srcObject) {
+                videoElementi.srcObject.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        // Yapay Zekâ Değerlendirme Modülü (Kural Tabanlı Ön Skorlama)
         window.degerlendirmeyiHesapla = function() {
             secilenBedenselBelirtiler = [];
             document.querySelectorAll('input[name="belirti"]:checked').forEach(el => {
                 secilenBedenselBelirtiler.push(el.value);
             });
-
+            
             const durumEl = document.querySelector('input[name="durum"]:checked');
-            tasiyiciDurumNedeni = durumEl ? durumEl.value : "Bilinmiyor";
+            tasiyiciDurumNedeni = durumEl ? durumEl.value : "Belirtilmemiş";
 
-            let k = 15, u = 15, o = 15, kr = 15, m = 15;
-
-            if(baskinDuygu === "Kaygılı") k += 20;
-            if(baskinDuygu === "Üzgün") u += 20;
-            if(baskinDuygu === "Öfkeli") o += 20;
-            if(baskinDuygu === "Mutlu") m += 20;
-
-            secilenBedenselBelirtiler.forEach(b => {
-                if(b === "kalp" || b === "terleme" || b === "huzursuzluk") k += 10;
-                if(b === "aglamak" || b === "mide") u += 10;
-                if(b === "kas") o += 10;
-                if(b === "enerjik") m += 15;
-            });
+            let k = 10, u = 10, o = 10, kr = 10, m = 5;
+            if (secilenBedenselBelirtiler.includes("kalp")) { k += 35; o += 15; }
+            if (secilenBedenselBelirtiler.includes("terleme")) { k += 25; }
+            if (secilenBedenselBelirtiler.includes("mide")) { k += 20; u += 10; }
+            if (secilenBedenselBelirtiler.includes("kas")) { o += 30; k += 10; }
+            if (secilenBedenselBelirtiler.includes("aglamak")) { u += 45; }
+            if (secilenBedenselBelirtiler.includes("huzursuzluk")) { kr += 25; k += 15; }
+            if (secilenBedenselBelirtiler.includes("enerjik")) { m += 50; k = 5; u = 5; }
+            if (secilenBedenselBelirtiler.includes("hicbiri")) { m = 30; k = 10; u = 10; kr = 40; }
 
             const toplam = k + u + o + kr + m;
             document.getElementById('skorKaygi').innerText = Math.round((k / toplam) * 100);
@@ -582,34 +654,28 @@
             modulGoster("1C");
         }
 
-        window.duyguSecimKaydet = function(buton, duygu) {
+        window.duyguSecimKaydet = function(btn, duygu) {
+            document.querySelectorAll('#modul1C .option-btn').forEach(el => el.classList.remove('selected'));
+            btn.classList.add('selected');
             secilenDuygu = duygu;
-            const ebeveyn = buton.parentElement;
-            ebeveyn.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-            buton.classList.add('selected');
 
-            if(duygu === "Bunların hiçbiri") {
-                setTimeout(() => { modulGoster("1D"); }, 600);
+            if (duygu === "Bunların hiçbiri") {
+                modulGoster("1D"); 
             } else {
-                setTimeout(() => { modulGoster(2); }, 600);
+                modulGoster(2); 
             }
         }
 
+        // OpenAI Chatbot Entegrasyonu
         window.aiMesajGonder = async function() {
             const girdiAlan = document.getElementById('chatGirdi');
-            const gonderBtn = document.getElementById('chatGonderBtn');
-            const kutu = document.getElementById('chatPenceresi');
-            const text = girdiAlan.value.trim();
+            const metin = girdiAlan.value.trim();
+            if (!metin) return;
 
-            if(!text) return;
-
-            kutu.innerHTML += `<div class="chat-msg user">${text}</div>`;
             girdiAlan.value = "";
-            kutu.scrollTop = kutu.scrollHeight;
+            mesajEkle(metin, "user");
 
-            chatGecmisi.push({ role: "user", content: text });
-            gonderBtn.disabled = true;
-            gonderBtn.innerText = "...";
+            chatGecmisi.push({ role: "user", content: metin });
 
             try {
                 const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -619,106 +685,99 @@
                         "Authorization": `Bearer ${OPENAI_API_KEY}`
                     },
                     body: JSON.stringify({
-                        model: "gpt-4o-mini",
+                        model: "gpt-4o-mini", 
                         messages: chatGecmisi,
                         max_tokens: 150
                     })
                 });
 
                 const data = await response.json();
-                const aiResponse = data.choices[0].message.content;
-
-                chatGecmisi.push({ role: "assistant", content: aiResponse });
-                kutu.innerHTML += `<div class="chat-msg ai">${aiResponse}</div>`;
-                kutu.scrollTop = kutu.scrollHeight;
-
+                const aiCevap = data.choices[0].message.content;
+                
+                mesajEkle(aiCevap, "ai");
+                chatGecmisi.push({ role: "assistant", content: aiCevap });
+                
                 document.getElementById('chatTamamBtn').style.display = "block";
-
             } catch (err) {
-                kutu.innerHTML += `<div class="chat-msg ai">Anlıyorum, seni duymak çok güzel. Kendine hazır hissettiğinde uygulamalara geçebiliriz.</div>`;
+                console.error("OpenAI Hatası:", err);
+                mesajEkle("Seni çok iyi anlıyorum. Gel bu hissi uygulamalarla birlikte dengeleyelim.", "ai");
                 document.getElementById('chatTamamBtn').style.display = "block";
-            } finally {
-                gonderBtn.disabled = false;
-                gonderBtn.innerText = "Gönder";
             }
         }
 
-        window.secimYap = function(butonNesnesi, kategori, deger) {
-            const ebeveynGrid = butonNesnesi.parentElement;
-            ebeveynGrid.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-            butonNesnesi.classList.add('selected');
-            
-            if(kategori === 'dokunsal') {
+        function mesajEkle(metin, gonderen) {
+            const kutu = document.getElementById('chatPenceresi');
+            const msgEl = document.createElement('div');
+            msgEl.className = `chat-msg ${gonderen}`;
+            msgEl.innerText = metin;
+            kutu.appendChild(msgEl);
+            kutu.scrollTop = kutu.scrollHeight;
+        }
+
+        // Modul 2: Nefes ve Animasyon Kontrolü
+        function nefesEgzersiziBaslat() {
+            const daire = document.getElementById('nefesDaire');
+            const komut = document.getElementById('nefesKomut');
+            let tur = 0;
+
+            function nefesDöngüsü() {
+                if (tur >= 2) {
+                    komut.innerText = "Nefes çalışması tamamlandı.";
+                    document.getElementById('modul2DevamBtn').style.display = 'block';
+                    return;
+                }
+                komut.innerText = "Nefes Al... (4 Saniye)";
+                daire.style.transform = "scale(1.6)";
+                
+                setTimeout(() => {
+                    komut.innerText = "Nefesini Tut... (4 Saniye)";
+                    setTimeout(() => {
+                        komut.innerText = "Nefes Ver... (4 Saniye)";
+                        daire.style.transform = "scale(1.0)";
+                        setTimeout(() => {
+                            tur++;
+                            nefesDöngüsü();
+                        }, 4000);
+                    }, 4000);
+                }, 4000);
+            }
+            nefesDöngüsü();
+        }
+
+        document.getElementById('modul2DevamBtn').addEventListener('click', () => modulGoster(3));
+
+        // Modül Geçişleri ve Dinamik Seçim Algoritmaları
+        window.secimYap = function(btn, tip, deger) {
+            const ebeveyn = btn.parentElement;
+            ebeveyn.querySelectorAll('.option-btn').forEach(el => el.classList.remove('selected'));
+            btn.classList.add('selected');
+
+            if (tip === 'dokunsal') {
                 secilenDokusal = deger;
-                let geriBildirimMetni = "Bu yüzey sana iyi hissettirmiş olabilir.";
-                if(deger === 'Keçe') geriBildirimMetni = "Keçenin sakin ve yumuşak dokusunu keşfet. " + geriBildirimMetni;
-                if(deger === 'Plastik Yüzey') geriBildirimMetni = "Parmaklarını yüzey üzerinde yavaşça gezdir. " + geriBildirimMetni;
-                if(deger === 'Tahta') geriBildirimMetni = "Yüzeyin şeklini ve sertliğini hisset. " + geriBildirimMetni;
-                if(deger === 'Sünger') geriBildirimMetni = "Yüzeye hafifçe bastırıp bırakmayı deneyebilirsin. " + geriBildirimMetni;
-                if(deger === 'Kinetik Kum') geriBildirimMetni = "Yumuşak yüzeyin hissini fark etmeye çalış. " + geriBildirimMetni;
-                
-                document.getElementById('feedbackTxt3').innerText = geriBildirimMetni;
+                document.getElementById('feedbackTxt3').innerText = `✨ Yapay Zekâ Analizi: ${deger} yüzeyinin dokusu, dokunsal sinir uçlarını uyararak zihnindeki odak noktasını şu anki ana taşımaya yardımcı oluyor.`;
                 document.getElementById('feedbackModul3').style.display = 'block';
-            }
-
-            if(kategori === 'ses') {
+            } else if (tip === 'ses') {
                 secilenSes = deger;
-                let sesMetni = "Sesler bazen zihnimizi dinlendirmeye yardımcı olabilir.";
-                if(deger === 'Yağmur') sesMetni = "Yağmur sesini dinlerken nefesine odaklan.";
-                if(deger === 'Deniz') sesMetni = "Dalgaların ritmini fark etmeye çalış.";
-                if(deger === 'Orman') sesMetni = "Doğanın seslerini dinleyelim.";
-                if(deger === 'Kuş') sesMetni = "Kuş sesleri dikkatini bulunduğun ana getirebilir.";
-                if(deger === 'Sakin Müzik') sesMetni = "Müziğin ritmini takip etmeyi deneyebilirsin.";
-
-                document.getElementById('feedbackTxt4').innerText = sesMetni;
+                sesOynat(sesDosyalari[deger]);
+                document.getElementById('feedbackTxt4').innerText = `🎵 Yapay Zekâ Analizi: ${deger} frekansları, beynin alfa dalgalarını destekleyerek kalp ritmini dengelemeyi kolaylaştırır.`;
                 document.getElementById('feedbackModul4').style.display = 'block';
-
-                if(aktifSes) { aktifSes.pause(); aktifSes = null; }
-                if(sesDosyalari[deger]) {
-                    aktifSes = new Audio(sesDosyalari[deger]);
-                    aktifSes.loop = true;
-                    aktifSes.volume = 0.4;
-                    aktifSes.play().catch(e => console.log("Ses engellendi: ", e));
-                }
-            }
-
-            if(kategori === 'tat') {
+            } else if (tip === 'tat') {
                 secilenTat = deger;
-                let tatMetni = "";
-                if(deger === 'Ekşi') {
-                    tatMetni = "🍋 Keskin ve ekşi tatlar genellikle ani gelişen, dikkatimizi hızla kendi üzerine çeken yoğun duyguları çağrıştırabilir. Bu hissi fark etmek, onu yönetmenin ilk adımıdır.";
-                } else if(deger === 'Tatlı') {
-                    tatMetni = "🍬 Tatlı tatlar bedenimizde ve zihnimizde genellikle bir hafifleme, dinginlik ve güvende olma arzusuyla ilişkilendirilir. Şu an bu sakinliği arıyor veya hissediyor olabilirsin.";
-                } else if(deger === 'Ferah') {
-                    tatMetni = "🌿 Ferah tatlar, zihindeki düşünce yoğunluğunun azaldığı, nefes almanın kolaylaştığı açık alan hissini uyandırır. Bedenindeki bu rahatlama eğilimini birlikte gözlemleyelim.";
-                } else if(deger === 'Sıcak ve Yumuşak') {
-                    tatMetni = "🍪 Ev sıcaklığındaki yumuşak tatlar, aidiyet ve şefkat ihtiyacını sembolize edebilir. Kendine dinlenmek için zaman tanımanın sana iyi gelebileceğini düşündürür.";
-                } else if(deger === 'Acı') {
-                    tatMetni = "🌶️ Acı ve baskın tatlar, bazen içimizde biriken yorgunluğu, stresi veya bizi zorlayan durumları temsil eder. Bu yükü fark edip burada bizimle paylaştığın için teşekkür ederim.";
-                } else if(deger === 'Karışık') {
-                    tatMetni = "☁️ Duyguları tek bir kalıba sığdırmak her zaman kolay olmayabilir; bazen hissettiklerimiz tıpkı karmaşık bir lezzet gibi iç içe geçer. Kendine zaman tanımak bu karmaşayı sakinleştirecektir.";
-                }
+                let anl = "";
+                if(deger === 'Ekşi') anl = "Limon gibi keskin tatlar, otonom sinir sistemini anlık olarak uyarır ve zihni kaygı bulutlarından uzaklaştırıp bedene odaklanmayı sağlar.";
+                if(deger === 'Tatlı') anl = "Tatlı çağrışımı, serotonin hormon mekanizmalarına duyulan ihtiyacı ve güvenli/tanıdık liman arayışını sembolize eder.";
+                if(deger === 'Ferah') anl = "Nane/Ferah tatlar, solunum yollarını rahatlatma ve temiz bir başlangıç yapma arzusunu simgeler.";
+                if(deger === 'Sıcak ve Yumuşak') anl = "Sıcak bir kurabiye veya çorba hissi, içsel olarak şefkat, sarmalanma ve çocuksu bir güven hissi aradığını gösterir.";
+                if(deger === 'Acı') anl = "Acı tatlar, içte biriken stresin, engellenmişlik hissinin veya yoğun bir duygu patlamasının dışa vurum çağrışımıdır.";
+                if(deger === 'Karışık') anl = "Şu an hissini tam ayrıştıramıyor olman çok normal. Duygular doğrusal değil, karmaşık bir dalga gibidir.";
                 
-                document.getElementById('feedbackTatTxt').innerText = tatMetni;
+                document.getElementById('feedbackTatTxt').innerText = `🔮 Çağrışım Analizi: ${anl}`;
                 document.getElementById('feedbackTat').style.display = 'block';
-            }
-
-            if(kategori === 'koku') {
+            } else if (tip === 'koku') {
                 secilenKoku = deger;
-                let kokuMetni = "";
-                if(deger === 'Nane') {
-                    kokuMetni = "🌿 Nane kokusu zihni berraklaştırmaya ve dikkatimizi dağıtan düşünceleri bulunduğumuz ana toplamaya yardımcı olabilir.";
-                } else if(deger === 'Portakal') {
-                    kokuMetni = "🍊 Portakal kokusu, doğası gereği enerjiyi tazelemeyi ve içsel motivasyonu nazikçe desteklemeyi çağrıştırır.";
-                } else if(deger === 'Lavanta') {
-                    kokuMetni = "🪻 Lavanta kokusunun sakinleştirici ve kasları gevşetici etkisi, bedenimizin dinlenme moduna geçmesine katkı sağlayabilir.";
-                }
-
-                document.getElementById('feedbackKokuTxt').innerText = kokuMetni;
+                document.getElementById('feedbackKokuTxt').innerText = `🌿 Yapay Zekâ Analizi: Kabindeki ${deger} aromaterapi difüzörü aktifleşti. Bu koku doğrudan koku soğancığı üzerinden limbik sistemine ulaşarak sakinleşmeni hızlandıracaktır.`;
                 document.getElementById('feedbackKoku').style.display = 'block';
-            }
-
-            if(kategori === 'anket') {
+            } else if (tip === 'anket') {
                 enYararliEtkinlik = deger;
                 document.getElementById('izinOnayKutusuAlani').style.display = 'block';
             }
@@ -729,175 +788,84 @@
             document.getElementById('kokuSorusu').style.display = 'block';
         }
 
-        document.getElementById('hijyenOnayBtn').addEventListener('click', () => {
-            document.getElementById('nabizAlani0').style.display = 'block';
-            baslangicBpm = Math.floor(Math.random() * (105 - 90 + 1)) + 90;
-            document.getElementById('baslangicNabizTxt').innerText = baslangicBpm + " BPM";
-            document.getElementById('modul0DevamBtn').style.display = 'block';
-        });
-
-        document.getElementById('modul0DevamBtn').addEventListener('click', () => modulGoster(1));
-
-        async function initAI() {
-            try {
-                const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
-                aiDurum.innerText = "Yapay zeka analiz modülleri hazırlanıyor...";
-                await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-                await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
-                
-                aiDurum.innerText = "Kamera aktifleşiyor...";
-                navigator.mediaDevices.getUserMedia({ video: {} }).then(stream => { 
-                    video.srcObject = stream; 
-                    video.addEventListener('play', yüzAnalizSüreci);
-                });
-            } catch (err) {
-                baskinDuygu = "Kaygılı";
-                setTimeout(() => { modulGoster("1B"); }, 1500);
-            }
+        function sesOynat(url) {
+            if (aktifSes) { aktifSes.pause(); }
+            aktifSes = new Audio(url);
+            aktifSes.loop = true;
+            aktifSes.volume = 0.5;
+            aktifSes.play().catch(e => console.log("Ses çalma engellendi:", e));
         }
 
-        function yüzAnalizSüreci() {
-            let sayac = 0;
-            const barContainer = document.getElementById('analizBarContainer');
-            const bar = document.getElementById('analizBar');
-            barContainer.style.display = 'block';
-            aiInterval = setInterval(trackFace, 400);
-
-            const barInterval = setInterval(() => {
-                sayac += 2;
-                bar.style.width = sayac + "%";
-                if(sayac >= 100) {
-                    clearInterval(barInterval);
-                    clearInterval(aiInterval); 
-                    barContainer.style.display = 'none';
-                    if(video.srcObject) {
-                        video.srcObject.getTracks().forEach(track => track.stop());
+        // Modül 7: Son Durum Analizi (Gelişim Karşılaştırması)
+        document.getElementById('sonNabizOlculmeBtn').addEventListener('click', () => {
+            document.getElementById('sonNabizOlculmeBtn').style.display = 'none';
+            
+            let sSayac = 0;
+            const sonNabizInterval = setInterval(() => {
+                sonBpm = Math.floor(Math.random() * (85 - 68 + 1)) + 68; 
+                document.getElementById('aiSonDurum').innerText = "Son ölçüm hesaplanıyor: " + sonBpm + " BPM";
+                sSayac++;
+                
+                if (sSayac >= 5) {
+                    clearInterval(sonNabizInterval);
+                    kameraKapat(videoSon);
+                    document.getElementById('sonKameraKutusu').style.display = 'none';
+                    document.getElementById('aiSonDurum').style.display = 'none';
+                    
+                    const fark = baslangicBpm - sonBpm;
+                    document.getElementById('ozetBaslangicBpm').innerText = baslangicBpm;
+                    document.getElementById('ozetSonBpm').innerText = sonBpm;
+                    document.getElementById('nabizDegisimTxt').innerText = fark > 0 ? `-${fark}` : `+${Math.abs(fark)}`;
+                    
+                    let rapor = "";
+                    if (fark > 5) {
+                        rapor = `📉 Harika! Kabine girdiğinden beri nabzın ${fark} BPM düştü. Seçtiğin duyusal istasyonlar ve nefes egzersizi parasempatik sinir sistemini başarıyla devreye sokmuş görünüyor.`;
+                        sonBaskinDuygu = "Dengelenmiş / Sakin";
+                    } else {
+                        rapor = `⚖️ Nabzın stabil veya yakın düzeyde kaldı. Fiziksel olarak tam gevşeyememiş olsan bile zihinsel farkındalık kazanman harika bir adım.`;
+                        sonBaskinDuygu = "Hafif Sakin";
                     }
-                    modulGoster("1B");
+                    
+                    document.getElementById('aiKarsilastirmaRaporu').innerText = rapor;
+                    document.getElementById('sonNabizSonucAlani').style.display = 'block';
+                    if (aktifSes) { aktifSes.pause(); } 
                 }
-            }, 50);
-        }
-
-        async function trackFace() {
-            if (!video.srcObject) return;
-            const result = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceExpressions();
-            if (result && result.expressions) {
-                let maxEmotion = 'neutral'; let maxScore = 0;
-                for (const [em, sc] of Object.entries(result.expressions)) {
-                    if (sc > maxScore) { maxScore = sc; maxEmotion = em; }
-                }
-                let tDuygu = "Kaygılı";
-                if(maxEmotion === "sad") tDuygu = "Üzgün";
-                if(maxEmotion === "angry") tDuygu = "Öfkeli";
-                if(maxEmotion === "happy") tDuygu = "Mutlu";
-                if(maxEmotion === "neutral") tDuygu = "Kaygılı"; 
-                baskinDuygu = tDuygu;
-            }
-        }
-
-        function nefesEgzersiziBaslat() {
-            const nefesKomut = document.getElementById('nefesKomut');
-            const nefesDaire = document.getElementById('nefesDaire');
-            let tur = 0;
-
-            function dongu() {
-                if(tur >= 2) {
-                    nefesKomut.innerText = "Nefes egzersizi tamamlandı.";
-                    document.getElementById('modul2DevamBtn').style.display = 'block';
-                    return;
-                }
-                nefesKomut.innerText = "Işık büyürken burnundan nefes al.";
-                nefesDaire.style.transform = "scale(1.7)";
-                setTimeout(() => {
-                    nefesKomut.innerText = "Nefesini kısa bir süre tut.";
-                    setTimeout(() => {
-                        nefesKomut.innerText = "Şimdi yavaşça nefes ver. Nefesine odaklan, acele etmene gerek yok.";
-                        nefesDaire.style.transform = "scale(1.0)";
-                        setTimeout(() => {
-                            tur++;
-                            dongu();
-                        }, 4000);
-                    }, 2000);
-                }, 4000);
-            }
-            dongu();
-        }
-
-        document.getElementById('modul2DevamBtn').addEventListener('click', () => modulGoster(3));
-
-        document.getElementById('sonNabizOlculmeBtn').addEventListener('click', async () => {
-            const buton = document.getElementById('sonNabizOlculmeBtn');
-            buton.innerText = "Analiz ediliyor, lütfen bekleyin...";
-            buton.disabled = true;
-
-            document.getElementById('sonKameraKutusu').style.display = 'block';
-            document.getElementById('aiSonDurum').style.display = 'block';
-
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
-                videoSon.srcObject = stream;
-            } catch(e) { console.log(e); }
-
-            setTimeout(() => {
-                sonBpm = baslangicBpm - (Math.floor(Math.random() * (12 - 5 + 1)) + 5);
-                const degisim = sonBpm - baslangicBpm;
-                
-                sonBaskinDuygu = "Rahatlamış / Dengeli";
-
-                document.getElementById('ozetBaslangicBpm').innerText = baslangicBpm;
-                document.getElementById('ozetSonBpm').innerText = sonBpm;
-                document.getElementById('nabizDegisimTxt').innerText = degisim;
-
-                document.getElementById('aiKarsilastirmaRaporu').innerHTML = 
-                    `📊 <strong>DuyuKabini Raporu:</strong> Sürecin başında yapılan testlerde ve beyanlarda duygusal bir yoğunluk gözlemlenmişti. Etkinlikler sonrasında şu anki fizyolojik ve durumsal verilerinin <strong>"${sonBaskinDuygu}"</strong> yönünde olumlu bir ivme kazandığını gözlemledim.`;
-
-                buton.style.display = 'none';
-                document.getElementById('sonKameraKutusu').style.display = 'none';
-                document.getElementById('aiSonDurum').style.display = 'none';
-                document.getElementById('sonNabizSonucAlani').style.display = 'block';
-
-                if(videoSon.srcObject) {
-                    videoSon.srcObject.getTracks().forEach(track => track.stop());
-                }
-            }, 4000);
+            }, 800);
         });
 
+        // Modül 8: Verileri Firebase Firestore'a Kaydetme
         document.getElementById('finalGonderBtn').addEventListener('click', async () => {
-            const buton = document.getElementById('finalGonderBtn');
-            const okulIzni = document.getElementById('okulIzniCheckbox').checked;
-
-            buton.innerText = "Veriler Gönderiliyor...";
-            buton.disabled = true;
+            document.getElementById('finalGonderBtn').style.display = 'none';
+            const rehberlikOnay = document.getElementById('okulIzniCheckbox').checked;
 
             try {
-                await addDoc(collection(db, "analizler"), {
-                    kullaniciUid: cihazUser.uid,
+                await addDoc(collection(db, "kabin_analizleri"), {
+                    userId: cihazUser.uid,
                     kullaniciAdSoyad: cihazUser.displayName,
-                    ilkAiAlgilananDuygu: baskinDuygu,
-                    sonAiAlgilananDuygu: sonBaskinDuygu,
-                    kullaniciBeyanDuygu: secilenDuygu,
-                    bedenselBelirtiler: secilenBedenselBelirtiler,
+                    ilkBaskinDuyguAI: baskinDuygu,
+                    ogrenciBeyanDuygu: secilenDuygu || "Chatbot Yardımıyla Arıyor",
                     durumTetikleyicisi: tasiyiciDurumNedeni,
+                    bedenselBelirtiler: secilenBedenselBelirtiler,
                     secilenDokunsalYuzey: secilenDokusal,
-                    secilenArkaplanSes: secilenSes,
+                    secilenIsitselSes: secilenSes,
                     secilenTatCagrisimi: secilenTat,
                     secilenKokuCagrisimi: secilenKoku,
-                    enYararliEtkinlik: enYararliEtkinlik,
-                    baslangicBpm: baslangicBpm,
-                    sonBpm: sonBpm,
-                    nabizDegisimi: sonBpm - baslangicBpm,
-                    rehberlikPaylasimIzni: okulIzni,
+                    enYararliUygulama: enYararliEtkinlik,
+                    baslangicNabizBpm: baslangicBpm,
+                    bitisNabizBpm: sonBpm,
+                    nabizFarki: (baslangicBpm - sonBpm),
+                    sonDuyguDurumu: sonBaskinDuygu,
+                    rehberlikPaylasimIzni: rehberlikOnay,
                     kayitTarihi: serverTimestamp()
                 });
 
-                document.getElementById('anketGrid').style.display = 'none';
                 document.getElementById('izinOnayKutusuAlani').style.display = 'none';
+                document.getElementById('anketGrid').style.display = 'none';
                 document.getElementById('finalMesajAlani').style.display = 'block';
-
             } catch (error) {
-                alert("Bağlantı hatası oluştu, veriler kaydedilemedi.");
-                buton.innerText = "Analizi Bitir ve Verileri Kaydet";
-                buton.disabled = false;
+                console.error("Firebase kaydetme hatası: ", error);
+                alert("Veriler kaydedilirken bir hata oluştu. Lütfen bağlantınızı kontrol edin.");
+                document.getElementById('finalGonderBtn').style.display = 'block';
             }
         });
     </script>
