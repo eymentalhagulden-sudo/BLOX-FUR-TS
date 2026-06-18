@@ -12,8 +12,10 @@
         .user-item:hover { background: rgba(168, 85, 247, 0.2); border-left-color: #a855f7; }
         .active-user-item { background: #a855f7 !important; color: black !important; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #020617; border-radius: 10px; overflow: hidden; }
-        th, td { padding: 12px 15px; border-bottom: 1px solid #1e293b; text-align: left; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #1e293b; text-align: left; font-size: 0.9rem; }
         th { background: #0f172a; color: #a855f7; font-weight: bold; }
+        .izinsiz { color: #ef4444; font-style: italic; }
+        .izinli { color: #10b981; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -33,13 +35,16 @@
         <table>
             <thead>
                 <tr>
-                    <th>Durum Damgası (Zaman)</th>
-                    <th>Yapay Zekâ Duygu Analizi</th>
-                    <th>Biyometrik Nabız</th>
+                    <th>Zaman</th>
+                    <th>AI Duygu tespiti</th>
+                    <th>Kullanıcı Beyanı</th>
+                    <th>Biyometrik Nabız (İlk -> Son)</th>
+                    <th>Etkinlik Tercihleri (Yüzey / Ses / Koku)</th>
+                    <th>Rehberlik İzni</th>
                 </tr>
             </thead>
             <tbody id="logTablosu">
-                <tr><td colspan="3" style="text-align:center; color:#64748b;">Henüz bir profil seçilmedi.</td></tr>
+                <tr><td colspan="6" style="text-align:center; color:#64748b;">Henüz bir profil seçilmedi.</td></tr>
             </tbody>
         </table>
     </div>
@@ -49,7 +54,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-        // Kanka panel için aldığın yepyeni config burası!
         const firebaseConfig = {
             apiKey: "AIzaSyB-sjEa93bNOoplmYYpqF1cfTqvb0mm7Dk",
             authDomain: "duyu-kabini.firebaseapp.com",
@@ -66,7 +70,6 @@
         let tumLoglar = [];
         let seciliUid = null;
 
-        // Aynı veri tabanındaki "kabin_loglari" koleksiyonunu dinliyoruz
         const q = query(collection(db, "kabin_loglari"), orderBy("zaman", "desc"));
         
         onSnapshot(q, (snapshot) => {
@@ -113,7 +116,7 @@
             let filtrelenmisLoglar = tumLoglar.filter(l => l.userId === uid);
 
             if(filtrelenmisLoglar.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Veri bekleniyor...</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Veri bekleniyor...</td></tr>`;
                 return;
             }
 
@@ -123,10 +126,26 @@
                     tarihText = log.zaman.toDate().toLocaleTimeString();
                 }
 
+                // Kabin verileriyle uyumlu hale getirilen güvenli alanlar kanka
+                let aiDuygu = log.aiAlgilananDuygu || "Nötr";
+                let beyanDuygu = log.kullaniciBeyanDuygu || "Seçilmedi";
+                let bBpm = log.baslangicBpm || "--";
+                let sBpm = log.bitisBpm || "--";
+                let yuzey = log.secilenDokunsalYuzey || "Pas geçildi";
+                let ses = log.secilenSesTemasi || "Pas geçildi";
+                let koku = log.cagrisimKoku || "Pas geçildi";
+                
+                let izinDurumu = log.okulYetkiliPaylasimIzni 
+                    ? `<span class="izinli">✅ Onaylandı</span>` 
+                    : `<span class="izinsiz">❌ Onaylanmadı</span>`;
+
                 let row = `<tr>
                     <td style="color:#64748b">${tarihText}</td>
-                    <td style="font-weight:bold; color:#00f2fe">${log.duygu.toUpperCase()}</td>
-                    <td><strong style="color:#ef4444">❤️ ${log.bpm}</strong> BPM</td>
+                    <td style="font-weight:bold; color:#a855f7">${aiDuygu.toUpperCase()}</td>
+                    <td style="font-weight:bold; color:#00f2fe">${beyanDuygu}</td>
+                    <td><span style="color:#ef4444">❤️ ${bBpm}</span> -> <span style="color:#10b981">💚 ${sBpm}</span></td>
+                    <td style="font-size:0.8rem; color:#94a3b8">✋ ${yuzey} / 🎵 ${ses} / 🌿 ${koku}</td>
+                    <td>${izinDurumu}</td>
                 </tr>`;
                 tbody.innerHTML += row;
             });
