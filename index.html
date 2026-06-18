@@ -75,7 +75,7 @@
         button:hover { transform: scale(1.02); box-shadow: 0 0 15px var(--primary-color); }
         
         .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .option-btn { background: rgba(255,255,255,0.05); color: var(--text-color); border: 1px solid var(--border-color); padding: 12px; font-size: 0.95rem; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .option-btn { background: rgba(255,255,255,0.05); color: var(--text-color); border: 1px solid var(--border-color); padding: 12px; font-size: 0.95rem; border-radius: 8px; cursor: pointer; transition: 0.2s; text-align: left; }
         .option-btn:hover { background: rgba(255,255,255,0.12); border-color: var(--primary-color); }
         
         .option-btn.selected {
@@ -92,8 +92,8 @@
 
         .form-group { text-align: left; margin-bottom: 12px; }
         .form-group label { display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 5px; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-color); font-size: 0.95rem; box-sizing: border-box; }
-        input:focus, select:focus { border-color: var(--primary-color); outline: none; }
+        input, select, textarea { width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-color); font-size: 0.95rem; box-sizing: border-box; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary-color); outline: none; }
 
         .modul-ekrani { display: none; text-align: center; }
         .active { display: block; }
@@ -117,6 +117,17 @@
         .izin-alani { display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px dashed var(--primary-color); }
         .izin-alani input { width: auto; cursor: pointer; transform: scale(1.3); }
         .izin-alani label { font-size: 0.9rem; text-align: left; cursor: pointer; }
+
+        /* Anket & Listeler için yeni stiller */
+        .check-list { text-align: left; margin: 15px 0; display: flex; flex-direction: column; gap: 10px; }
+        .check-item { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.02); padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; }
+        .check-item input { width: auto; transform: scale(1.2); }
+        
+        /* Chat Penceresi Stilleri */
+        .chat-container { border: 1px solid var(--border-color); border-radius: 10px; background: rgba(0,0,0,0.2); height: 250px; overflow-y: auto; padding: 15px; margin-bottom: 15px; text-align: left; display: flex; flex-direction: column; gap: 10px; }
+        .chat-msg { padding: 8px 12px; border-radius: 8px; max-width: 80%; font-size: 0.9rem; line-height: 1.4; }
+        .chat-msg.ai { background: rgba(0, 242, 254, 0.1); border-left: 3px solid var(--primary-color); align-self: flex-start; color: white; }
+        .chat-msg.user { background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color: var(--button-text); align-self: flex-end; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -161,7 +172,7 @@
         <div id="modul0" class="box modul-ekrani active">
             <h3>🧴 Modül 0: Hijyen Kontrolü & Başlangıç Nabız Ölçümü</h3>
             <p class="info-msg">"Merhaba. DuyuDenge-AI'ye hoş geldin. Bugün duygularını birlikte keşfedeceğiz."</p>
-            <p><strong>Sistem Uyarısı:</strong> Başlamadan önce lütfen ellerini dezenfekte et.</p>
+            <p><strong>Sistem Uyarısı:</strong> Başlamadan önce lütfen elveslerini dezenfekte et.</p>
             <button id="hijyenOnayBtn" style="background: #10b981; color: white;">Dezenfektan Kullanıldı (Sensör Onayı)</button>
             
             <div id="nabizAlani0" style="display:none;">
@@ -172,7 +183,7 @@
         </div>
 
         <div id="modul1" class="box modul-ekrani">
-            <h3>🧠 Modül 1: AI Duygu Fark Etme ve İfade Alanı</h3>
+            <h3>📷 1️⃣ Yüz İfadesi ve Nabız Analizi</h3>
             <p class="info-msg" id="modul1GirisMetni">"Kameraya birkaç saniye bakabilir misin?"</p>
             
             <div class="camera-box">
@@ -183,23 +194,78 @@
             <div class="progress-bar-container" id="analizBarContainer">
                 <div class="progress-bar" id="analizBar"></div>
             </div>
+        </div>
 
-            <div id="kullaniciDuyguSecim" style="display: none; margin-top: 20px;">
-                <p class="info-msg">"Bu sadece bir tahmin. Sen kendini nasıl hissediyorsun?"</p>
-                <div class="option-grid" id="duyguGrid">
-                    <button class="option-btn" onclick="secimYap(this, 'duygu', 'Mutlu')">😊 Mutlu</button>
-                    <button class="option-btn" onclick="secimYap(this, 'duygu', 'Rahat')">😌 Rahat</button>
-                    <button class="option-btn" onclick="secimYap(this, 'duygu', 'Kaygılı')">😟 Kaygılı</button>
-                    <button class="option-btn" onclick="secimYap(this, 'duygu', 'Üzgün')">😢 Üzgün</button>
-                    <button class="option-btn" onclick="secimYap(this, 'duygu', 'Öfkeli')">😡 Öfkeli</button>
-                    <button class="option-btn" onclick="secimYap(this, 'duygu', 'Yorgun')">😴 Yorgun</button>
-                </div>
-                
-                <div class="ai-feedback-box" id="feedbackModul1">
-                    <p style="color:var(--primary-color); font-weight:bold;" id="feedbackTxt1"></p>
-                    <button onclick="modulGoster(2)">Sana yardımcı olabilecek etkinlikleri birlikte deneyelim ➡️</button>
+        <div id="modul1B" class="box modul-ekrani">
+            <h3>🤖 2️⃣ Yapay Zekâ Duygu Koçu</h3>
+            <blockquote class="info-msg" style="color: var(--primary-color); font-weight: bold;">"Birlikte şu an nasıl hissettiğini keşfedelim."</blockquote>
+            
+            <div class="form-group">
+                <label style="color: white; font-size:1rem; margin-bottom: 10px;">📋 Şu anda hangilerini hissediyorsun? (Bedensel Belirtiler)</label>
+                <div class="check-list">
+                    <label class="check-item"><input type="checkbox" name="belirti" value="kalp"> ☑️ Kalbim hızlı atıyor</label>
+                    <label class="check-item"><input type="checkbox" name="belirti" value="terleme"> ☑️ Ellerim terliyor</label>
+                    <label class="check-item"><input type="checkbox" name="belirti" value="mide"> ☑️ Midemde rahatsızlık var</label>
+                    <label class="check-item"><input type="checkbox" name="belirti" value="kas"> ☑️ Kaslarım gergin</label>
+                    <label class="check-item"><input type="checkbox" name="belirti" value="aglamak"> ☑️ Ağlamak istiyorum</label>
+                    <label class="check-item"><input type="checkbox" name="belirti" value="huzursuzluk"> ☑️ İçimde huzursuzluk var</label>
+                    <label class="check-item"><input type="checkbox" name="belirti" value="enerjik"> ☑️ Enerjik hissediyorum</label>
+                    <label class="check-item"><input type="checkbox" name="belirti" value="hicbiri" id="belirtiHicbiri" onchange="hicbiriSecildi(this)"> ☑️ Hiçbiri</label>
                 </div>
             </div>
+
+            <div class="form-group" style="margin-top: 25px;">
+                <label style="color: white; font-size:1rem; margin-bottom: 10px;">🕒 Bu his daha çok ne zaman ortaya çıkıyor? (Durum Sorusu)</label>
+                <div class="check-list">
+                    <label class="check-item"><input type="radio" name="durum" value="Sınavlarda" checked> 🔘 Sınavlarda</label>
+                    <label class="check-item"><input type="radio" name="durum" value="Arkadaş ortamında"> 🔘 Arkadaş ortamında</label>
+                    <label class="check-item"><input type="radio" name="durum" value="Evde"> 🔘 Evde</label>
+                    <label class="check-item"><input type="radio" name="durum" value="Sebebini bilmiyorum"> 🔘 Sebebini bilmiyorum</label>
+                    <label class="check-item"><input type="radio" name="durum" value="Diğer"> 🔘 Diğer</label>
+                </div>
+            </div>
+
+            <button onclick="degerlendirmeyiHesapla()" style="margin-top: 20px; background: linear-gradient(135deg, #a855f7, #6366f1); color: white;">3️⃣ Yapay Zekâ Değerlendirmesini Başlat 🔮</button>
+        </div>
+
+        <div id="modul1C" class="box modul-ekrani">
+            <h3>📊 4️⃣ Duygu Farkındalığı Ekranı</h3>
+            <p class="info-msg">"Verdiğin cevaplara göre şu duygular ön plana çıkıyor olabilir:"</p>
+            
+            <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; text-align: left; margin-bottom: 25px; border: 1px solid var(--border-color);">
+                <h4 style="margin-top:0; color: var(--primary-color);">📋 Hesaplanan Sonuçlar:</h4>
+                <p>😟 Kaygı → <strong>%<span id="skorKaygi">45</span></strong></p>
+                <p>😔 Üzüntü → <strong>%<span id="skorUzuntu">25</span></strong></p>
+                <p>😠 Öfke → <strong>%<span id="skorOfke">15</span></strong></p>
+                <p>😕 Kararsızlık → <strong>%<span id="skorKararsizlik">10</span></strong></p>
+                <p>😊 Mutluluk → <strong>%<span id="skorMutluluk">5</span></strong></p>
+            </div>
+
+            <p class="info-msg" style="color: white; font-weight: bold;">"Sence şu an sana en yakın duygu hangisi?"</p>
+            <div class="option-grid" style="grid-template-columns: 1fr;">
+                <button class="option-btn" onclick="duyguSecimKaydet(this, 'Kaygı')">🔘 Kaygı</button>
+                <button class="option-btn" onclick="duyguSecimKaydet(this, 'Üzüntü')">🔘 Üzüntü</button>
+                <button class="option-btn" onclick="duyguSecimKaydet(this, 'Öfke')">🔘 Öfke</button>
+                <button class="option-btn" onclick="duyguSecimKaydet(this, 'Kararsızlık')">🔘 Kararsızlık</button>
+                <button class="option-btn" onclick="duyguSecimKaydet(this, 'Mutluluk')">🔘 Mutluluk</button>
+                <button class="option-btn" onclick="duyguSecimKaydet(this, 'Bunların hiçbiri')" style="border-color: #ef4444; color: #f87171;">🔘 Bunların hiçbiri</button>
+            </div>
+        </div>
+
+        <div id="modul1D" class="box modul-ekrani">
+            <h3>🤖 Yapay Zekâ Keşif Alanı</h3>
+            <p class="info-msg">"Duygularını tanımlamak her zaman kolay olmayabilir. Gel, ne hissettiğini ve asıl sorunu birlikte konuşarak bulalım."</p>
+            
+            <div class="chat-container" id="chatPenceresi">
+                <div class="chat-msg ai">Merhaba, tahminlerim sana tam uymadı sanırım. Şu an içinden geçenleri, zihnini meşgul eden şeyleri veya bedeninde ne hissettiğini bana biraz anlatır mısın? Sorununu birlikte bulalım.</div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <textarea id="chatGirdi" rows="2" placeholder="Buraya yazabilirsin..." style="resize: none; flex: 1;"></textarea>
+                <button id="chatGonderBtn" style="width: auto; padding: 0 20px; margin: 0;" onclick="aiMesajGonder()">Gönder</button>
+            </div>
+            
+            <button id="chatTamamBtn" style="margin-top: 20px; background: #10b981; color: white; display: none;" onclick="modulGoster(2)">Sorunumu Keşfettim, Uygulamalara Devam Et ➡️</button>
         </div>
 
         <div id="modul2" class="box modul-ekrani">
@@ -314,7 +380,7 @@
 
         <div id="modul8" class="box modul-ekrani">
             <h3>📊 Çıkış Ekranı & Değerlendirme</h3>
-            <p class="info-msg">"Sesler bazen zihnimizi dinlendirmeye yardımcı olabilir. Bugün sana en çok hangi etkinlik yardımcı oldu?"</p>
+            <p class="info-msg">"Bugün sana en çok hangi etkinlik yardımcı oldu?"</p>
             <div class="option-grid" id="anketGrid">
                 <button class="option-btn" onclick="secimYap(this, 'anket', 'Nefes Egzersizi')">○ Nefes Egzersizi</button>
                 <button class="option-btn" onclick="secimYap(this, 'anket', 'Dokunsal Panel')">○ Dokunsal Panel</button>
@@ -359,6 +425,9 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // OpenAI API Key - Güncellendi kanka
+        const OPENAI_API_KEY = "AQ.Ab8RN6KS_xPS5SkXKgTQE_LiWynxl8DCt6Rakh1Tr4j-or0cyQ"; 
+
         let cihazUser = { uid: null, displayName: null };
         let baskinDuygu = "Ölçülüyor...";
         let sonBaskinDuygu = "Nötr";
@@ -370,6 +439,12 @@
         let enYararliEtkinlik = "";
         let baslangicBpm = 0;
         let sonBpm = 0;
+        let tasiyiciDurumNedeni = "Sınavlarda";
+        let secilenBedenselBelirtiler = [];
+
+        let chatGecmisi = [
+            { role: "system", content: "Sen bir lisede görev yapan sevecen, profesyonel, yapıcı ve empatik bir okul rehber öğretmenisin (Yapay Zekâ Duygu Koçu). Karşındaki öğrencinin kabindeki yapay zekâ analiz sonuçları tam uyuşmadı ve kendini tanımlayamıyor. Amacın, öğrenciye tanı koymadan, onunla dostça konuşarak canını sıkan veya asıl hissettiği ana kök problemi bulmasını sağlamak. Konuşma samimi, yargısız ve kısa olmalı. Öğrenci sorunu fark edip paylaştığında onu tebrik et ve yönlendir." }
+        ];
 
         let aiInterval;
         let aktifSes = null; 
@@ -464,16 +539,111 @@
             else if(modulId === 2) { nefesEgzersiziBaslat(); }
         }
 
+        window.hicbiriSecildi = function(checkbox) {
+            const elementler = document.querySelectorAll('input[name="belirti"]');
+            if(checkbox.checked) {
+                elementler.forEach(el => { if(el.id !== 'belirtiHicbiri') el.checked = false; });
+            }
+        }
+
+        window.degerlendirmeyiHesapla = function() {
+            secilenBedenselBelirtiler = [];
+            document.querySelectorAll('input[name="belirti"]:checked').forEach(el => {
+                secilenBedenselBelirtiler.push(el.value);
+            });
+
+            const durumEl = document.querySelector('input[name="durum"]:checked');
+            tasiyiciDurumNedeni = durumEl ? durumEl.value : "Bilinmiyor";
+
+            let k = 15, u = 15, o = 15, kr = 15, m = 15;
+
+            if(baskinDuygu === "Kaygılı") k += 20;
+            if(baskinDuygu === "Üzgün") u += 20;
+            if(baskinDuygu === "Öfkeli") o += 20;
+            if(baskinDuygu === "Mutlu") m += 20;
+
+            secilenBedenselBelirtiler.forEach(b => {
+                if(b === "kalp" || b === "terleme" || b === "huzursuzluk") k += 10;
+                if(b === "aglamak" || b === "mide") u += 10;
+                if(b === "kas") o += 10;
+                if(b === "enerjik") m += 15;
+            });
+
+            const toplam = k + u + o + kr + m;
+            document.getElementById('skorKaygi').innerText = Math.round((k / toplam) * 100);
+            document.getElementById('skorUzuntu').innerText = Math.round((u / toplam) * 100);
+            document.getElementById('skorOfke').innerText = Math.round((o / toplam) * 100);
+            document.getElementById('skorKararsizlik').innerText = Math.round((kr / toplam) * 100);
+            document.getElementById('skorMutluluk').innerText = Math.round((m / toplam) * 100);
+
+            modulGoster("1C");
+        }
+
+        window.duyguSecimKaydet = function(buton, duygu) {
+            secilenDuygu = duygu;
+            const ebeveyn = buton.parentElement;
+            ebeveyn.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            buton.classList.add('selected');
+
+            if(duygu === "Bunların hiçbiri") {
+                setTimeout(() => { modulGoster("1D"); }, 600);
+            } else {
+                setTimeout(() => { modulGoster(2); }, 600);
+            }
+        }
+
+        window.aiMesajGonder = async function() {
+            const girdiAlan = document.getElementById('chatGirdi');
+            const gonderBtn = document.getElementById('chatGonderBtn');
+            const kutu = document.getElementById('chatPenceresi');
+            const text = girdiAlan.value.trim();
+
+            if(!text) return;
+
+            kutu.innerHTML += `<div class="chat-msg user">${text}</div>`;
+            girdiAlan.value = "";
+            kutu.scrollTop = kutu.scrollHeight;
+
+            chatGecmisi.push({ role: "user", content: text });
+            gonderBtn.disabled = true;
+            gonderBtn.innerText = "...";
+
+            try {
+                const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${OPENAI_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4o-mini",
+                        messages: chatGecmisi,
+                        max_tokens: 150
+                    })
+                });
+
+                const data = await response.json();
+                const aiResponse = data.choices[0].message.content;
+
+                chatGecmisi.push({ role: "assistant", content: aiResponse });
+                kutu.innerHTML += `<div class="chat-msg ai">${aiResponse}</div>`;
+                kutu.scrollTop = kutu.scrollHeight;
+
+                document.getElementById('chatTamamBtn').style.display = "block";
+
+            } catch (err) {
+                kutu.innerHTML += `<div class="chat-msg ai">Anlıyorum, bazen hisleri tam adlandıramamak da sürecin bir parçasıdır. Hazır hissettiğinde devam edebiliriz.</div>`;
+                document.getElementById('chatTamamBtn').style.display = "block";
+            } finally {
+                gonderBtn.disabled = false;
+                gonderBtn.innerText = "Gönder";
+            }
+        }
+
         window.secimYap = function(butonNesnesi, kategori, deger) {
             const ebeveynGrid = butonNesnesi.parentElement;
             ebeveynGrid.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
             butonNesnesi.classList.add('selected');
-
-            if(kategori === 'duygu') {
-                secilenDuygu = deger;
-                document.getElementById('feedbackTxt1').innerText = `💬 Teşekkür ederim. Duygularını fark etmek onları yönetmenin ilk adımıdır.`;
-                document.getElementById('feedbackModul1').style.display = 'block';
-            }
             
             if(kategori === 'dokunsal') {
                 secilenDokusal = deger;
@@ -556,7 +726,6 @@
             document.getElementById('kokuSorusu').style.display = 'block';
         }
 
-        // Modül 0 Tetikleyicileri
         document.getElementById('hijyenOnayBtn').addEventListener('click', () => {
             document.getElementById('nabizAlani0').style.display = 'block';
             baslangicBpm = Math.floor(Math.random() * (105 - 90 + 1)) + 90;
@@ -566,7 +735,6 @@
 
         document.getElementById('modul0DevamBtn').addEventListener('click', () => modulGoster(1));
 
-        // Modül 1 AI Altyapısı
         async function initAI() {
             try {
                 const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
@@ -580,8 +748,8 @@
                     video.addEventListener('play', yüzAnalizSüreci);
                 });
             } catch (err) {
-                aiDurum.innerText = "Yüz ifadenden biraz kaygılı hissediyor olabileceğini tahmin ettim.";
-                document.getElementById('kullaniciDuyguSecim').style.display = 'block';
+                baskinDuygu = "Kaygılı";
+                setTimeout(() => { modulGoster("1B"); }, 1500);
             }
         }
 
@@ -598,9 +766,11 @@
                 if(sayac >= 100) {
                     clearInterval(barInterval);
                     clearInterval(aiInterval); 
-                    aiDurum.innerHTML = "Yüz ifadenden biraz <strong>" + baskinDuygu.toLowerCase() + "</strong> hissediyor olabileceğini tahmin ettim.";
                     barContainer.style.display = 'none';
-                    document.getElementById('kullaniciDuyguSecim').style.display = 'block'; 
+                    if(video.srcObject) {
+                        video.srcObject.getTracks().forEach(track => track.stop());
+                    }
+                    modulGoster("1B");
                 }
             }, 50);
         }
@@ -622,17 +792,16 @@
             }
         }
 
-        // Modül 2 Nefes Fonksiyonu
         function nefesEgzersiziBaslat() {
             const nefesKomut = document.getElementById('nefesKomut');
             const nefesDaire = document.getElementById('nefesDaire');
-            const devamBtn = document.getElementById('modul2DevamBtn');
+            constPlatformDevamBtn = document.getElementById('modul2DevamBtn');
             let tur = 0;
 
             function dongu() {
                 if(tur >= 2) {
                     nefesKomut.innerText = "Nefes egzersizi tamamlandı.";
-                    devamBtn.style.display = 'block';
+                    document.getElementById('modul2DevamBtn').style.display = 'block';
                     return;
                 }
                 nefesKomut.innerText = "Işık büyürken burnundan nefes al.";
@@ -654,7 +823,6 @@
 
         document.getElementById('modul2DevamBtn').addEventListener('click', () => modulGoster(3));
 
-        // Modül 7 Son Ölçüm ve Karşılaştırmalı Yüz Analizi
         document.getElementById('sonNabizOlculmeBtn').addEventListener('click', async () => {
             const buton = document.getElementById('sonNabizOlculmeBtn');
             buton.innerText = "Analiz ediliyor, lütfen bekleyin...";
@@ -679,7 +847,7 @@
                 document.getElementById('nabizDegisimTxt').innerText = degisim;
 
                 document.getElementById('aiKarsilastirmaRaporu').innerHTML = 
-                    `📊 <strong>DuyuKabini Raporu:</strong> Sürecin başında yüz ifadenden <em>"${baskinDuygu}"</em> hissettiğini tahmin etmiştim. Etkinlikler sonrasında şu anki durumunun <strong>"${sonBaskinDuygu}"</strong> yönünde değiştiğini gözlemledim.`;
+                    `📊 <strong>DuyuKabini Raporu:</strong> Sürecin başında yapılan testlerde ve beyanlarda duygusal bir yoğunluk gözlemlenmişti. Etkinlikler sonrasında şu anki fizyolojik ve durumsal verilerinin <strong>"${sonBaskinDuygu}"</strong> yönünde olumlu bir ivme kazandığını gözlemledim.`;
 
                 buton.style.display = 'none';
                 document.getElementById('sonKameraKutusu').style.display = 'none';
@@ -692,7 +860,6 @@
             }, 4000);
         });
 
-        // Veri Kaydetme (Firestore)
         document.getElementById('finalGonderBtn').addEventListener('click', async () => {
             const buton = document.getElementById('finalGonderBtn');
             const okulIzni = document.getElementById('okulIzniCheckbox').checked;
@@ -707,6 +874,8 @@
                     ilkAiAlgilananDuygu: baskinDuygu,
                     sonAiAlgilananDuygu: sonBaskinDuygu,
                     kullaniciBeyanDuygu: secilenDuygu,
+                    bedenselBelirtiler: secilenBedenselBelirtiler,
+                    durumTetikleyicisi: tasiyiciDurumNedeni,
                     secilenDokunsalYuzey: secilenDokusal,
                     secilenArkaplanSes: secilenSes,
                     secilenTatCagrisimi: secilenTat,
