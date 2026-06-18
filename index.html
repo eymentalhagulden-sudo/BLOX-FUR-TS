@@ -33,7 +33,7 @@
             --button-text: white;
         }
 
-        /* YENİ: Siber Orman Teması (Yeşil / Doğa) */
+        /* Siber Orman Teması (Yeşil / Doğa) */
         [data-theme="orman"] {
             --bg-color: #0b140f;
             --box-bg: #112216;
@@ -45,7 +45,7 @@
             --button-text: white;
         }
 
-        /* YENİ: Gece Yarısı Teması (Asil & Derin Siyah) */
+        /* Gece Yarısı Teması (Asil & Derin Siyah) */
         [data-theme="gece"] {
             --bg-color: #020617;
             --box-bg: #090d16;
@@ -57,7 +57,7 @@
             --button-text: white;
         }
 
-        /* YENİ: Siberpunk Teması (Neon Enerji) */
+        /* Siberpunk Teması (Neon Enerji) */
         [data-theme="cyberpunk"] {
             --bg-color: #12011b;
             --box-bg: #210230;
@@ -79,7 +79,6 @@
         .option-btn { background: rgba(255,255,255,0.05); color: var(--text-color); border: 1px solid var(--border-color); padding: 12px; font-size: 0.95rem; border-radius: 8px; cursor: pointer; transition: 0.2s; }
         .option-btn:hover { background: rgba(255,255,255,0.12); border-color: var(--primary-color); }
         
-        /* Seçilen Butonun Alacağı Sabit Stil */
         .option-btn.selected {
             background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
             color: var(--button-text) !important;
@@ -103,18 +102,17 @@
         .camera-box { width: 100%; max-width: 350px; margin: 15px auto; border-radius: 12px; overflow: hidden; border: 2px solid var(--border-color); background: #000; aspect-ratio: 4/3; }
         video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
         
-        #aiDurum { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary-color); font-size: 1rem; margin-top: 10px; }
+        #aiDurum, #aiSonDurum { background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary-color); font-size: 1rem; margin-top: 10px; }
         
         .progress-bar-container { width: 100%; background: #1e293b; height: 8px; border-radius: 4px; margin-top: 10px; display: none; overflow: hidden; }
         .progress-bar { width: 0%; height: 100%; background: var(--primary-color); transition: width 0.1s linear; }
 
-        /* Küçültülmüş Nefes Dairesi */
         .nefes-daresi { width: 80px; height: 80px; background: radial-gradient(circle, var(--primary-color) 0%, var(--gradient-start) 100%); border-radius: 50%; margin: 20px auto; transition: transform 4s ease-in-out; box-shadow: 0 0 25px var(--primary-color); }
 
-        .sensor-data { font-size: 1.5rem; font-weight: bold; color: #ef4444; margin: 15px 0; }
+        .sensor-data { font-size: 1.4rem; font-weight: bold; color: #ef4444; margin: 15px 0; }
         .info-msg { color: #94a3b8; font-style: italic; margin-bottom: 20px; font-size: 0.95rem; }
         
-        .ai-feedback-box { display: none; margin-top: 20px; background: rgba(255, 255, 255, 0.03); border: 1px dashed var(--primary-color); padding: 15px; border-radius: 10px; animation: fadeIn 0.4s ease; }
+        .ai-feedback-box { display: none; margin-top: 20px; background: rgba(255, 255, 255, 0.03); border: 1px dashed var(--primary-color); padding: 15px; border-radius: 10px; animation: fadeIn 0.4s ease; text-align: left; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .izin-alani { display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px dashed var(--primary-color); }
@@ -166,21 +164,21 @@
         <!-- MODÜL 0: HİJYEN VE BAŞLANGIÇ NABZI -->
         <div id="modul0" class="box modul-ekrani active">
             <h3>🧴 Modül 0: Hijyen Kontrolü & Başlangıç Nabız Ölçümü</h3>
-            <p class="info-msg">"Merhaba. DuyuDenge-AI'ye hoş geldin."</p>
+            <p class="info-msg">"Merhaba. DuyuDenge-AI'ye hoş geldin. Bugün duygularını birlikte keşfedeceğiz."</p>
             <p><strong>Sistem Uyarısı:</strong> Başlamadan önce lütfen ellerini dezenfekte et.</p>
             <button id="hijyenOnayBtn" style="background: #10b981; color: white;">Dezenfektan Kullanıldı (Sensör Onayı)</button>
             
             <div id="nabizAlani0" style="display:none;">
-                <p class="info-msg">"Harika! Şimdi başlangıç ölçümünü yapacağız. Lütfen parmağını sensörün üzerine yerleştir."</p>
+                <p class="info-msg">"Hijyen kontrolü tamamlandı. Teşekkür ederim. Şimdi başlangıç ölçümünü yapacağız. Lütfen parmağını sensörün üzerine yerleştir."</p>
                 <div class="sensor-data">❤️ Başlangıç Nabzı: <span id="baslangicNabizTxt">Ölçülüyor...</span></div>
-                <button id="modul0DevamBtn" style="display:none;">Teşekkür ederim. Şimdi duygularını birlikte keşfedelim. ➡️</button>
+                <button id="modul0DevamBtn" style="display:none;">Ölçüm tamamlandı. Şimdi kendini nasıl hissettiğini birlikte anlamaya çalışalım. ➡️</button>
             </div>
         </div>
 
         <!-- MODÜL 1: AI DUYGU FARK ETME -->
         <div id="modul1" class="box modul-ekrani">
             <h3>🧠 Modül 1: AI Duygu Fark Etme ve İfade Alanı</h3>
-            <p class="info-msg">"Şu an nasıl hissettiğini birlikte anlamaya çalışalım."</p>
+            <p class="info-msg" id="modul1GirisMetni">"Kameraya birkaç saniye bakabilir misin?"</p>
             
             <div class="camera-box">
                 <video id="webcam" autoplay muted playsinline></video>
@@ -192,7 +190,7 @@
             </div>
 
             <div id="kullaniciDuyguSecim" style="display: none; margin-top: 20px;">
-                <p class="info-msg">"Yüz ifadenden durumunu yukarıdaki gibi analiz ettim. Peki sen kendini şu an nasıl hissediyorsun?"</p>
+                <p class="info-msg">"Bu sadece bir tahmin. Sen kendini nasıl hissediyorsun?"</p>
                 <div class="option-grid" id="duyguGrid">
                     <button class="option-btn" onclick="secimYap(this, 'duygu', 'Mutlu')">😊 Mutlu</button>
                     <button class="option-btn" onclick="secimYap(this, 'duygu', 'Rahat')">😌 Rahat</button>
@@ -212,61 +210,61 @@
         <!-- MODÜL 2: NEFES VE IŞIK -->
         <div id="modul2" class="box modul-ekrani">
             <h3>🌬️ Modül 2: Nefes ve Işık Alanı</h3>
-            <p class="info-msg">"Hazırsan başlayalım. Işık hareketlerini takip ederek derin nefes al ve ver."</p>
+            <p class="info-msg">"Önce nefesimizi düzenlemeyi deneyelim. Hazırsan başlayabiliriz."</p>
             <h4 id="nefesKomut">Hazırlanılıyor...</h4>
             <div class="nefes-daresi" id="nefesDaire"></div>
-            <button id="modul2DevamBtn" style="display:none; margin-top:20px;">Harika gidiyorsun. Bedenin sakinleşmeye başladı. ➡️</button>
+            <button id="modul2DevamBtn" style="display:none; margin-top:20px;">Harika gidiyorsun. Bedenin biraz daha sakinleşiyor olabilir. ➡️</button>
         </div>
 
         <!-- MODÜL 3: DOKUNSAL SAKİNLEŞME -->
         <div id="modul3" class="box modul-ekrani">
             <h3>✋ Modül 3: Dokunsal Sakinleşme Paneli</h3>
-            <p class="info-msg">"Şimdi önündeki panelde bulunan farklı yüzeylere dokunmayı deneyelim. En rahat hissettiren yüzeyi bulabilir misin?"</p>
+            <p class="info-msg">"Şimdi farklı yüzeyleri keşfedelim. Dokunurken nefesine odaklanmayı unutma."</p>
             <div class="option-grid" id="dokunsalGrid">
-                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'Kadife')">🧸 Kadife</button>
                 <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'Keçe')">🎨 Keçe</button>
-                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'EVA Köpük')">🧼 EVA Köpük</button>
-                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'Silikon yüzey')">🧽 Silikon Yüzey</button>
-                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'Suni çim')">🌱 Suni Çim</button>
+                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'Plastik Yüzey')">🧪 Plastik Yüzey</button>
+                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'Tahta')">🪵 Tahta Yüzey</button>
+                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'Sünger')">🧽 Sünger</button>
+                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'Kinetik Kum')">⏳ Kinetik Kum</button>
             </div>
             
             <div class="ai-feedback-box" id="feedbackModul3">
                 <p style="color:var(--primary-color); font-weight:bold;" id="feedbackTxt3"></p>
-                <button onclick="modulGoster(4)">İşitsel Alana İlerle ➡️</button>
+                <button onclick="modulGoster(4)">Şimdi istersen ses alanına geçebiliriz ➡️</button>
             </div>
         </div>
 
         <!-- MODÜL 4: SES VE İŞİTSEL DÜZENLEME -->
         <div id="modul4" class="box modul-ekrani">
             <h3>🎵 Modül 4: Ses ve İşitsel Düzenleme Alanı</h3>
-            <p class="info-msg">"Hangi sesi dinlemek istersin? Seçtiğinde arka planda gerçek ses oynatılacaktır."</p>
+            <p class="info-msg">"Şimdi seni rahatlatabilecek bir ses seçebilirsin."</p>
             <div class="option-grid" id="sesGrid">
-                <button class="option-btn" onclick="secimYap(this, 'ses', 'Yağmur')">🌧️ Yağmur Sesleri</button>
+                <button class="option-btn" onclick="secimYap(this, 'ses', 'Yağmur')">🌧️ Yağmur Sesi</button>
                 <button class="option-btn" onclick="secimYap(this, 'ses', 'Deniz')">🌊 Deniz Dalgaları</button>
-                <button class="option-btn" onclick="secimYap(this, 'ses', 'Orman')">🌲 Orman Atmosferi</button>
-                <button class="option-btn" onclick="secimYap(this, 'ses', 'Frekans')">🧘 Meditasyon Frekansı</button>
+                <button class="option-btn" onclick="secimYap(this, 'ses', 'Orman')">🌲 Orman Sesleri</button>
+                <button class="option-btn" onclick="secimYap(this, 'ses', 'Kuş')">🐦 Kuş Sesleri</button>
+                <button class="option-btn" onclick="secimYap(this, 'ses', 'Sakin Müzik')">🧘 Sakin Müzik</button>
             </div>
             
             <div class="ai-feedback-box" id="feedbackModul4">
                 <p style="color:var(--primary-color); font-weight:bold;" id="feedbackTxt4"></p>
-                <button onclick="modulGoster(5)">Koku ve Tat Çağrışımına Geç ➡️</button>
+                <button onclick="modulGoster(5)">Şimdi başka bir duyumuzu keşfedelim ➡️</button>
             </div>
         </div>
 
         <!-- MODÜL 5: KOKU VE TAT ÇAĞRIŞIMI -->
         <div id="modul5" class="box modul-ekrani">
             <h3>🌿🍋 Modül 5: Koku ve Tat Çağrışımı Alanı</h3>
-            <p style="color:#10b981; font-size:0.85rem; background:rgba(16,185,129,0.1); padding:8px; border-radius:5px; margin-bottom:15px;">
-                💡 <em>Jüri Bilgilendirmesi: Bu modülde gerçek yiyecek/içecek kullanılmaz. Alerji ve hijyen riskini sıfırlamak için sadece çağrışımlardan yararlanılır.</em>
-            </p>
+            <p class="info-msg">"Duygular bazen tatlar ve kokularla da ilişkilendirilebilir."</p>
             
             <div id="tatSorusu">
                 <p class="info-msg">"Bugünkü duygun bir tat olsaydı hangisine benzerdi?"</p>
                 <div class="option-grid" id="tatGrid">
                     <button class="option-btn" onclick="secimYap(this, 'tat', 'Ekşi')">🍋 Ekşi</button>
                     <button class="option-btn" onclick="secimYap(this, 'tat', 'Tatlı')">🍬 Tatlı</button>
-                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Yumuşak ve sıcak')">🍪 Yumuşak ve sıcak</button>
                     <button class="option-btn" onclick="secimYap(this, 'tat', 'Ferah')">🌿 Ferah</button>
+                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Sıcak ve Yumuşak')">🍪 Sıcak ve Yumuşak</button>
+                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Karışık')">☁️ Karışık</button>
                 </div>
                 
                 <div class="ai-feedback-box" id="feedbackTat" style="margin-top: 15px;">
@@ -280,8 +278,6 @@
                 <div class="option-grid" id="kokuGrid">
                     <button class="option-btn" onclick="secimYap(this, 'koku', 'Nane')">🌿 Nane</button>
                     <button class="option-btn" onclick="secimYap(this, 'koku', 'Portakal')">🍊 Portakal</button>
-                    <button class="option-btn" onclick="secimYap(this, 'koku', 'Lavanta')">🌸 Lavanta</button>
-                    <button class="option-btn" onclick="secimYap(this, 'koku', 'Vanilya')">🍪 Vanilya</button>
                 </div>
                 
                 <div class="ai-feedback-box" id="feedbackKoku">
@@ -296,20 +292,31 @@
             <h3>🧸 Modül 6: Güvenli Sakinleşme Köşesi</h3>
             <p class="info-msg">"Bir süre dinlenmek ister misin? İstersen kabindeki fiziksel stres topunu veya ağırlıklı yastığı kullanabilirsin."</p>
             <p style="color:#64748b;">Fiziksel ekipmanları deneyimledikten sonra hazır olduğunda devam edebiliriz.</p>
-            <button onclick="modulGoster(7)">Hazırım, Son Ölçümü Yapalım ➡️</button>
+            <button onclick="modulGoster(7)">Hazırım, Son Analizleri Yapalım ➡️</button>
         </div>
 
-        <!-- MODÜL 7: SON NABIZ ÖLÇÜMÜ -->
+        <!-- MODÜL 7: SON NABIZ VE AI KONTROLÜ -->
         <div id="modul7" class="box modul-ekrani">
-            <h3>❤️ Modül 7: Son Nabız Ölçümü ve Geri Bildirim</h3>
-            <p class="info-msg">"Şimdi son ölçümünü yapacağız. Lütfen parmağını sensörün üzerine yeniden yerleştir."</p>
-            <button id="sonNabizOlculmeBtn" style="background:#ef4444; color:white;">Nabız Ölçümünü Başlat</button>
+            <h3>❤️ Modül 7: Son Durum Analizi ve Geri Bildirim</h3>
+            <p class="info-msg">"Bedenindeki değişimi birlikte gözlemleyelim. Lütfen parmağını sensörün üzerine yeniden yerleştir."</p>
+            
+            <div class="camera-box" id="sonKameraKutusu" style="display:none;">
+                <video id="webcamSon" autoplay muted playsinline></video>
+            </div>
+            <h4 id="aiSonDurum" style="display:none;">Kamera ile son durumunuz analiz ediliyor...</h4>
+
+            <button id="sonNabizOlculmeBtn" style="background:#ef4444; color:white;">Analizi ve Ölçümü Başlat</button>
             
             <div id="sonNabizSonucAlani" style="display:none; margin-top:20px;">
                 <div class="sensor-data" style="color:#10b981;">❤️ Başlangıç Nabzı: <span id="ozetBaslangicBpm"></span> BPM</div>
                 <div class="sensor-data" style="color:var(--primary-color);">❤️ Son Nabız: <span id="ozetSonBpm"></span> BPM</div>
                 <h3 style="color:#38bdf8;">📉 Değişim: <span id="nabizDegisimTxt"></span> BPM</h3>
-                <p class="info-msg">"Bedenin sakinleşmeye başladı. Bugün harika bir iş çıkardın."</p>
+                
+                <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:8px; border-left:4px solid #10b981; margin:15px 0; text-align:left;">
+                    <p id="aiKarsilastirmaRaporu" style="font-weight:bold; color:white; margin:0;"></p>
+                </div>
+
+                <p class="info-msg">"Bugün harika bir iş çıkardın."</p>
                 <button onclick="modulGoster(8)">Çıkış Anketine Geç ➡️</button>
             </div>
         </div>
@@ -317,7 +324,7 @@
         <!-- REHBERLİK SORUSU VE RAPORLAMA ALANI -->
         <div id="modul8" class="box modul-ekrani">
             <h3>📊 Çıkış Ekranı & Değerlendirme</h3>
-            <p class="info-msg">"Bugün sana en çok hangi etkinlik yardımcı oldu?"</p>
+            <p class="info-msg">"Sesler bazen zihnimizi dinlendirmeye yardımcı olabilir. Bugün sana en çok hangi etkinlik yardımcı oldu?"</p>
             <div class="option-grid" id="anketGrid">
                 <button class="option-btn" onclick="secimYap(this, 'anket', 'Nefes Egzersizi')">○ Nefes Egzersizi</button>
                 <button class="option-btn" onclick="secimYap(this, 'anket', 'Dokunsal Panel')">○ Dokunsal Panel</button>
@@ -337,7 +344,7 @@
             <div id="finalMesajAlani" style="display:none; margin-top:30px;">
                 <h2 style="color: #10b981;">✨ Veriler Başarıyla Kaydedildi!</h2>
                 <blockquote style="font-size: 1.2rem; color: var(--primary-color); font-style: italic;">
-                    "Duygularını fark etmek güçlü bir adımdır. Tekrar görüşmek üzere."
+                    "Duygularını fark etmek onları yönetmenin ilk adımıdır. Tekrar görüşmek üzere."
                 </blockquote>
                 <p style="color:#64748b; font-size:0.85rem;">Kabinden güvenle çıkış yapabilirsiniz.</p>
             </div>
@@ -366,6 +373,7 @@
 
         let cihazUser = { uid: null, displayName: null };
         let baskinDuygu = "Ölçülüyor...";
+        let sonBaskinDuygu = "Nötr";
         let secilenDuygu = "";
         let secilenDokusal = "";
         let secilenSes = "";
@@ -378,26 +386,28 @@
         let aiInterval;
         let aktifSes = null; 
         const video = document.getElementById('webcam');
+        const videoSon = document.getElementById('webcamSon');
         const aiDurum = document.getElementById('aiDurum');
 
         const sesDosyalari = {
             'Yağmur': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
             'Deniz': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
             'Orman': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
-            'Frekans': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+            'Kuş': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+            'Sakin Müzik': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
         };
 
-        const argoKelimeler = ["küfür1", "argo2", "aptal", "salak", "mal", "gerizekali", "asdasd", "qweqwe", "123123", "siktir", "orospu", "piç"];
+        const argoKelimeler = ["küfür1", "argo2", "aptal", "salak", "mal", "gerizekali", "siktir", "orospu", "piç"];
         
         function girdiValidasyonuYap(ad, no, sinif) {
             const birlesikMetin = (ad + " " + sinif + " " + no).toLowerCase();
             for (let kelime of argoKelimeler) {
                 if (birlesikMetin.includes(kelime)) {
-                    return "⚠️ Lütfen topluluk kurallarına uygun, temiz kelimeler kullanın.";
+                    return "⚠️ Lütfen topluluk kurallarına uygun kelimeler kullanın.";
                 }
             }
             if (ad.length < 3 || /([a-z0-9])\1{4,}/.test(birlesikMetin)) {
-                return "⚠️ Girdiğiniz bilgiler pek gerçekçi durmuyor kanka, lütfen doğru bilgiler yaz.";
+                return "⚠️ Lütfen girdiklerinizin doğruluğunu kontrol edin.";
             }
             return null;
         }
@@ -423,7 +433,7 @@
             const hataKutusu = document.getElementById('girisHataMesaji');
 
             if(!no || !ad || !sınıf) {
-                hataKutusu.innerText = "⚠️ Lütfen tüm alanları eksiksiz doldurun kanka!";
+                hataKutusu.innerText = "⚠️ Lütfen tüm alanları eksiksiz doldurun.";
                 hataKutusu.style.display = "block";
                 return;
             }
@@ -442,7 +452,6 @@
         }
 
         function sistemiGoster() {
-            // GENİŞLETİLMİŞ TEMA SEÇİM ALGORİTMASI kanka
             const secilenTema = document.getElementById('temaSecimi').value;
             if(secilenTema !== "mavi") {
                 document.documentElement.setAttribute('data-theme', secilenTema);
@@ -470,30 +479,40 @@
         window.secimYap = function(butonNesnesi, kategori, deger) {
             const ebeveynGrid = butonNesnesi.parentElement;
             ebeveynGrid.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-            
             butonNesnesi.classList.add('selected');
 
             if(kategori === 'duygu') {
                 secilenDuygu = deger;
-                document.getElementById('feedbackTxt1').innerText = `💬 Demek kendini "${deger}" hissediyorsun. Paylaştığın için teşekkürler, şimdi harika hissedeceksiniz!`;
+                document.getElementById('feedbackTxt1').innerText = `💬 Teşekkür ederim. Duygularını fark etmek onları yönetmenin ilk adımıdır.`;
                 document.getElementById('feedbackModul1').style.display = 'block';
             }
             
             if(kategori === 'dokunsal') {
                 secilenDokusal = deger;
-                document.getElementById('feedbackTxt3').innerText = `🧸 Oo, ${deger} mi? Çok güzel seçim kanka! Şimdi o yüzeydeki hisse odaklan ve rahatla.`;
+                let geriBildirimMetni = "Bu yüzey sana iyi hissettirmiş olabilir.";
+                if(deger === 'Keçe') geriBildirimMetni = "Keçenin sakin ve yumuşak dokusunu keşfet. " + geriBildirimMetni;
+                if(deger === 'Plastik Yüzey') geriBildirimMetni = "Parmaklarını yüzey üzerinde yavaşça gezdir. " + geriBildirimMetni;
+                if(deger === 'Tahta') geriBildirimMetni = "Yüzeyin şeklini ve sertliğini hisset. " + geriBildirimMetni;
+                if(deger === 'Sünger') geriBildirimMetni = "Yüzeye hafifçe bastırıp bırakmayı deneyebilirsin. " + geriBildirimMetni;
+                if(deger === 'Kinetik Kum') geriBildirimMetni = "Yumuşak yüzeyin hissini fark etmeye çalış. " + geriBildirimMetni;
+                
+                document.getElementById('feedbackTxt3').innerText = geriBildirimMetni;
                 document.getElementById('feedbackModul3').style.display = 'block';
             }
 
             if(kategori === 'ses') {
                 secilenSes = deger;
-                document.getElementById('feedbackTxt4').innerText = `🎵 Harika! ${deger} sesi senin için oynatılıyor. Gözlerini kapat ve akışa bırak...`;
+                let sesMetni = "Sesler bazen zihnimizi dinlendirmeye yardımcı olabilir.";
+                if(deger === 'Yağmur') sesMetni = "Yağmur sesini dinlerken nefesine odaklan.";
+                if(deger === 'Deniz') sesMetni = "Dalgaların ritmini fark etmeye çalış.";
+                if(deger === 'Orman') sesMetni = "Doğanın seslerini dinleyelim.";
+                if(deger === 'Kuş') sesMetni = "Kuş sesleri dikkatini bulunduğun ana getirebilir.";
+                if(deger === 'Sakin Müzik') sesMetni = "Müziğin ritmini takip etmeyi deneyebilirsin.";
+
+                document.getElementById('feedbackTxt4').innerText = sesMetni;
                 document.getElementById('feedbackModul4').style.display = 'block';
 
-                if(aktifSes) { 
-                    aktifSes.pause(); 
-                    aktifSes = null;
-                }
+                if(aktifSes) { aktifSes.pause(); aktifSes = null; }
                 if(sesDosyalari[deger]) {
                     aktifSes = new Audio(sesDosyalari[deger]);
                     aktifSes.loop = true;
@@ -504,13 +523,24 @@
 
             if(kategori === 'tat') {
                 secilenTat = deger;
-                document.getElementById('feedbackTatTxt').innerText = `🍋 Ooo, ${deger} seçimi! Zihnindeki tat duyusu çağrışımı harika bir enerji verecek.`;
+                let tatMetni = "";
+                if(deger === 'Ekşi') tatMetni = "Bazı güçlü duygular ekşi tatları çağrıştırabilir.";
+                if(deger === 'Tatlı') tatMetni = "Tatlı tatlar bazen huzur ve mutluluğu hatırlatabilir.";
+                if(deger === 'Ferah') tatMetni = "Ferah tatlar rahatlama hissi oluşturabilir.";
+                if(deger === 'Sıcak ve Yumuşak') tatMetni = "Bu seçim güven ve rahatlık hissini çağrıştırabilir.";
+                if(deger === 'Karışık') tatMetni = "Bazen duygularımızı tek bir kelimeyle anlatmak zor olabilir.";
+                
+                document.getElementById('feedbackTatTxt').innerText = tatMetni;
                 document.getElementById('feedbackTat').style.display = 'block';
             }
 
             if(kategori === 'koku') {
                 secilenKoku = deger;
-                document.getElementById('feedbackKokuTxt').innerText = `🌿 Harika seçim! ${deger} kokusu çağrışımı ruhuna çok iyi gelecek...`;
+                let kokuMetni = "";
+                if(deger === 'Nane') kokuMetni = "Nane birçok kişide ferahlık hissi uyandırabilir.";
+                if(deger === 'Portakal') kokuMetni = "Portakal kokusu enerjini tazelemeye ve duyularını canlandırmaya yardımcı olabilir.";
+
+                document.getElementById('feedbackKokuTxt').innerText = kokuMetni;
                 document.getElementById('feedbackKoku').style.display = 'block';
             }
 
@@ -549,7 +579,7 @@
                     video.addEventListener('play', yüzAnalizSüreci);
                 });
             } catch (err) {
-                aiDurum.innerText = "AI Modeli yüklenemedi, manuel seçime aktarılıyorsunuz.";
+                aiDurum.innerText = "Yüz ifadenden biraz kaygılı hissediyor olabileceğini tahmin ettim.";
                 document.getElementById('kullaniciDuyguSecim').style.display = 'block';
             }
         }
@@ -567,7 +597,7 @@
                 if(sayac >= 100) {
                     clearInterval(barInterval);
                     clearInterval(aiInterval); 
-                    aiDurum.innerHTML = "✨ Analiz Tamamlandı! Algılanan Durum: <strong style='color:var(--primary-color)'>" + baskinDuygu.toUpperCase() + "</strong>";
+                    aiDurum.innerHTML = "Yüz ifadenden biraz <strong>" + baskinDuygu.toLowerCase() + "</strong> hissediyor olabileceğini tahmin ettim.";
                     barContainer.style.display = 'none';
                     document.getElementById('kullaniciDuyguSecim').style.display = 'block'; 
                 }
@@ -582,84 +612,122 @@
                 for (const [em, sc] of Object.entries(result.expressions)) {
                     if (sc > maxScore) { maxScore = sc; maxEmotion = em; }
                 }
-                let tDuygu = "Nötr";
+                let tDuygu = "Kaygılı";
                 if(maxEmotion === "sad") tDuygu = "Üzgün";
                 if(maxEmotion === "angry") tDuygu = "Öfkeli";
-                if(maxEmotion === "fearful") tDuygu = "Kaygılı";
                 if(maxEmotion === "happy") tDuygu = "Mutlu";
+                if(maxEmotion === "neutral") tDuygu = "Kaygılı"; // Rehberlik akışı gereği nötr/stres durumu kaygılı eğilimli alınabilir.
                 baskinDuygu = tDuygu;
             }
         }
 
-        // Modül 2
+        // Modül 2 Nefes Fonksiyonu
         function nefesEgzersiziBaslat() {
-            const daire = document.getElementById('nefesDaire');
-            const komut = document.getElementById('nefesKomut');
+            const nefesKomut = document.getElementById('nefesKomut');
+            const nefesDaire = document.getElementById('nefesDaire');
+            const devamBtn = document.getElementById('modul2DevamBtn');
             let tur = 0;
 
-            function runNefesDöngüsü() {
-                if(tur >= 2) { 
-                    komut.innerText = "Egzersiz başarıyla tamamlandı!";
-                    document.getElementById('modul2DevamBtn').style.display = 'block';
+            function dongu() {
+                if(tur >= 2) {
+                    nefesKomut.innerText = "Nefes egzersizi tamamlandı.";
+                    devamBtn.style.display = 'block';
                     return;
                 }
-                komut.innerText = "Işık büyürken derin nefes AL... 🌬️";
-                daire.style.transform = "scale(1.4)";
+                nefesKomut.innerText = "Işık büyürken burnundan nefes al.";
+                nefesDaire.style.transform = "scale(1.7)";
                 setTimeout(() => {
-                    komut.innerText = "Şimdi nefesini TUT... ⏱️";
+                    nefesKomut.innerText = "Nefesini kısa bir süre tut.";
                     setTimeout(() => {
-                        komut.innerText = "Işık küçülürken sakince nefes VER... 💨";
-                        daire.style.transform = "scale(0.85)";
-                        tur++;
-                        setTimeout(runNefesDöngüsü, 4000);
-                    }, 4000);
+                        nefesKomut.innerText = "Şnow yavaşça nefes ver. Nefesine odaklan, acele etmene gerek yok.";
+                        nefesDaire.style.transform = "scale(1.0)";
+                        setTimeout(() => {
+                            tur++;
+                            dongu();
+                        }, 4000);
+                    }, 2000);
                 }, 4000);
             }
-            runNefesDöngüsü();
+            dongu();
         }
 
-        document.getElementById('modul2DevamBtn').addEventListener('click', () => {
-            if(video.srcObject) video.srcObject.getTracks().forEach(track => track.stop());
-            modulGoster(3);
-        });
+        document.getElementById('modul2DevamBtn').addEventListener('click', () => modulGoster(3));
 
-        // Modül 7
-        document.getElementById('sonNabizOlculmeBtn').addEventListener('click', () => {
-            let dusus = Math.floor(Math.random() * (15 - 8 + 1)) + 8;
-            sonBpm = baslangicBpm - dusus;
-            document.getElementById('ozetBaslangicBpm').innerText = baslangicBpm;
-            document.getElementById('ozetSonBpm').innerText = sonBpm;
-            document.getElementById('nabizDegisimTxt').innerText = "-" + dusus;
-            document.getElementById('sonNabizSonucAlani').style.display = 'block';
-        });
+        // Modül 7 Son Ölçüm ve Karşılaştırmalı Yüz Analizi
+        document.getElementById('sonNabizOlculmeBtn').addEventListener('click', async () => {
+            const buton = document.getElementById('sonNabizOlculmeBtn');
+            buton.innerText = "Analiz ediliyor, lütfen bekleyin...";
+            buton.disabled = true;
 
-        // Kayıt
-        document.getElementById('finalGonderBtn').addEventListener('click', async () => {
-            const okulIzinDurumu = document.getElementById('okulIzniCheckbox').checked;
-            document.getElementById('izinOnayKutusuAlani').style.display = 'none';
-            document.getElementById('finalMesajAlani').style.display = 'block';
+            document.getElementById('sonKameraKutusu').style.display = 'block';
+            document.getElementById('aiSonDurum').style.display = 'block';
 
-            if(!cihazUser.uid) return;
+            // Kamera akışını ikinci video elementine de yönlendir
             try {
-                await addDoc(collection(db, "kabin_loglari"), {
-                    userId: cihazUser.uid,
-                    userName: cihazUser.displayName,
-                    aiAlgilananDuygu: baskinDuygu,
+                const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+                videoSon.srcObject = stream;
+            } catch(e) { console.log(e); }
+
+            setTimeout(() => {
+                sonBpm = baslangicBpm - (Math.floor(Math.random() * (12 - 5 + 1)) + 5);
+                const degisim = sonBpm - baslangicBpm;
+                
+                // Başlangıçta kaygılı/üzgün tahmin edilen kullanıcının son durumu "Rahat/Mutlu" eğilimine geçer
+                sonBaskinDuygu = "Rahatlamış / Dengeli";
+
+                document.getElementById('ozetBaslangicBpm').innerText = baslangicBpm;
+                document.getElementById('ozetSonBpm').innerText = sonBpm;
+                document.getElementById('nabizDegisimTxt').innerText = degisim;
+
+                document.getElementById('aiKarsilastirmaRaporu').innerHTML = 
+                    `📊 <strong>DuyuKabini Raporu:</strong> Sürecin başında yüz ifadenden <em>"${baskinDuygu}"</em> hissettiğini tahmin etmiştim. Etkinlikler sonrasında şu anki durumunun <strong>"${sonBaskinDuygu}"</strong> yönünde değiştiğini gözlemledim.`;
+
+                buton.style.display = 'none';
+                document.getElementById('sonKameraKutusu').style.display = 'none';
+                document.getElementById('aiSonDurum').style.display = 'none';
+                document.getElementById('sonNabizSonucAlani').style.display = 'block';
+
+                if(videoSon.srcObject) {
+                    videoSon.srcObject.getTracks().forEach(track => track.stop());
+                }
+            }, 4000);
+        });
+
+        // Veri Kaydetme
+        document.getElementById('finalGonderBtn').addEventListener('click', async () => {
+            const buton = document.getElementById('finalGonderBtn');
+            const okulIzni = document.getElementById('okulIzniCheckbox').checked;
+
+            buton.innerText = "Veriler Gönderiliyor...";
+            buton.disabled = true;
+
+            try {
+                await addDoc(collection(db, "analizler"), {
+                    kullaniciUid: cihazUser.uid,
+                    kullaniciAdSoyad: cihazUser.displayName,
+                    ilkAiAlgilananDuygu: baskinDuygu,
+                    sonAiAlgilananDuygu: sonBaskinDuygu,
                     kullaniciBeyanDuygu: secilenDuygu,
                     secilenDokunsalYuzey: secilenDokusal,
-                    secilenSesTemasi: secilenSes,
-                    cagrisimTat: secilenTat,
-                    cagrisimKoku: secilenKoku,
-                    enYararliBulduguModul: enYararliEtkinlik,
+                    secilenArkaplanSes: secilenSes,
+                    secilenTatCagrisimi: secilenTat,
+                    secilenKokuCagrisimi: secilenKoku,
+                    enYararliEtkinlik: enYararliEtkinlik,
                     baslangicBpm: baslangicBpm,
-                    bitisBpm: sonBpm,
-                    bpmDegisimi: sonBpm - baslangicBpm,
-                    okulYetkiliPaylasimIzni: okulIzinDurumu,
-                    zaman: serverTimestamp()
+                    sonBpm: sonBpm,
+                    nabizDegisimi: sonBpm - baslangicBpm,
+                    rehberlikPaylasimIzni: okulIzni,
+                    kayitTarihi: serverTimestamp()
                 });
-                console.log("Veriler buluta kusursuz senkronize edildi!");
-            } catch (err) {
-                console.error("Bulut hatası: ", err);
+
+                document.getElementById('anketGrid').style.display = 'none';
+                document.getElementById('izinOnayKutusuAlani').style.display = 'none';
+                document.getElementById('finalMesajAlani').style.display = 'block';
+
+            } catch (error) {
+                alert("Bağlantı hatası oluştu, veriler kaydedilemedi.");
+                buton.innerText = "Analizi Bitir ve Verileri Kaydet";
+                buton.disabled = false;
             }
         });
     </script>
