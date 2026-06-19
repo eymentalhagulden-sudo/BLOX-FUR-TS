@@ -133,7 +133,7 @@
 </head>
 <body>
 
-    <!-- Giriş Kutusu (Modul 99 olarak düşünülebilir, sesli okunmayacak) -->
+    <!-- Giriş Kutusu -->
     <div id="loginKutusu" class="box active">
         <h2>🧠 DuyuKabini-AI Akıllı Kabin</h2>
         <p style="color: #64748b; font-size:0.9rem;">Analizin başlaması için giriş yapın ve kabin temanızı seçin.</p>
@@ -469,6 +469,25 @@
 
         // YAPAY ZEKA SESLİ OKUMA DEĞİŞKENLERİ
         let isSpeechEnabled = false;
+        let secilenTurkceSes = null;
+
+        // Tarayıcıdaki en insansı/doğal Türkçe sesi bulan altyapı
+        function enIyiSesiYukle() {
+            if (typeof speechSynthesis === 'undefined') return;
+            let voices = speechSynthesis.getVoices();
+            
+            // Öncelik sırasına göre en insansı Türkçe sesleri filtrele
+            // 1. Google TR (Chrome'da harika çalışır), 2. Microsoft Natural (Edge), 3. Herhangi bir TR ses
+            let trVoices = voices.filter(voice => voice.lang.includes('tr-TR'));
+            
+            secilenTurkceSes = trVoices.find(v => v.name.includes('Google')) || 
+                               trVoices.find(v => v.name.includes('Natural')) || 
+                               trVoices[0] || null;
+        }
+
+        if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = enIyiSesiYukle;
+        }
 
         let chatGecmisi = [
             { 
@@ -505,18 +524,24 @@
             return null;
         }
 
+        // Metnin içindeki emoji veya teknik kodları temizleyip daha doğal okutma fonksiyonu
+        function metniTemizle(text) {
+            return text.replace(/[0-9️⃣🤖📊🌬️✋🎵🌿🍋🧸❤️🔮🧴☑️🔘○🎨🧪🪵🧽⏳🧱🫧🌧️🌊🌲🐦🧘🍬🍪🌶️☁️🍊🪻🧑‍🏫✨]/g, '').trim();
+        }
+
         // ==========================================
-        // 🔊 YAPAY ZEKA SES MODÜLÜ FONKSİYONLARI
+        // 🔊 YAPAY ZEKA SES MODÜLÜ FONKSİYONLARI (YENİ SAKİN TON)
         // ==========================================
         function toggleSpeech() {
             isSpeechEnabled = !isSpeechEnabled;
             const btn = document.getElementById('sesliOkumaBtn');
             if (isSpeechEnabled) {
                 btn.innerText = "🔊 Sesli Okuma: AÇIK";
-                btn.style.backgroundColor = "#10b981"; // Yeşil
+                btn.style.backgroundColor = "#10b981"; 
+                if(!secilenTurkceSes) enIyiSesiYukle();
             } else {
                 btn.innerText = "🔊 Sesli Okuma: KAPALI";
-                btn.style.backgroundColor = "#334155"; // Gri
+                btn.style.backgroundColor = "#334155"; 
                 window.speechSynthesis.cancel();
             }
         }
@@ -524,12 +549,20 @@
 
         function speakText(text) {
             if (!isSpeechEnabled || !text) return;
-            window.speechSynthesis.cancel(); // Önceki okumayı kes
+            window.speechSynthesis.cancel(); 
 
-            const utterance = new SpeechSynthesisUtterance(text);
+            const safMetin = metniTemizle(text);
+            const utterance = new SpeechSynthesisUtterance(safMetin);
+            
+            if (secilenTurkceSes) {
+                utterance.voice = secilenTurkceSes; // En insansı sesi ata
+            }
             utterance.lang = 'tr-TR';
-            utterance.rate = 1.3; // Bir tık hızlı okuma ayarı
-            utterance.pitch = 1.0;
+            
+            // 🧠 GROK / AI ASİSTAN AYARI: Daha yavaş, tane tane ve insansı
+            utterance.rate = 0.85; 
+            utterance.pitch = 1.0; 
+            
             window.speechSynthesis.speak(utterance);
         }
 
@@ -540,11 +573,13 @@
             if(target) {
                 target.classList.add('active');
                 
-                // 🔊 SESLİ OKUMA ENTEGRASYONU (Slayt metnini otomatik çekip okur)
-                // Modül başlığı ve açıklama mesajını birleştirip seslendirir
+                // Modül başlığı ve açıklama mesajını temizleyip okur
                 const baslik = target.querySelector('h3') ? target.querySelector('h3').innerText : "";
                 const aciklama = target.querySelector('.info-msg') ? target.querySelector('.info-msg').innerText : "";
-                speakText(baslik + ". " + aciklama);
+                
+                // Başlıktaki "Modül 1:" gibi teknik ifadeleri ayıklayarak oku
+                const okunacakKisim = baslik.split(':').pop() + ". " + aciklama;
+                speakText(okunacakKisim);
             }
             
             // Modül özel tetikleyicileri
@@ -612,7 +647,6 @@
             const txt = "Hijyen kontrolü tamamlandı. Teşekkür ederim. Şimdi başlangıç ölçümünü yapacağız. Lütfen parmağını sensörün üzerine yerleştir.";
             speakText(txt);
 
-            // Simüle edilmiş Nabız Sensör Okuması
             setTimeout(() => {
                 baslangicBpm = Math.floor(Math.random() * (105 - 85 + 1)) + 85; 
                 document.getElementById('baslangicNabizTxt').innerText = baslangicBpm + " BPM";
@@ -727,7 +761,7 @@
                 const aiYanit = data.choices[0].message.content;
                 
                 mesajEkle(aiYanit, "ai");
-                speakText(aiYanit); // Chat botun yanıtını sesli oku
+                speakText(aiYanit); 
                 chatGecmisi.push({ role: "assistant", content: aiYanit });
                 document.getElementById('chatTamamBtn').style.display = "block";
             } catch (e) {
@@ -765,17 +799,17 @@
                 }
                 
                 const alTxt = "Derin Bir Nefes Al";
-                komut.innerText = alTxt + "... (4 Saniye)";
+                komut.innerText = alTxt + "...";
                 speakText(alTxt);
                 daire.style.transform = "scale(1.6)";
                 
                 setTimeout(() => {
                     const tutTxt = "Nefesini Tut";
-                    komut.innerText = tutTxt + "... (4 Saniye)";
+                    komut.innerText = tutTxt + "...";
                     speakText(tutTxt);
                     setTimeout(() => {
                         const verTxt = "Yavaşça Nefesini Ver";
-                        komut.innerText = verTxt + "... (4 Saniye)";
+                        komut.innerText = verTxt + "...";
                         speakText(verTxt);
                         daire.style.transform = "scale(1)";
                         setTimeout(() => {
@@ -797,7 +831,7 @@
             const txt3 = document.getElementById('feedbackTxt3');
             f3.style.display = "block";
             
-            const feedbackMetni = `🤖 AI Koç Bilgisi: ${val} dokusu uyarısıyla sinir sistemine güvenli alan sinyalleri gönderiliyor. Dokunmaya devam ederken omuzlarını serbest bırak.`;
+            const feedbackMetni = `Koç Bilgisi: ${val} dokusu uyarısıyla sinir sistemine güvenli alan sinyalleri gönderiliyor. Dokunmaya devam ederken omuzlarını serbest bırak.`;
             txt3.innerText = feedbackMetni;
             speakText(feedbackMetni);
         });
@@ -814,7 +848,7 @@
             aktifSes.play().catch(() => console.log("Ses çalma izin engeline takıldı."));
 
             const f4 = document.getElementById('feedbackModul4');
-            const feedbackMetni = `🤖 AI Koç Bilgisi: ${val} frekansları beyin dalgalarını alfa moduna çekmeye yardımcı oluyor.`;
+            const feedbackMetni = `Koç Bilgisi: ${val} frekansları beyin dalgalarını alfa moduna çekmeye yardımcı oluyor.`;
             document.getElementById('feedbackTxt4').innerText = feedbackMetni;
             speakText(feedbackMetni);
             f4.style.display = "block";
@@ -835,7 +869,7 @@
                 'Acı': "Acı tat baskın bir uyarandır; dikkati fiziksel bir noktaya sabitleyerek kaygıyı maskeleyebilir.",
                 'Karışık': "Duyguların karmaşık olması çok normal. Onları hemen çözmek zorunda değiliz."
             };
-            const feedbackMetni = `🤖 Anlamı: ${yorumsalHarita[val]}`;
+            const feedbackMetni = `Anlamı: ${yorumsalHarita[val]}`;
             document.getElementById('feedbackTatTxt').innerText = feedbackMetni;
             speakText(feedbackMetni);
             document.getElementById('feedbackTat').style.display = "block";
@@ -849,7 +883,7 @@
 
         gridAyarla('kokuGrid', (val) => {
             secilenKoku = val;
-            const feedbackMetni = `🤖 Tercihiniz: ${val}. Kabindeki koku dağıtıcı şu anda aktif hale getirildi. Aromaterapi molekülleri amigdalanı sakinleştiriyor.`;
+            const feedbackMetni = `Tercihiniz: ${val}. Kabindeki koku dağıtıcı şu anda aktif hale getirildi. Aromaterapi molekülleri amigdalanı sakinleştiriyor.`;
             document.getElementById('feedbackKokuTxt').innerText = feedbackMetni;
             speakText(feedbackMetni);
             document.getElementById('feedbackKoku').style.display = "block";
@@ -857,7 +891,7 @@
         document.getElementById('toModul6Btn').addEventListener('click', () => modulGoster(6));
         document.getElementById('toModul7Btn').addEventListener('click', () => modulGoster(7));
 
-        // Modül 7: Son Durum Analizi (Karşılaştırma Raporu)
+        // Modül 7: Son Durum Analizi
         document.getElementById('sonNabizOlculmeBtn').addEventListener('click', function() {
             this.style.display = "none";
             document.getElementById('sonKameraKutusu').style.display = "block";
@@ -880,9 +914,9 @@
 
                 let rapor = "";
                 if(fark < 0) {
-                    rapor = `✨ Harika! Kabine girdiğinden bu yana kalp atış hızın ${Math.abs(fark)} BPM azaldı. Duyu odaklı çalışmalar parasempatik sinir sistemini başarıyla aktive etmiş görünüyor.`;
+                    rapor = `Harika! Kabine girdiğinden bu yana kalp atış hızın ${Math.abs(fark)} vuruş azaldı. Duyu odaklı çalışmalar parasempatik sinir sistemini başarıyla aktive etmiş görünüyor.`;
                 } else {
-                    rapor = "📊 Kalp atış hızın stabil kalmış. Duygusal dengelenme süreci kabinden çıktıktan sonra da devam edebilir; kendine biraz zaman tanı.";
+                    rapor = "Kalp atış hızın stabil kalmış. Duygusal dengelenme süreci kabinden çıktıktan sonra da devam edebilir; kendine biraz zaman tanı.";
                 }
                 document.getElementById('aiKarsilastirmaRaporu').innerText = rapor;
                 speakText(rapor);
@@ -892,7 +926,7 @@
 
         document.getElementById('toModul8Btn').addEventListener('click', () => modulGoster(8));
 
-        // Modül 8: Çıkış Anketi & Veritabanına Gönderim
+        // Modül 8: Çıkış Anketi
         gridAyarla('anketGrid', (val) => {
             enYararliEtkinlik = val;
             document.getElementById('izinOnayKutusuAlani').style.display = "block";
@@ -937,7 +971,6 @@
             }
         });
 
-        // Ortak Yardımcı Fonksiyon: Grid içi buton seçimlerini yönetir
         function gridAyarla(gridId, callback) {
             document.querySelectorAll(`#${gridId} .option-btn`).forEach(btn => {
                 btn.addEventListener('click', function() {
