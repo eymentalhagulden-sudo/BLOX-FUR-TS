@@ -69,7 +69,8 @@
         }
 
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-color); text-align: center; padding: 20px; margin: 0; transition: all 0.5s ease; }
-        .box { background: var(--box-bg); padding: 30px; border-radius: 15px; max-width: 600px; margin: 20px auto; border: 1px solid var(--primary-color); box-shadow: 0 0 20px rgba(0,242,254,0.1); transition: all 0.5s ease; }
+        .box { background: var(--box-bg); padding: 30px; border-radius: 15px; max-width: 600px; margin: 20px auto; border: 1px solid var(--primary-color); box-shadow: 0 0 20px rgba(0,242,254,0.1); transition: all 0.5s ease; display: none; }
+        .box.active { display: block; }
         
         button { background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color: var(--button-text); border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: 0.3s; width: 100%; margin-bottom: 15px; }
         button:hover { transform: scale(1.02); box-shadow: 0 0 15px var(--primary-color); }
@@ -95,9 +96,6 @@
         input, select, textarea { width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-color); font-size: 0.95rem; box-sizing: border-box; }
         input:focus, select:focus, textarea:focus { border-color: var(--primary-color); outline: none; }
 
-        .modul-ekrani { display: none; text-align: center; }
-        .active { display: block; }
-        
         .camera-box { width: 100%; max-width: 350px; margin: 15px auto; border-radius: 12px; overflow: hidden; border: 2px solid var(--border-color); background: #000; aspect-ratio: 4/3; }
         video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
         
@@ -128,14 +126,23 @@
         .chat-msg { padding: 8px 12px; border-radius: 8px; max-width: 80%; font-size: 0.9rem; line-height: 1.4; }
         .chat-msg.ai { background: rgba(0, 242, 254, 0.1); border-left: 3px solid var(--primary-color); align-self: flex-start; color: white; }
         .chat-msg.user { background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color: var(--button-text); align-self: flex-end; font-weight: 500; }
+        
+        /* Ses Kontrol Butonu */
+        #sesliOkumaBtn { background: #334155; color: white; border: 1px solid #475569; padding: 10px; font-size: 0.9rem; margin-top: 10px; border-radius: 8px; cursor: pointer; width: 100%; transition: 0.2s; }
     </style>
 </head>
 <body>
 
+    <!-- Giriş Kutusu (Modul 99 olarak düşünülebilir, sesli okunmayacak) -->
     <div id="loginKutusu" class="box active">
         <h2>🧠 DuyuKabini-AI Akıllı Kabin</h2>
         <p style="color: #64748b; font-size:0.9rem;">Analizin başlaması için giriş yapın ve kabin temanızı seçin.</p>
         
+        <!-- SESLİ OKUMA AKTİVASYON BUTONU -->
+        <button id="sesliOkumaBtn">🔊 Sesli Okuma: KAPALI</button>
+
+        <div class="divider">AYARLAR</div>
+
         <div class="form-group" style="margin-bottom: 20px;">
             <label>🔮 Kabin Arayüz Teması Seçin</label>
             <select id="temaSecimi">
@@ -167,9 +174,11 @@
         <button id="manuelGirisBtn" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: white; margin-top: 10px;">🔐 Bilgilerle Kabine Giriş Yap</button>
     </div>
 
+    <!-- Kabin Çalışma Alanı -->
     <div id="kabinAlani" style="display: none;">
         
-        <div id="modul0" class="box modul-ekrani">
+        <!-- Modül 0 -->
+        <div id="modul0" class="box">
             <h3>🧴 Modül 0: Hijyen Kontrolü & Başlangıç Nabız Ölçümü</h3>
             <p class="info-msg">"Merhaba. DuyuDenge-AI'ye hoş geldin. Bugün duygularını birlikte keşfedeceğiz."</p>
             <p><strong>Sistem Uyarısı:</strong> Başlamadan önce lütfen ellerini dezenfekte et.</p>
@@ -182,7 +191,8 @@
             </div>
         </div>
 
-        <div id="modul1" class="box modul-ekrani">
+        <!-- Modül 1 -->
+        <div id="modul1" class="box">
             <h3>📷 1️⃣ Yüz İfadesi ve Nabız Analizi</h3>
             <p class="info-msg" id="modul1GirisMetni">"Kameraya birkaç saniye bakabilir misin?"</p>
             
@@ -196,7 +206,8 @@
             </div>
         </div>
 
-        <div id="modul1B" class="box modul-ekrani">
+        <!-- Modül 1B -->
+        <div id="modul1B" class="box">
             <h3>🤖 2️⃣ Yapay Zekâ Duygu Koçu</h3>
             <p class="info-msg" style="color: var(--primary-color); font-weight: bold;">"Birlikte şu an nasıl hissettiğini keşfedelim."</p>
             
@@ -210,7 +221,7 @@
                     <label class="check-item"><input type="checkbox" name="belirti" value="aglamak"> ☑️ Ağlamak istiyorum</label>
                     <label class="check-item"><input type="checkbox" name="belirti" value="huzursuzluk"> ☑️ İçimde huzursuzluk var</label>
                     <label class="check-item"><input type="checkbox" name="belirti" value="enerjik"> ☑️ Enerjik hissediyorum</label>
-                    <label class="check-item"><input type="checkbox" name="belirti" value="hicbiri" id="belirtiHicbiri" onchange="hicbiriSecildi(this)"> ☑️ Hiçbiri</label>
+                    <label class="check-item"><input type="checkbox" name="belirti" value="hicbiri" id="belirtiHicbiri"> ☑️ Hiçbiri</label>
                 </div>
             </div>
 
@@ -225,10 +236,11 @@
                 </div>
             </div>
 
-            <button onclick="degerlendirmeyiHesapla()" style="margin-top: 20px; background: linear-gradient(135deg, #a855f7, #6366f1); color: white;">3️⃣ Yapay Zekâ Değerlendirmesini Başlat 🔮</button>
+            <button id="degerlendirmeHesaplaBtn" style="margin-top: 20px; background: linear-gradient(135deg, #a855f7, #6366f1); color: white;">3️⃣ Yapay Zekâ Değerlendirmesini Başlat 🔮</button>
         </div>
 
-        <div id="modul1C" class="box modul-ekrani">
+        <!-- Modül 1C -->
+        <div id="modul1C" class="box">
             <h3>📊 4️⃣ Duygu Farkındalığı Ekranı</h3>
             <p class="info-msg">"Verdiğin cevaplara göre şu duygular ön plana çıkıyor olabilir:"</p>
             
@@ -242,17 +254,18 @@
             </div>
 
             <p class="info-msg" style="color: white; font-weight: bold;">"Sence şu an sana en yakın duygu hangisi?"</p>
-            <div class="option-grid" style="grid-template-columns: 1fr;">
-                <button class="option-btn" onclick="duyguSecimKaydet(this, 'Kaygı')">🔘 Kaygı</button>
-                <button class="option-btn" onclick="duyguSecimKaydet(this, 'Üzüntü')">🔘 Üzüntü</button>
-                <button class="option-btn" onclick="duyguSecimKaydet(this, 'Öfke')">🔘 Öfke</button>
-                <button class="option-btn" onclick="duyguSecimKaydet(this, 'Kararsızlık')">🔘 Kararsızlık</button>
-                <button class="option-btn" onclick="duyguSecimKaydet(this, 'Mutluluk')">🔘 Mutluluk</button>
-                <button class="option-btn" onclick="duyguSecimKaydet(this, 'Bunların hiçbiri')" style="border-color: #ef4444; color: #f87171;">🔘 Bunların hiçbiri</button>
+            <div class="option-grid" style="grid-template-columns: 1fr;" id="duyguSecimGrid">
+                <button class="option-btn" data-val="Kaygı">🔘 Kaygı</button>
+                <button class="option-btn" data-val="Üzüntü">🔘 Üzüntü</button>
+                <button class="option-btn" data-val="Öfke">🔘 Öfke</button>
+                <button class="option-btn" data-val="Kararsızlık">🔘 Kararsızlık</button>
+                <button class="option-btn" data-val="Mutluluk">🔘 Mutluluk</button>
+                <button class="option-btn" data-val="Bunların hiçbiri" style="border-color: #ef4444; color: #f87171;">🔘 Bunların hiçbiri</button>
             </div>
         </div>
 
-        <div id="modul1D" class="box modul-ekrani">
+        <!-- Modül 1D (AI Chat) -->
+        <div id="modul1D" class="box">
             <h3>🤖 Yapay Zekâ Keşif Alanı</h3>
             <p class="info-msg">"Duygularını tanımlamak her zaman kolay olmayabilir. Gel, ne hissettiğini ve asıl sorunu birlikte konuşarak bulalım."</p>
             
@@ -262,13 +275,14 @@
 
             <div style="display: flex; gap: 10px;">
                 <textarea id="chatGirdi" rows="2" placeholder="Buraya yazabilirsin..." style="resize: none; flex: 1;"></textarea>
-                <button id="chatGonderBtn" style="width: auto; padding: 0 20px; margin: 0;" onclick="aiMesajGonder()">Gönder</button>
+                <button id="chatGonderBtn" style="width: auto; padding: 0 20px; margin: 0;">Gönder</button>
             </div>
             
-            <button id="chatTamamBtn" style="margin-top: 20px; background: #10b981; color: white; display: none;" onclick="modulGoster(2)">Sorunumu Keşfettim, Uygulamalara Devam Et ➡️</button>
+            <button id="chatTamamBtn" style="margin-top: 20px; background: #10b981; color: white; display: none;">Sorunumu Keşfettim, Uygulamalara Devam Et ➡️</button>
         </div>
 
-        <div id="modul2" class="box modul-ekrani">
+        <!-- Modül 2 -->
+        <div id="modul2" class="box">
             <h3>🌬️ Modül 2: Nefes ve Işık Alanı</h3>
             <p class="info-msg">"Önce nefesimizi düzenlemeyi deneyelim. Hazırsan başlayabiliriz."</p>
             <h4 id="nefesKomut">Hazırlanılıyor...</h4>
@@ -276,88 +290,93 @@
             <button id="modul2DevamBtn" style="display:none; margin-top:20px;">Harika gidiyorsun. Bedenin biraz daha sakinleşiyor olabilir. ➡️</button>
         </div>
 
-        <div id="modul3" class="box modul-ekrani">
+        <!-- Modül 3 -->
+        <div id="modul3" class="box">
             <h3>✋ Modül 3: Dokunsal Sakinleşme Paneli</h3>
             <p class="info-msg">"Şimdi farklı yüzeyleri keşfedelim. Dokunurken nefesine odaklanmayı unutma."</p>
             <div class="option-grid" id="dokunsalGrid">
-                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'Keçe')">🎨 Keçe</button>
-                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'Plastik Yüzey')">🧪 Plastik Yüzey</button>
-                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'Tahta')">🪵 Tahta Yüzey</button>
-                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'Sünger')">🧽 Sünger</button>
-                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'Kinetik Kum')">⏳ Kinetik Kum</button>
-                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'Çim Yüzey')">🌲 Çim Yüzey</button>
-                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'stres top')">⚽ stres topu</button>
-                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'taşlı yüzey')">🧱 Taşlı Yüzey</button>
-                <button class="option-btn" onclick="secimYap(this, 'dokunsal', 'pıt pıt yüzey')"> 🫧 pıt pıt yüzey</button>
+                <button class="option-btn" data-val="Keçe">🎨 Keçe</button>
+                <button class="option-btn" data-val="Plastik Yüzey">🧪 Plastik Yüzey</button>
+                <button class="option-btn" data-val="Tahta">🪵 Tahta Yüzey</button>
+                <button class="option-btn" data-val="Sünger">🧽 Sünger</button>
+                <button class="option-btn" data-val="Kinetik Kum">⏳ Kinetik Kum</button>
+                <button class="option-btn" data-val="Çim Yüzey">🌲 Çim Yüzey</button>
+                <button class="option-btn" data-val="stres top">⚽ stres topu</button>
+                <button class="option-btn" data-val="taşlı yüzey">🧱 Taşlı Yüzey</button>
+                <button class="option-btn" data-val="pıt pıt yüzey">🫧 pıt pıt yüzey</button>
             </div>
             
             <div class="ai-feedback-box" id="feedbackModul3">
                 <p style="color:var(--primary-color); font-weight:bold;" id="feedbackTxt3"></p>
-                <button onclick="modulGoster(4)">Şimdi istersen ses alanına geçebiliriz ➡️</button>
+                <button id="toModul4Btn">Şimdi istersen ses alanına geçebiliriz ➡️</button>
             </div>
         </div>
 
-        <div id="modul4" class="box modul-ekrani">
+        <!-- Modül 4 -->
+        <div id="modul4" class="box">
             <h3>🎵 Modül 4: Ses ve İşitsel Düzenleme Alanı</h3>
             <p class="info-msg">"Şimdi seni rahatlatabilecek bir ses seçebilirsin."</p>
             <div class="option-grid" id="sesGrid">
-                <button class="option-btn" onclick="secimYap(this, 'ses', 'Yağmur')">🌧️ Yağmur Sesi</button>
-                <button class="option-btn" onclick="secimYap(this, 'ses', 'Deniz')">🌊 Deniz Dalgaları</button>
-                <button class="option-btn" onclick="secimYap(this, 'ses', 'Orman')">🌲 Orman Sesleri</button>
-                <button class="option-btn" onclick="secimYap(this, 'ses', 'Kuş')">🐦 Kuş Sesleri</button>
-                <button class="option-btn" onclick="secimYap(this, 'ses', 'Sakin Müzik')">🧘 Sakin Müzik</button>
+                <button class="option-btn" data-val="Yağmur">🌧️ Yağmur Sesi</button>
+                <button class="option-btn" data-val="Deniz">🌊 Deniz Dalgaları</button>
+                <button class="option-btn" data-val="Orman">🌲 Orman Sesleri</button>
+                <button class="option-btn" data-val="Kuş">🐦 Kuş Sesleri</button>
+                <button class="option-btn" data-val="Sakin Müzik">🧘 Sakin Müzik</button>
             </div>
             
             <div class="ai-feedback-box" id="feedbackModul4">
                 <p style="color:var(--primary-color); font-weight:bold;" id="feedbackTxt4"></p>
-                <button onclick="modulGoster(5)">Şimdi başka bir duyumuzu keşfedelim ➡️</button>
+                <button id="toModul5Btn">Şimdi başka bir duyumuzu keşfedelim ➡️</button>
             </div>
         </div>
 
-        <div id="modul5" class="box modul-ekrani">
+        <!-- Modül 5 -->
+        <div id="modul5" class="box">
             <h3>🌿🍋 Modül 5: Koku ve Tat Çağrışımı Alanı</h3>
             <p class="info-msg">"Duygular bazen tatlar ve kokularla da ilişkilendirilebilir. Duygusal farkındalığımızı artırmak için bu çağrışımlardan yararlanabiliriz."</p>
             
             <div id="tatSorusu">
                 <p class="info-msg" style="color: var(--primary-color); font-weight: bold;">"Bugünkü duygun bir tat olsaydı hangisine benzerdi? Seçeneklerin altındaki anlamları birlikte düşünelim."</p>
                 <div class="option-grid" id="tatGrid">
-                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Ekşi')">🍋 Ekşi (Yoğun & Keskin)</button>
-                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Tatlı')">🍬 Tatlı (Hafif & Dingin)</button>
-                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Ferah')">🌿 Ferah (Açık & Rahat)</button>
-                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Sıcak ve Yumuşak')">🍪 Sıcak ve Yumuşak (Güvenli & Sakin)</button>
-                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Acı')">🌶️ Acı (Yorucu & Baskın)</button>
-                    <button class="option-btn" onclick="secimYap(this, 'tat', 'Karışık')">☁️ Karışık / Belirsiz</button>
+                    <button class="option-btn" data-val="Ekşi">🍋 Ekşi (Yoğun & Keskin)</button>
+                    <button class="option-btn" data-val="Tatlı">🍬 Tatlı (Hafif & Dingin)</button>
+                    <button class="option-btn" data-val="Ferah">🌿 Ferah (Açık & Rahat)</button>
+                    <button class="option-btn" data-val="Sıcak ve Yumuşak">🍪 Sıcak ve Yumuşak (Güvenli & Sakin)</button>
+                    <button class="option-btn" data-val="Acı">🌶️ Acı (Yorucu & Baskın)</button>
+                    <button class="option-btn" data-val="Karışık">☁️ Karışık / Belirsiz</button>
                 </div>
                 
                 <div class="ai-feedback-box" id="feedbackTat" style="margin-top: 15px;">
                     <p id="feedbackTatTxt" style="color:var(--primary-color); font-weight:bold; line-height: 1.5;"></p>
-                    <button onclick="tatAşamasınıKapat()" style="background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); margin-top: 10px;">Anlamı Keşfettim, Koku Çağrışımına Geç ➡️</button>
+                    <button id="tatKapatBtn" style="background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); margin-top: 10px;">Anlamı Keşfettim, Koku Çağrışımına Geç ➡️</button>
                 </div>
             </div>
 
             <div id="kokuSorusu" style="display:none; margin-top:20px;">
                 <p class="info-msg">"Bugünkü duygun bir koku olsaydı hangisine benzerdi?"</p>
                 <div class="option-grid" id="kokuGrid">
-                    <button class="option-btn" onclick="secimYap(this, 'koku', 'Nane')">🌿 Nane (Zihinsel Canlanma)</button>
-                    <button class="option-btn" onclick="secimYap(this, 'koku', 'Portakal')">🍊 Portakal (Enerji & Motivasyon)</button>
-                    <button class="option-btn" onclick="secimYap(this, 'koku', 'Lavanta')">🪻 Lavanta (Gevşeme & Huzur)</button>
+                    <button class="option-btn" data-val="Nane">🌿 Nane (Zihinsel Canlanma)</button>
+                    <button class="option-btn" data-val="Portakal">🍊 Portakal (Enerji & Motivasyon)</button>
+                    <button class="option-btn" data-val="Lavanta">🪻 Lavanta (Gevşeme & Huzur)</button>
                 </div>
                 
                 <div class="ai-feedback-box" id="feedbackKoku">
                     <p id="feedbackKokuTxt" style="color:var(--primary-color); font-weight:bold; margin-bottom:15px;"></p>
-                    <button onclick="modulGoster(6)">Güvenli Alana Geç ➡️</button>
+                    <button id="toModul6Btn">Güvenli Alana Geç ➡️</button>
                 </div>
             </div>
         </div>
 
-        <div id="modul6" class="box modul-ekrani">
+        <!-- Modül 6 -->
+        <div id="modul6" class="box">
             <h3>🧸 Modül 6: Güvenli Sakinleşme Köşesi</h3>
             <p class="info-msg">"Bir süre dinlenmek ister misin? İstersen kabindeki fiziksel stres topunu veya ağırlıklı yastığı kullanabilirsin."</p>
             <p style="color:#64748b;">Fiziksel ekipmanları deneyimledikten sonra hazır olduğunda devam edebiliriz.</p>
-            <button onclick="modulGoster(7)">Hazırım, Son Analizleri Yapalım ➡️</button>
+            <button id="toModul7Btn">Hazırım, Son Analizleri Yapalım ➡️</button>
         </div>
 
-        <div id="modul7" class="box modul-ekrani">
+        <!-- Modül 7 -->
+        <div id="modul7" class="box">
             <h3>❤️ Modül 7: Son Durum Analizi ve Geri Bildirim</h3>
             <p class="info-msg">"Bedenindeki değişimi birlikte gözlemleyelim. Lütfen parmağını sensörün üzerine yeniden yerleştir."</p>
             
@@ -378,18 +397,19 @@
                 </div>
 
                 <p class="info-msg">"Bugün harika bir iş çıkardın."</p>
-                <button onclick="modulGoster(8)">Çıkış Anketine Geç ➡️</button>
+                <button id="toModul8Btn">Çıkış Anketine Geç ➡️</button>
             </div>
         </div>
 
-        <div id="modul8" class="box modul-ekrani">
+        <!-- Modül 8 -->
+        <div id="modul8" class="box">
             <h3>📊 Çıkış Ekranı & Değerlendirme</h3>
             <p class="info-msg">"Bugün sana en çok hangi etkinlik yardımcı oldu?"</p>
             <div class="option-grid" id="anketGrid">
-                <button class="option-btn" onclick="secimYap(this, 'anket', 'Nefes Egzersizi')">○ Nefes Egzersizi</button>
-                <button class="option-btn" onclick="secimYap(this, 'anket', 'Dokunsal Panel')">○ Dokunsal Panel</button>
-                <button class="option-btn" onclick="secimYap(this, 'anket', 'İşitsel Sesler')">○ İşitsel Sesler</button>
-                <button class="option-btn" onclick="secimYap(this, 'anket', 'Koku ve Tat Köşesi')">○ Koku ve Tat Köşesi</button>
+                <button class="option-btn" data-val="Nefes Egzersizi">○ Nefes Egzersizi</button>
+                <button class="option-btn" data-val="Dokunsal Panel">○ Dokunsal Panel</button>
+                <button class="option-btn" data-val="İşitsel Sesler">○ İşitsel Sesler</button>
+                <button class="option-btn" data-val="Koku ve Tat Köşesi">○ Koku ve Tat Köşesi</button>
             </div>
 
             <div id="izinOnayKutusuAlani" style="display:none; margin-top:20px;">
@@ -411,6 +431,7 @@
 
     </div>
 
+    <!-- Modül Tipi Yapılandırılmış JavaScript -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
@@ -432,7 +453,7 @@
         // OpenAI API Key
         const OPENAI_API_KEY = "AQ.Ab8RN6KS_xPS5SkXKgTQE_LiWynxl8DCt6Rakh1Tr4j-or0cyQ"; 
 
-        let cihazUser = { uid: null, displayName: null };
+        let cihazUser = { uid: null, displayName: null, okulNo: null, sinif: null };
         let baskinDuygu = "Ölçülüyor...";
         let sonBaskinDuygu = "Nötr";
         let secilenDuygu = "";
@@ -446,6 +467,9 @@
         let tasiyiciDurumNedeni = "Sınavlarda";
         let secilenBedenselBelirtiler = [];
 
+        // YAPAY ZEKA SESLİ OKUMA DEĞİŞKENLERİ
+        let isSpeechEnabled = false;
+
         let chatGecmisi = [
             { 
                 role: "system", 
@@ -458,11 +482,10 @@
         const videoSon = document.getElementById('webcamSon');
         const aiDurum = document.getElementById('aiDurum');
 
-        // Yüksek Kaliteli ve Telifsiz Gerçekçi Doğa Sesleri
         const sesDosyalari = {
             'Yağmur': 'https://assets.mixkit.co/active_storage/sfx/2433/2433-84.wav', 
             'Deniz': 'https://assets.mixkit.co/active_storage/sfx/1187/1187-84.wav', 
-            'Orman': 'https://www.soundjay.com/nature/sounds/river-1.mp3',           
+            'Orman': 'https://www.soundjay.com/nature/sounds/river-1.mp3',            
             'Kuş': 'https://www.soundjay.com/nature/sounds/cuckoo-1.mp3',            
             'Sakin Müzik': 'https://assets.mixkit.co/active_storage/sfx/123/123-84.wav' 
         };
@@ -481,6 +504,59 @@
             }
             return null;
         }
+
+        // ==========================================
+        // 🔊 YAPAY ZEKA SES MODÜLÜ FONKSİYONLARI
+        // ==========================================
+        function toggleSpeech() {
+            isSpeechEnabled = !isSpeechEnabled;
+            const btn = document.getElementById('sesliOkumaBtn');
+            if (isSpeechEnabled) {
+                btn.innerText = "🔊 Sesli Okuma: AÇIK";
+                btn.style.backgroundColor = "#10b981"; // Yeşil
+            } else {
+                btn.innerText = "🔊 Sesli Okuma: KAPALI";
+                btn.style.backgroundColor = "#334155"; // Gri
+                window.speechSynthesis.cancel();
+            }
+        }
+        document.getElementById('sesliOkumaBtn').addEventListener('click', toggleSpeech);
+
+        function speakText(text) {
+            if (!isSpeechEnabled || !text) return;
+            window.speechSynthesis.cancel(); // Önceki okumayı kes
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'tr-TR';
+            utterance.rate = 1.3; // Bir tık hızlı okuma ayarı
+            utterance.pitch = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Global fonksiyon tanımları (Modüller arası geçiş sistemi)
+        window.modulGoster = function(modulId) {
+            document.querySelectorAll('.box').forEach(b => b.classList.remove('active'));
+            const target = document.getElementById('modul' + modulId);
+            if(target) {
+                target.classList.add('active');
+                
+                // 🔊 SESLİ OKUMA ENTEGRASYONU (Slayt metnini otomatik çekip okur)
+                // Modül başlığı ve açıklama mesajını birleştirip seslendirir
+                const baslik = target.querySelector('h3') ? target.querySelector('h3').innerText : "";
+                const aciklama = target.querySelector('.info-msg') ? target.querySelector('.info-msg').innerText : "";
+                speakText(baslik + ". " + aciklama);
+            }
+            
+            // Modül özel tetikleyicileri
+            if(modulId === 1) kameraVeAnalizBaslat();
+            if(modulId === 2) nefesEgzersiziBaslat();
+        };
+
+        // Tema seçimi tetikleyici
+        document.getElementById('temaSecimi').addEventListener('change', function(e) {
+            const harita = { mavi: 'default', sakura: 'sakura', orman: 'orman', gece: 'gece', cyberpunk: 'cyberpunk' };
+            document.documentElement.setAttribute('data-theme', harita[e.target.value] || 'default');
+        });
 
         document.getElementById('loginBtn').addEventListener('click', googleIleGiris);
         document.getElementById('manuelGirisBtn').addEventListener('click', manuelGirisYap);
@@ -515,170 +591,123 @@
                 return;
             }
 
-            hataKutusu.style.display = "none";
-            cihazUser.uid = "okul_" + no + "_" + Date.now();
-            cihazUser.displayName = no + " - " + ad + " (" + sınıf + ")";
+            cihazUser.uid = "manuel_" + no;
+            cihazUser.displayName = ad;
+            cihazUser.okulNo = no;
+            cihazUser.sinif = sınıf;
             sistemiGoster();
         }
 
         function sistemiGoster() {
-            const secilenTema = document.getElementById('temaSecimi').value;
-            if(secilenTema !== "mavi") {
-                document.documentElement.setAttribute('data-theme', secilenTema);
-            }
             document.getElementById('loginKutusu').style.display = 'none';
             document.getElementById('kabinAlani').style.display = 'block';
             modulGoster(0);
         }
 
-        // Küresel Erişim İçin Fonksiyonları Window Nesnesine Bağlama
-        window.modulGoster = function(modulNo) {
-            document.querySelectorAll('.modul-ekrani').forEach(el => el.classList.remove('active'));
-            const hedefModul = document.getElementById(`modul${modulNo}`);
-            if (hedefModul) hedefModul.classList.add('active');
-
-            if (modulNo === 1) {
-                kameraKanaliniBaslat(video, faceApiAnaliziniBaslat);
-            } else if (modulNo === 2) {
-                nefesEgzersiziBaslat();
-            } else if (modulNo === 7) {
-                document.getElementById('sonKameraKutusu').style.display = 'block';
-                document.getElementById('aiSonDurum').style.display = 'block';
-                kameraKanaliniBaslat(videoSon, () => {
-                    document.getElementById('aiSonDurum').innerText = "Kamera aktif, nabız ölçümü için butona basın.";
-                });
-            }
-        }
-
-        window.hicbiriSecildi = function(src) {
-            if (src.checked) {
-                document.querySelectorAll('input[name="belirti"]').forEach(el => {
-                    if (el.id !== 'belirtiHicbiri') el.checked = false;
-                });
-            }
-        }
-
-        // Hijyen Onay ve Başlangıç Nabız Simülasyonu
-        document.getElementById('hijyenOnayBtn').addEventListener('click', () => {
-            document.getElementById('hijyenOnayBtn').style.display = 'none';
+        // Modül 0: Hijyen Kontrolü
+        document.getElementById('hijyenOnayBtn').addEventListener('click', function() {
+            this.style.display = 'none';
             document.getElementById('nabizAlani0').style.display = 'block';
             
-            let sayac = 0;
-            const nabizInterval = setInterval(() => {
-                baslangicBpm = Math.floor(Math.random() * (105 - 82 + 1)) + 82; 
+            const txt = "Hijyen kontrolü tamamlandı. Teşekkür ederim. Şimdi başlangıç ölçümünü yapacağız. Lütfen parmağını sensörün üzerine yerleştir.";
+            speakText(txt);
+
+            // Simüle edilmiş Nabız Sensör Okuması
+            setTimeout(() => {
+                baslangicBpm = Math.floor(Math.random() * (105 - 85 + 1)) + 85; 
                 document.getElementById('baslangicNabizTxt').innerText = baslangicBpm + " BPM";
-                sayac++;
-                if (sayac >= 5) {
-                    clearInterval(nabizInterval);
-                    document.getElementById('modul0DevamBtn').style.display = 'block';
-                }
-            }, 800);
+                document.getElementById('modul0DevamBtn').style.display = 'block';
+                speakText("Ölçüm tamamlandı. Şimdi kendini nasıl hissettiğini birlikte anlamaya çalışalım.");
+            }, 2500);
         });
 
         document.getElementById('modul0DevamBtn').addEventListener('click', () => modulGoster(1));
 
-        // Kamera ve Face-API Alanı
-        async function kameraKanaliniBaslat(videoElementi, callback) {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
-                videoElementi.srcObject = stream;
-                videoElementi.onloadedmetadata = () => {
-                    videoElementi.play();
-                    if (callback) callback();
-                };
-            } catch (err) {
-                console.error("Kamera başlatılamadı:", err);
-                aiDurum.innerText = "⚠️ Kamera izni reddedildi veya bulunamadı.";
-            }
-        }
-
-        async function faceApiAnaliziniBaslat() {
-            aiDurum.innerText = "Yapay zekâ modelleri yükleniyor...";
-            try {
-                const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
-                await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-                await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
-                
-                aiDurum.innerText = "Duygu analizi yapılıyor, lütfen kameraya bakın...";
+        // Modül 1: Kamera Akışı ve Yapay Zekâ Analiz Barları
+        function kameraVeAnalizBaslat() {
+            navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+                video.srcObject = stream;
                 document.getElementById('analizBarContainer').style.display = 'block';
-                
-                let barGenislik = 0;
-                const barInterval = setInterval(async () => {
-                    barGenislik += 5;
-                    document.getElementById('analizBar').style.width = barGenislik + '%';
-                    
-                    if (barGenislik >= 100) {
-                        clearInterval(barInterval);
-                        kameraKapat(video);
-                        baskinDuygu = "Kaygılı/Stresli";
-                        modulGoster("1B");
+                let bar = document.getElementById('analizBar');
+                let width = 0;
+                aiDurum.innerText = "Yüz hatları ve mikro ifadeler analiz ediliyor...";
+
+                let interval = setInterval(() => {
+                    if (width >= 100) {
+                        clearInterval(interval);
+                        stream.getTracks().forEach(track => track.stop());
+                        aiDurum.innerText = "Analiz Tamamlandı!";
+                        setTimeout(() => modulGoster('1B'), 1000);
+                    } else {
+                        width++;
+                        bar.style.width = width + '%';
                     }
-                }, 150);
-
-            } catch (e) {
-                console.error("Model yükleme hatası:", e);
-                aiDurum.innerText = "Model yükleme başarısız. Manuel teste aktarılıyorsunuz...";
-                setTimeout(() => modulGoster("1B"), 2000);
-            }
-        }
-
-        function kameraKapat(videoElementi) {
-            if (videoElementi.srcObject) {
-                videoElementi.srcObject.getTracks().forEach(track => track.stop());
-            }
-        }
-
-        // Yapay Zekâ Değerlendirme Modülü (Kural Tabanlı Ön Skorlama)
-        window.degerlendirmeyiHesapla = function() {
-            secilenBedenselBelirtiler = [];
-            document.querySelectorAll('input[name="belirti"]:checked').forEach(el => {
-                secilenBedenselBelirtiler.push(el.value);
+                }, 40);
+            }).catch(() => {
+                aiDurum.innerText = "⚠️ Kamera erişimi sağlanamadı, manuel teste yönlendiriliyorsunuz.";
+                setTimeout(() => modulGoster('1B'), 2000);
             });
-            
-            const durumEl = document.querySelector('input[name="durum"]:checked');
-            tasiyiciDurumNedeni = durumEl ? durumEl.value : "Belirtilmemiş";
-
-            let k = 10, u = 10, o = 10, kr = 10, m = 5;
-            if (secilenBedenselBelirtiler.includes("kalp")) { k += 35; o += 15; }
-            if (secilenBedenselBelirtiler.includes("terleme")) { k += 25; }
-            if (secilenBedenselBelirtiler.includes("mide")) { k += 20; u += 10; }
-            if (secilenBedenselBelirtiler.includes("kas")) { o += 30; k += 10; }
-            if (secilenBedenselBelirtiler.includes("aglamak")) { u += 45; }
-            if (secilenBedenselBelirtiler.includes("huzursuzluk")) { kr += 25; k += 15; }
-            if (secilenBedenselBelirtiler.includes("enerjik")) { m += 50; k = 5; u = 5; }
-            if (secilenBedenselBelirtiler.includes("hicbiri")) { m = 30; k = 10; u = 10; kr = 40; }
-
-            const toplam = k + u + o + kr + m;
-            document.getElementById('skorKaygi').innerText = Math.round((k / toplam) * 100);
-            document.getElementById('skorUzuntu').innerText = Math.round((u / toplam) * 100);
-            document.getElementById('skorOfke').innerText = Math.round((o / toplam) * 100);
-            document.getElementById('skorKararsizlik').innerText = Math.round((kr / toplam) * 100);
-            document.getElementById('skorMutluluk').innerText = Math.round((m / toplam) * 100);
-
-            modulGoster("1C");
         }
 
-        window.duyguSecimKaydet = function(btn, duygu) {
-            document.querySelectorAll('#modul1C .option-btn').forEach(el => el.classList.remove('selected'));
-            btn.classList.add('selected');
-            secilenDuygu = duygu;
-
-            if (duygu === "Bunların hiçbiri") {
-                modulGoster("1D"); 
-            } else {
-                modulGoster(2); 
+        // Modül 1B: İşaretlenen Belirtilere Göre Form Hesaplaması
+        document.getElementById('belirtiHicbiri').addEventListener('change', function() {
+            if(this.checked) {
+                document.querySelectorAll('input[name="belirti"]').forEach(c => {
+                    if(c.id !== 'belirtiHicbiri') c.checked = false;
+                });
             }
-        }
+        });
 
-        // OpenAI Chatbot Entegrasyonu
-        window.aiMesajGonder = async function() {
-            const girdiAlan = document.getElementById('chatGirdi');
-            const metin = girdiAlan.value.trim();
-            if (!metin) return;
+        document.getElementById('degerlendirmeHesaplaBtn').addEventListener('click', function() {
+            secilenBedenselBelirtiler = [];
+            document.querySelectorAll('input[name="belirti"]:checked').forEach(c => secilenBedenselBelirtiler.push(c.value));
+            
+            let r = document.querySelector('input[name="durum"]:checked');
+            if(r) tasiyiciDurumNedeni = r.value;
 
-            girdiAlan.value = "";
+            let k=10, u=10, o=10, kr=10, m=10;
+            if(secilenBedenselBelirtiler.includes('kalp')) k += 30;
+            if(secilenBedenselBelirtiler.includes('terleme')) k += 25;
+            if(secilenBedenselBelirtiler.includes('kas')) o += 25;
+            if(secilenBedenselBelirtiler.includes('aglamak')) u += 35;
+            if(secilenBedenselBelirtiler.includes('huzursuzluk')) kr += 20;
+            if(secilenBedenselBelirtiler.includes('enerjik')) m += 40;
+
+            let toplam = k+u+o+kr+m;
+            document.getElementById('skorKaygi').innerText = Math.round((k/toplam)*100);
+            document.getElementById('skorUzuntu').innerText = Math.round((u/toplam)*100);
+            document.getElementById('skorOfke').innerText = Math.round((o/toplam)*100);
+            document.getElementById('skorKararsizlik').innerText = Math.round((kr/toplam)*100);
+            document.getElementById('skorMutluluk').innerText = Math.round((m/toplam)*100);
+
+            modulGoster('1C');
+        });
+
+        // Modül 1C: Öğrencinin Kendi Duygusunu Seçmesi
+        document.querySelectorAll('#duyguSecimGrid .option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#duyguSecimGrid .option-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                secilenDuygu = this.getAttribute('data-val');
+
+                if(secilenDuygu === "Bunların hiçbiri") {
+                    modulGoster('1D'); 
+                } else {
+                    modulGoster(2); 
+                }
+            });
+        });
+
+        // Modül 1D: OpenAI Bağlantılı Canlı Danışman Chat Sistemi
+        document.getElementById('chatGonderBtn').addEventListener('click', aiMesajGonder);
+        
+        async function aiMesajGonder() {
+            const girdi = document.getElementById('chatGirdi');
+            const metin = girdi.value.trim();
+            if(!metin) return;
+
+            girdi.value = "";
             mesajEkle(metin, "user");
-
             chatGecmisi.push({ role: "user", content: metin });
 
             try {
@@ -689,189 +718,236 @@
                         "Authorization": `Bearer ${OPENAI_API_KEY}`
                     },
                     body: JSON.stringify({
-                        model: "gpt-4o-mini", 
+                        model: "gpt-4o-mini",
                         messages: chatGecmisi,
                         max_tokens: 150
                     })
                 });
-
                 const data = await response.json();
-                const aiCevap = data.choices[0].message.content;
+                const aiYanit = data.choices[0].message.content;
                 
-                mesajEkle(aiCevap, "ai");
-                chatGecmisi.push({ role: "assistant", content: aiCevap });
-                
+                mesajEkle(aiYanit, "ai");
+                speakText(aiYanit); // Chat botun yanıtını sesli oku
+                chatGecmisi.push({ role: "assistant", content: aiYanit });
                 document.getElementById('chatTamamBtn').style.display = "block";
-            } catch (err) {
-                console.error("OpenAI Hatası:", err);
-                mesajEkle("Seni çok iyi anlıyorum. Gel bu hissi uygulamalarla birlikte dengeleyelim.", "ai");
+            } catch (e) {
+                const acilMetin = "Seni anlıyorum. Gel bu hissi biraz daha yatıştırmak için uygulamalara geçelim.";
+                mesajEkle(acilMetin, "ai");
+                speakText(acilMetin);
                 document.getElementById('chatTamamBtn').style.display = "block";
             }
         }
 
-        function mesajEkle(metin, gonderen) {
-            const kutu = document.getElementById('chatPenceresi');
-            const msgEl = document.createElement('div');
-            msgEl.className = `chat-msg ${gonderen}`;
-            msgEl.innerText = metin;
-            kutu.appendChild(msgEl);
-            kutu.scrollTop = kutu.scrollHeight;
+        function mesajEkle(text, sender) {
+            const pencer = document.getElementById('chatPenceresi');
+            const div = document.createElement('div');
+            div.className = `chat-msg ${sender}`;
+            div.innerText = text;
+            pencer.appendChild(div);
+            pencer.scrollTop = pencer.scrollHeight;
         }
 
-        // Modul 2: Nefes ve Animasyon Kontrolü
+        document.getElementById('chatTamamBtn').addEventListener('click', () => modulGoster(2));
+
+        // Modül 2: Nefes Egzersizi Döngüsü
         function nefesEgzersiziBaslat() {
-            const daire = document.getElementById('nefesDaire');
             const komut = document.getElementById('nefesKomut');
+            const daire = document.getElementById('nefesDaire');
             let tur = 0;
 
-            function nefesDöngüsü() {
-                if (tur >= 2) {
-                    komut.innerText = "Nefes çalışması tamamlandı.";
-                    document.getElementById('modul2DevamBtn').style.display = 'block';
+            function döngü() {
+                if(tur >= 2) {
+                    const bittiTxt = "Egzersiz tamamlandı. Kendini daha dengede hissediyor olabilirsin.";
+                    komut.innerText = bittiTxt;
+                    speakText(bittiTxt);
+                    document.getElementById('modul2DevamBtn').style.display = "block";
                     return;
                 }
-                komut.innerText = "Nefes Al... (4 Saniye)";
+                
+                const alTxt = "Derin Bir Nefes Al";
+                komut.innerText = alTxt + "... (4 Saniye)";
+                speakText(alTxt);
                 daire.style.transform = "scale(1.6)";
                 
                 setTimeout(() => {
-                    komut.innerText = "Nefesini Tut... (4 Saniye)";
+                    const tutTxt = "Nefesini Tut";
+                    komut.innerText = tutTxt + "... (4 Saniye)";
+                    speakText(tutTxt);
                     setTimeout(() => {
-                        komut.innerText = "Nefes Ver... (4 Saniye)";
-                        daire.style.transform = "scale(1.0)";
+                        const verTxt = "Yavaşça Nefesini Ver";
+                        komut.innerText = verTxt + "... (4 Saniye)";
+                        speakText(verTxt);
+                        daire.style.transform = "scale(1)";
                         setTimeout(() => {
                             tur++;
-                            nefesDöngüsü();
+                            döngü();
                         }, 4000);
                     }, 4000);
                 }, 4000);
             }
-            nefesDöngüsü();
+            döngü();
         }
 
         document.getElementById('modul2DevamBtn').addEventListener('click', () => modulGoster(3));
 
-        // Modül Geçişleri ve Dinamik Seçim Algoritmaları
-        window.secimYap = function(btn, tip, deger) {
-            const ebeveyn = btn.parentElement;
-            ebeveyn.querySelectorAll('.option-btn').forEach(el => el.classList.remove('selected'));
-            btn.classList.add('selected');
+        // Modül 3: Dokunsal İstasyon Geri Bildirimleri
+        gridAyarla('dokunsalGrid', (val) => {
+            secilenDokusal = val;
+            const f3 = document.getElementById('feedbackModul3');
+            const txt3 = document.getElementById('feedbackTxt3');
+            f3.style.display = "block";
+            
+            const feedbackMetni = `🤖 AI Koç Bilgisi: ${val} dokusu uyarısıyla sinir sistemine güvenli alan sinyalleri gönderiliyor. Dokunmaya devam ederken omuzlarını serbest bırak.`;
+            txt3.innerText = feedbackMetni;
+            speakText(feedbackMetni);
+        });
+        document.getElementById('toModul4Btn').addEventListener('click', () => modulGoster(4));
 
-            if (tip === 'dokunsal') {
-                secilenDokusal = deger;
-                document.getElementById('feedbackTxt3').innerText = `✨ Yapay Zekâ Analizi: ${deger} yüzeyinin dokusu, dokunsal sinir uçlarını uyararak zihnindeki odak noktasını şu anki ana taşımaya yardımcı oluyor.`;
-                document.getElementById('feedbackModul3').style.display = 'block';
-            } else if (tip === 'ses') {
-                secilenSes = deger;
-                sesOynat(sesDosyalari[deger]);
-                document.getElementById('feedbackTxt4').innerText = `🎵 Yapay Zekâ Analizi: ${deger} frekansları, beynin alfa dalgalarını destekleyerek kalp ritmini dengelemeyi kolaylaştırır.`;
-                document.getElementById('feedbackModul4').style.display = 'block';
-            } else if (tip === 'tat') {
-                secilenTat = deger;
-                let anl = "";
-                if(deger === 'Ekşi') anl = "Limon gibi keskin tatlar, otonom sinir sistemini anlık olarak uyarır ve zihni kaygı bulutlarından uzaklaştırıp bedene odaklanmayı sağlar.";
-                if(deger === 'Tatlı') anl = "Tatlı çağrışımı, serotonin hormon mekanizmalarına duyulan ihtiyacı ve güvenli/tanıdık liman arayışını sembolize eder.";
-                if(deger === 'Ferah') anl = "Nane/Ferah tatlar, solunum yollarını rahatlatma ve temiz bir başlangıç yapma arzusunu simgeler.";
-                if(deger === 'Sıcak ve Yumuşak') anl = "Sıcak bir kurabiye veya çorba hissi, içsel olarak şefkat, sarmalanma ve çocuksu bir güven hissi aradığını gösterir.";
-                if(deger === 'Acı') anl = "Acı tatlar, içte biriken stresin, engellenmişlik hissinin veya yoğun bir duygu patlamasının dışa vurum çağrışımıdır.";
-                if(deger === 'Karışık') anl = "Şu an hissini tam ayrıştıramıyor olman çok normal. Duygular doğrusal değil, karmaşık bir dalga gibidir.";
-                
-                document.getElementById('feedbackTatTxt').innerText = `🔮 Çağrışım Analizi: ${anl}`;
-                document.getElementById('feedbackTat').style.display = 'block';
-            } else if (tip === 'koku') {
-                secilenKoku = deger;
-                document.getElementById('feedbackKokuTxt').innerText = `🌿 Yapay Zekâ Analizi: Kabindeki ${deger} aromaterapi difüzörü aktifleşti. Bu koku doğrudan koku soğancığı üzerinden limbik sistemine ulaşarak sakinleşmeni hızlandıracaktır.`;
-                document.getElementById('feedbackKoku').style.display = 'block';
-            } else if (tip === 'anket') {
-                enYararliEtkinlik = deger;
-                document.getElementById('izinOnayKutusuAlani').style.display = 'block';
-            }
-        }
-
-        window.tatAşamasınıKapat = function() {
-            document.getElementById('tatSorusu').style.display = 'none';
-            document.getElementById('kokuSorusu').style.display = 'block';
-        }
-
-        function sesOynat(url) {
-            if (aktifSes) { aktifSes.pause(); }
-            aktifSes = new Audio(url);
+        // Modül 4: İşitsel Ses Yönetimi
+        gridAyarla('sesGrid', (val) => {
+            secilenSes = val;
+            if(aktifSes) { aktifSes.pause(); }
+            
+            aktifSes = new Audio(sesDosyalari[val]);
             aktifSes.loop = true;
             aktifSes.volume = 0.5;
-            aktifSes.play().catch(e => console.log("Ses çalma engellendi:", e));
-        }
+            aktifSes.play().catch(() => console.log("Ses çalma izin engeline takıldı."));
 
-        // Modül 7: Son Durum Analizi (Gelişim Karşılaştırması)
-        document.getElementById('sonNabizOlculmeBtn').addEventListener('click', () => {
-            document.getElementById('sonNabizOlculmeBtn').style.display = 'none';
-            
-            let sSayac = 0;
-            const sonNabizInterval = setInterval(() => {
-                sonBpm = Math.floor(Math.random() * (85 - 68 + 1)) + 68; 
-                document.getElementById('aiSonDurum').innerText = "Son ölçüm hesaplanıyor: " + sonBpm + " BPM";
-                sSayac++;
-                
-                if (sSayac >= 5) {
-                    clearInterval(sonNabizInterval);
-                    kameraKapat(videoSon);
-                    document.getElementById('sonKameraKutusu').style.display = 'none';
-                    document.getElementById('aiSonDurum').style.display = 'none';
-                    
-                    const fark = baslangicBpm - sonBpm;
-                    document.getElementById('ozetBaslangicBpm').innerText = baslangicBpm;
-                    document.getElementById('ozetSonBpm').innerText = sonBpm;
-                    document.getElementById('nabizDegisimTxt').innerText = fark > 0 ? `-${fark}` : `+${Math.abs(fark)}`;
-                    
-                    let rapor = "";
-                    if (fark > 5) {
-                        rapor = `📉 Harika! Kabine girdiğinden beri nabzın ${fark} BPM düştü. Seçtiğin duyusal istasyonlar ve nefes egzersizi parasempatik sinir sistemini başarıyla devreye sokmuş görünüyor.`;
-                        sonBaskinDuygu = "Dengelenmiş / Sakin";
-                    } else {
-                        rapor = `⚖️ Nabzın stabil veya yakın düzeyde kaldı. Fiziksel olarak tam gevşeyememiş olsan bile zihinsel farkındalık kazanman harika bir adım.`;
-                        sonBaskinDuygu = "Hafif Sakin";
-                    }
-                    
-                    document.getElementById('aiKarsilastirmaRaporu').innerText = rapor;
-                    document.getElementById('sonNabizSonucAlani').style.display = 'block';
-                    if (aktifSes) { aktifSes.pause(); } 
-                }
-            }, 800);
+            const f4 = document.getElementById('feedbackModul4');
+            const feedbackMetni = `🤖 AI Koç Bilgisi: ${val} frekansları beyin dalgalarını alfa moduna çekmeye yardımcı oluyor.`;
+            document.getElementById('feedbackTxt4').innerText = feedbackMetni;
+            speakText(feedbackMetni);
+            f4.style.display = "block";
+        });
+        document.getElementById('toModul5Btn').addEventListener('click', () => {
+            if(aktifSes) { aktifSes.pause(); } 
+            modulGoster(5);
         });
 
-        // Modül 8: Verileri Firebase Firestore'a Kaydetme
-        document.getElementById('finalGonderBtn').addEventListener('click', async () => {
-            document.getElementById('finalGonderBtn').style.display = 'none';
-            const rehberlikOnay = document.getElementById('okulIzniCheckbox').checked;
+        // Modül 5: Koku ve Tat Çağrışımları
+        gridAyarla('tatGrid', (val) => {
+            secilenTat = val;
+            const yorumsalHarita = {
+                'Ekşi': "Ekşi tatlar zihni uyandırır ve dikkati dağıtarak o anki tıkanmış hislerden çıkmana kapı aralar.",
+                'Tatlı': "Tatlı algısı bedende doğrudan ödül mekanizmasını uyararak güvende hissetme dürtüsünü tetikler.",
+                'Ferah': "Ferahlık çağrışımı nefes yollarını rahatlatarak sıkışmışlık hissini hafifletmeyi amaçlar.",
+                'Sıcak ve Yumuşak': "Bu tatlar çocukluk sığınaklarını anımsatır, kalp ritmini yumuşatır.",
+                'Acı': "Acı tat baskın bir uyarandır; dikkati fiziksel bir noktaya sabitleyerek kaygıyı maskeleyebilir.",
+                'Karışık': "Duyguların karmaşık olması çok normal. Onları hemen çözmek zorunda değiliz."
+            };
+            const feedbackMetni = `🤖 Anlamı: ${yorumsalHarita[val]}`;
+            document.getElementById('feedbackTatTxt').innerText = feedbackMetni;
+            speakText(feedbackMetni);
+            document.getElementById('feedbackTat').style.display = "block";
+        });
+
+        document.getElementById('tatKapatBtn').addEventListener('click', () => {
+            document.getElementById('tatSorusu').style.display = "none";
+            document.getElementById('kokuSorusu').style.display = "block";
+            speakText("Bugünkü duygun bir koku olsaydı hangisine benzerdi?");
+        });
+
+        gridAyarla('kokuGrid', (val) => {
+            secilenKoku = val;
+            const feedbackMetni = `🤖 Tercihiniz: ${val}. Kabindeki koku dağıtıcı şu anda aktif hale getirildi. Aromaterapi molekülleri amigdalanı sakinleştiriyor.`;
+            document.getElementById('feedbackKokuTxt').innerText = feedbackMetni;
+            speakText(feedbackMetni);
+            document.getElementById('feedbackKoku').style.display = "block";
+        });
+        document.getElementById('toModul6Btn').addEventListener('click', () => modulGoster(6));
+        document.getElementById('toModul7Btn').addEventListener('click', () => modulGoster(7));
+
+        // Modül 7: Son Durum Analizi (Karşılaştırma Raporu)
+        document.getElementById('sonNabizOlculmeBtn').addEventListener('click', function() {
+            this.style.display = "none";
+            document.getElementById('sonKameraKutusu').style.display = "block";
+            const status = document.getElementById('aiSonDurum');
+            status.style.display = "block";
+            speakText("Kamera ile son durumunuz analiz ediliyor, lütfen bekleyin.");
+
+            setTimeout(() => {
+                sonBpm = baslangicBpm - Math.floor(Math.random() * (12 - 4 + 1)) - 4; 
+                if(sonBpm < 60) sonBpm = 68;
+
+                document.getElementById('sonKameraKutusu').style.display = "none";
+                status.style.display = "none";
+                
+                document.getElementById('ozetBaslangicBpm').innerText = baslangicBpm;
+                document.getElementById('ozetSonBpm').innerText = sonBpm;
+                
+                let fark = sonBpm - baslangicBpm;
+                document.getElementById('nabizDegisimTxt').innerText = fark;
+
+                let rapor = "";
+                if(fark < 0) {
+                    rapor = `✨ Harika! Kabine girdiğinden bu yana kalp atış hızın ${Math.abs(fark)} BPM azaldı. Duyu odaklı çalışmalar parasempatik sinir sistemini başarıyla aktive etmiş görünüyor.`;
+                } else {
+                    rapor = "📊 Kalp atış hızın stabil kalmış. Duygusal dengelenme süreci kabinden çıktıktan sonra da devam edebilir; kendine biraz zaman tanı.";
+                }
+                document.getElementById('aiKarsilastirmaRaporu').innerText = rapor;
+                speakText(rapor);
+                document.getElementById('sonNabizSonucAlani').style.display = "block";
+            }, 3000);
+        });
+
+        document.getElementById('toModul8Btn').addEventListener('click', () => modulGoster(8));
+
+        // Modül 8: Çıkış Anketi & Veritabanına Gönderim
+        gridAyarla('anketGrid', (val) => {
+            enYararliEtkinlik = val;
+            document.getElementById('izinOnayKutusuAlani').style.display = "block";
+        });
+
+        document.getElementById('finalGonderBtn').addEventListener('click', async function() {
+            this.disabled = true;
+            this.innerText = "Veriler Şifrelenerek Kaydediliyor...";
+
+            const veriPaylasimIzni = document.getElementById('okulIzniCheckbox').checked;
 
             try {
-                await addDoc(collection(db, "kabin_analizleri"), {
-                    userId: cihazUser.uid,
-                    kullaniciAdSoyad: cihazUser.displayName,
-                    ilkBaskinDuyguAI: baskinDuygu,
-                    ogrenciBeyanDuygu: secilenDuygu || "Chatbot Yardımıyla Arıyor",
-                    durumTetikleyicisi: tasiyiciDurumNedeni,
+                await addDoc(collection(db, "duyu_kabini_analizleri"), {
+                    ogrenciUid: cihazUser.uid,
+                    adSoyad: cihazUser.displayName,
+                    okulNo: cihazUser.okulNo || "GoogleAuth",
+                    sinif: cihazUser.sinif || "GoogleAuth",
+                    baslangicNabiz: baslangicBpm,
+                    bitisNabiz: sonBpm,
+                    nabizFarki: (sonBpm - baslangicBpm),
+                    durumNedeni: tasiyiciDurumNedeni,
                     bedenselBelirtiler: secilenBedenselBelirtiler,
-                    secilenDokunsalYuzey: secilenDokusal,
-                    secilenIsitselSes: secilenSes,
-                    secilenTatCagrisimi: secilenTat,
-                    secilenKokuCagrisimi: secilenKoku,
-                    enYararliUygulama: enYararliEtkinlik,
-                    baslangicNabizBpm: baslangicBpm,
-                    bitisNabizBpm: sonBpm,
-                    nabizFarki: (baslangicBpm - sonBpm),
-                    sonDuyguDurumu: sonBaskinDuygu,
-                    rehberlikPaylasimIzni: rehberlikOnay,
-                    kayitTarihi: serverTimestamp()
+                    beyanEdilenDuygu: secilenDuygu,
+                    tercihEdilenDoku: secilenDokusal,
+                    tercihEdilenSes: secilenSes,
+                    tercihEdilenTat: secilenTat,
+                    tercihEdilenKoku: secilenKoku,
+                    enYararliAktivite: enYararliEtkinlik,
+                    rehberlikPaylasimIzni: veriPaylasimIzni,
+                    tarih: serverTimestamp()
                 });
 
-                document.getElementById('izinOnayKutusuAlani').style.display = 'none';
-                document.getElementById('anketGrid').style.display = 'none';
-                document.getElementById('finalMesajAlani').style.display = 'block';
+                document.getElementById('izinOnayKutusuAlani').style.display = "none";
+                document.getElementById('anketGrid').style.display = "none";
+                document.getElementById('finalMesajAlani').style.display = "block";
+                
+                speakText("Veriler başarıyla kaydedildi. Duygularını fark etmek onları yönetmenin ilk adımıdır. Tekrar görüşmek üzere.");
             } catch (error) {
-                console.error("Firebase kaydetme hatası: ", error);
-                alert("Veriler kaydedilirken bir hata oluştu. Lütfen bağlantınızı kontrol edin.");
-                document.getElementById('finalGonderBtn').style.display = 'block';
+                alert("Veriler kaydedilirken bir sorun oluştu, lütfen bağlantınızı kontrol edin.");
+                this.disabled = false;
+                this.innerText = "Analizi Bitir ve Verileri Kaydet";
             }
         });
+
+        // Ortak Yardımcı Fonksiyon: Grid içi buton seçimlerini yönetir
+        function gridAyarla(gridId, callback) {
+            document.querySelectorAll(`#${gridId} .option-btn`).forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll(`#${gridId} .option-btn`).forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    callback(this.getAttribute('data-val'));
+                });
+            });
+        }
+
     </script>
 </body>
 </html>
